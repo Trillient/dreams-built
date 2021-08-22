@@ -4,7 +4,7 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 
 const Header = () => {
   return (
-    <header>
+    <header className="header">
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
         <Container>
           <LinkContainer to="/">
@@ -15,6 +15,9 @@ const Header = () => {
             <Nav className="ms-auto">
               <LinkContainer to="/">
                 <Nav.Link>Home</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/timesheet">
+                <Nav.Link>Sheet</Nav.Link>
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>
