@@ -72,6 +72,8 @@ MongoDB allows us to create and store user information as well as store the user
 
 #### Wireframe
 
+![./images/timesheet-entry-wireframe.png](images/timesheet-entry-wireframe.png)
+
 ### Admin Portal
 
 - Timesheet report
