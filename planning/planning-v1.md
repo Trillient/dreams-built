@@ -17,16 +17,24 @@
 
 ### Technology requirements
 
-_Frontend_ - REACT
+**Frontend** - REACT
 
 React gives the required functionality for this part of the website. Performance and SEO requirements can be met to an adequate level for the website.
 
-**Components:**
+_Components:_
 
 1. Header - includes the navigation bar, logo and login
 2. Main content - TBC (possible carousel of jobs, about us section, list of services)
 3. Contact - includes a contact form as well as contact information
-4. Footer -
+4. Footer - nav, copyright(dynamic)
+
+**Backend** - Node.js
+
+Node.js will allow the user to send an email through the contact form
+
+**Database** - Not required
+
+### Wireframe
 
 ## Employee Portal
 
@@ -34,7 +42,8 @@ React gives the required functionality for this part of the website. Performance
 - Can edit their details
 - Can submit weekly timesheet
 - Can view/adjust availability
--
+
+Create a UI for logged in users. Sidebar navigation that includes parts that users have privileges to. For example an employee can see their own timesheet but not reports, admin can see reports. Will therefore will need user roles.
 
 ### Staff Timesheet
 
@@ -46,6 +55,22 @@ React gives the required functionality for this part of the website. Performance
 - timesheet saves days to the appropriate week database
 - user can edit their timesheet IF it is prior to the following wednesday
 - If there is no data, the user must be reminded by text and email
+
+#### Technology
+
+**Frontend** - REACT
+
+Create a fast reliable application
+
+**Backend** - Node.js
+
+Node.js provides a Xero integration.
+
+**Database** - MongoDB/Mongoose
+
+MongoDB allows us to create and store user information as well as store the user's timesheet data.
+
+#### Wireframe
 
 ### Admin Portal
 
