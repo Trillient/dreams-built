@@ -6,7 +6,8 @@ const TimeSheetScreen = () => {
   return (
     <div>
       <Form>
-        <TimeSheetEntry />
+        <TimeSheetEntry day="Monday" />
+        <TimeSheetEntry day="Tuesday" />
 
         <Button variant="primary" type="submit">
           Submit
