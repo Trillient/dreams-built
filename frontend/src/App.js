@@ -11,7 +11,7 @@ const App = () => {
     <Router>
       <div className="grid">
         <Header />
-        <main className="py-3 main">
+        <main className="py-3 main background">
           <Container>
             <Route path="/timesheet" component={TimeSheetScreen} />
           </Container>

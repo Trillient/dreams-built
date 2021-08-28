@@ -14,19 +14,20 @@ const TimeSheetDay = ({ day }) => {
   };
 
   return (
-    <Card className="mt-5 mb-5">
+    <Card className="mt-5 mb-5 shadow">
       <Card.Body>
         <h2>{day}</h2>
-        <TimeSheetEntry />
-
+        <Card className="m-2">
+          <TimeSheetEntry />
+        </Card>
         {inputList.map(({ id }) => {
           return (
-            <div key={id}>
+            <Card className="m-2" key={id}>
               <TimeSheetEntry id={id} />
               <Button id={id} onClick={() => onDeleteClick(id)}>
                 -
               </Button>
-            </div>
+            </Card>
           );
         })}
 
@@ -37,3 +38,6 @@ const TimeSheetDay = ({ day }) => {
 };
 
 export default TimeSheetDay;
+
+// TODO - make unique id for inputlist
+//  Currently If a user were to add and then delete an entry they will have the same id when this needs to be unique
