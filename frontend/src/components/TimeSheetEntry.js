@@ -1,17 +1,17 @@
 import React from "react";
-import { Form } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 
-const TimeSheetEntry = ({ key }) => {
+const TimeSheetEntry = () => {
   return (
-    <div key={key}>
+    <div>
       <Form.Group className="mb-3" controlId="formTimeSheetStartTime">
         <Form.Label>Start Time</Form.Label>
-        <Form.Control type="time" placeholder="Enter email" />
+        <Form.Control type="time" />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formTimeSheetEndTime">
         <Form.Label>End Time</Form.Label>
-        <Form.Control type="time" placeholder="Password" />
+        <Form.Control type="time" />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formTimeSheetJobNumber">
