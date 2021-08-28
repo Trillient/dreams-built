@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Card } from "react-bootstrap";
 import TimeSheetEntry from "./TimeSheetEntry";
+import { FaTrash } from "react-icons/fa";
 
 const TimeSheetDay = ({ day }) => {
   const [inputList, setInputList] = useState([]);
@@ -16,22 +17,26 @@ const TimeSheetDay = ({ day }) => {
   return (
     <Card className="mt-5 mb-5 shadow">
       <Card.Body>
-        <h2>{day}</h2>
+        <h2 class="text-center mb-4">{day}</h2>
         <Card className="m-2">
           <TimeSheetEntry />
         </Card>
         {inputList.map(({ id }) => {
           return (
-            <Card className="m-2" key={id}>
-              <TimeSheetEntry id={id} />
-              <Button id={id} onClick={() => onDeleteClick(id)}>
-                -
+            <div className="m-2" key={id}>
+              <Card key={id}>
+                <TimeSheetEntry id={id} />
+              </Card>
+              <Button className="btn-main" id={id} onClick={() => onDeleteClick(id)}>
+                <FaTrash />
               </Button>
-            </Card>
+            </div>
           );
         })}
 
-        <Button onClick={onAddBtnClick}>+</Button>
+        <Button className="btn-add" onClick={onAddBtnClick}>
+          +
+        </Button>
       </Card.Body>
     </Card>
   );
