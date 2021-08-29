@@ -4,9 +4,14 @@ import TimeSheetDay from "../../components/TimeSheetDay";
 import "./timesheet.css";
 
 const TimeSheetScreen = () => {
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    console.log(e);
+  };
   return (
     <div className="background">
-      <Form>
+      <Form onSubmit={submitHandler}>
         <TimeSheetDay day="Monday" />
         <TimeSheetDay day="Tuesday" />
         <TimeSheetDay day="Wednesday" />
