@@ -14,3 +14,30 @@
   display: block;
   margin: 2rem auto 1rem;
 }
+
+.init-timesheet-entry {
+  margin: 0.5rem;
+}
+
+@media only screen and (min-width: 50rem) {
+  .timesheet-grid-container {
+    display: grid;
+    grid-template-columns: auto min-content;
+    gap: 1rem;
+  }
+
+  .timesheet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .btn-main {
+    height: min-content;
+    margin: auto;
+  }
+
+  .init-timesheet-entry {
+    margin-right: 4rem;
+  }
+}

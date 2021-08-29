@@ -18,12 +18,12 @@ const TimeSheetDay = ({ day }) => {
     <Card className="mt-5 mb-5 shadow">
       <Card.Body>
         <h2 class="text-center mb-4">{day}</h2>
-        <Card className="m-2">
+        <Card className="init-timesheet-entry">
           <TimeSheetEntry />
         </Card>
         {inputList.map(({ id }) => {
           return (
-            <div className="m-2" key={id}>
+            <div className="m-2 timesheet-grid-container" key={id}>
               <Card key={id}>
                 <TimeSheetEntry id={id} />
               </Card>
