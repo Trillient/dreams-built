@@ -3,9 +3,10 @@ import { Button, Card } from "react-bootstrap";
 import TimeSheetEntry from "./TimeSheetEntry";
 import { FaTrash } from "react-icons/fa";
 
-const TimeSheetDay = ({ day }) => {
+const TimeSheetDay = ({ day, setDayEntry }) => {
   const [inputList, setInputList] = useState([]);
-
+  const [entry, setEntry] = useState([]);
+  setDayEntry(entry);
   const onAddBtnClick = () => {
     setInputList([...inputList, { id: inputList.length }]);
   };
@@ -21,7 +22,7 @@ const TimeSheetDay = ({ day }) => {
           return (
             <div className="m-2 timesheet-grid-container" key={`${id}${day}`}>
               <Card>
-                <TimeSheetEntry id={id} name={`${id}${day}`} />
+                <TimeSheetEntry id={id} name={`${id}${day}`} setEntry={setEntry} entry={entry} />
               </Card>
               <Button className="btn-main" id={id} onClick={() => onDeleteClick(id)}>
                 <FaTrash />

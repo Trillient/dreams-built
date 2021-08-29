@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Card } from "react-bootstrap";
 // import Message from "../components/Message";
 
-const TimeSheetEntry = ({ id, name }) => {
+const TimeSheetEntry = ({ id, name, setEntry, entry }) => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [jobNumber, setJobNumber] = useState("");
