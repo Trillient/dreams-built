@@ -19,9 +19,8 @@ const TimeSheetScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    console.log(timeSheetEntry);
   };
-
-  console.log(timeSheetEntry);
 
   return (
     <>
