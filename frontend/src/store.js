@@ -4,7 +4,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { timeSheetReducer } from "./reducers/timeSheetReducer";
 
 const reducer = combineReducers({
-  timeSheet: timeSheetReducer,
+  timeSheetData: timeSheetReducer,
 });
 
 const initialState = {};

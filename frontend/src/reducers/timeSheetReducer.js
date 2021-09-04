@@ -1,6 +1,6 @@
 import { TIMESHEET_REQUEST, TIMESHEET_SUCCESS, TIMESHEET_FAIL } from "../constants/timeSheetConstants";
 
-export const timesheetReducer = (state = { timesheet: [] }, action) => {
+export const timeSheetReducer = (state = { timesheet: [] }, action) => {
   switch (action.type) {
     case TIMESHEET_REQUEST:
       return { loading: true, timesheet: [] };
