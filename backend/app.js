@@ -9,6 +9,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/timesheet", timesheetRoutes);
+
 app.use(errorHandler);
 
 if (process.env.NODE_ENV === "development") {
