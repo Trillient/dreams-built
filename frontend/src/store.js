@@ -7,7 +7,11 @@ const reducer = combineReducers({
   timeSheetData: timeSheetReducer,
 });
 
-const initialState = {};
+const timeSheetDataFromStorage = localStorage.getItem("timeSheetData") ? JSON.parse(localStorage.getItem("timeSheetData")) : [];
+
+const initialState = {
+  timeSheetData: timeSheetDataFromStorage,
+};
 
 const middleware = [thunk];
 

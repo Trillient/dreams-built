@@ -1,16 +1,22 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteTimeSheetEntry } from "../actions/timeSheetActions";
 import { Button, Card } from "react-bootstrap";
 import TimeSheetEntry from "./TimeSheetEntry";
 import { FaTrash } from "react-icons/fa";
 
 const TimeSheetDay = ({ day }) => {
+  const dispatch = useDispatch();
   const [inputList, setInputList] = useState([]);
 
   const onAddBtnClick = () => {
     setInputList([...inputList, { id: inputList.length }]);
   };
   const onDeleteClick = (id) => {
-    setInputList(inputList.filter((e) => e.id !== id));
+    if (window.confirm("Are you sure")) {
+      // dispatch(deleteTimeSheetEntry(id));
+      setInputList(inputList.filter((e) => e.id !== id));
+    }
   };
 
   return (
