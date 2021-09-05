@@ -50,7 +50,4 @@ const disconnect = async () => {
   await mongoose.disconnect();
 };
 
-exports = {
-  connect,
-  disconnect,
-};
+export { connect, disconnect };
