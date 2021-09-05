@@ -49,3 +49,13 @@ const TimeSheetScreen = () => {
 };
 
 export default TimeSheetScreen;
+
+// TODO - fetch the timesheet data from database and set as initial state, IF empty create empty
+
+// TODO - submit entered data onclick
+
+// TODO - ADD date selection for timesheet week that CREATES a database entry
+
+// TODO - PUT request on submit
+
+// TODO - CREATES new week each sunday

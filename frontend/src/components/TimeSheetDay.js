@@ -7,7 +7,6 @@ import { FaTrash } from "react-icons/fa";
 
 const TimeSheetDay = ({ day }) => {
   const dispatch = useDispatch();
-  const [inputList, setInputList] = useState([]);
 
   const onAddBtnClick = () => {
     setInputList([...inputList, { id: inputList.length }]);
@@ -46,5 +45,12 @@ const TimeSheetDay = ({ day }) => {
 
 export default TimeSheetDay;
 
+// TODO - Replace inputList with redux state, CHECK entries in DAY array and display
+
+// TODO - onClick ADD - create new entry in DAY array
+
+// TODO - onClick DELETE - DELETE entry in DAY array
+
+// TODO - store day entries in LOCAL STORAGE until form submit
+
 // TODO - make unique id for inputlist
-//  Currently If a user were to add and then delete an entry they will have the same id when this needs to be unique
