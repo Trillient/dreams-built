@@ -32,11 +32,11 @@ const TimeSheetScreen = () => {
           <Form onSubmit={submitHandler}>
             <TimeSheetDay day="Monday" />
             <TimeSheetDay day="Tuesday" />
-            {/* <TimeSheetDay day="Wednesday" />
+            <TimeSheetDay day="Wednesday" />
             <TimeSheetDay day="Thursday" />
             <TimeSheetDay day="Friday" />
             <TimeSheetDay day="Saturday" />
-            <TimeSheetDay day="Sunday" /> */}
+            <TimeSheetDay day="Sunday" />
 
             <Button variant="primary" type="submit">
               Submit

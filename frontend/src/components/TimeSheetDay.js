@@ -7,6 +7,7 @@ import { FaTrash } from "react-icons/fa";
 
 const TimeSheetDay = ({ day }) => {
   const dispatch = useDispatch();
+  const [inputList, setInputList] = useState([]);
 
   const onAddBtnClick = () => {
     setInputList([...inputList, { id: inputList.length }]);

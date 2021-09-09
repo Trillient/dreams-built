@@ -10,6 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/timesheet", timesheetRoutes);
+app.use("/api/user", userRoutes);
 
 app.use(errorHandler);
 
