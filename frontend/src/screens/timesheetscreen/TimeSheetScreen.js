@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Dropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { timeSheet } from '../../actions/timeSheetActions';
 import TimeSheetDay from '../../components/TimeSheetDay';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
+import CustomMenu from '../../components/CustomMenu';
 import './timesheet.css';
 
 const TimeSheetScreen = () => {
@@ -29,8 +30,8 @@ const TimeSheetScreen = () => {
     },
   });
 
-  const startDate = moment().startOf('week');
-  const endDate = moment().endOf('week');
+  const startDate = moment().startOf('week').format('DD/MM/YYYY');
+  const endDate = moment().endOf('week').format('DD/MM/YYYY');
 
   const weekArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -42,9 +43,21 @@ const TimeSheetScreen = () => {
         <Message variant="danger">{error}</Message>
       ) : (
         <div className="background">
-          <p>
-            Week: {startDate.format('DD/MM/YYYY')} - {endDate.format('DD/MM/YYYY')}
-          </p>
+          <Dropdown>
+            <Dropdown.Toggle id="dropdown-button" variant="primary">
+              Week: {startDate} - {endDate}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu as={CustomMenu}>
+              <Dropdown.Item eventKey={endDate} active>
+                {startDate} - {endDate}
+              </Dropdown.Item>
+              <Dropdown.Item eventKey="2">Blue</Dropdown.Item>
+              <Dropdown.Item eventKey="3">Orange</Dropdown.Item>
+              <Dropdown.Item eventKey="1">Red-Orange</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+
           <Form onSubmit={submitHandler}>
             {weekArray.map((day, index) => (
               <TimeSheetDay key={index} day={day} />
