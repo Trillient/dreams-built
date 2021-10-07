@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form, Card } from 'react-bootstrap';
 // import Message from "../components/Message";
 
-const TimeSheetEntry = ({ name, index }) => {
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [jobNumber, setJobNumber] = useState('');
+const TimeSheetEntry = ({ id, index, day, setJobNumber, setStartTime, setEndTime, jobNumber, startTime, endTime }) => {
+  // const [startTime, setStartTime] = useState('');
+  // const [endTime, setEndTime] = useState('');
+  // const [jobNumber, setJobNumber] = useState('');
+
+  const upDateArray = (updateState, state, value) => {
+    updateState(state.filter((e) => e.id !== id));
+    updateState([...state, { id: id, day: day, startTime: value }]);
+  };
 
   const getBackgroundColor = (value) => {
     let color;
@@ -19,17 +24,23 @@ const TimeSheetEntry = ({ name, index }) => {
     <>
       <Card className="p-3" style={{ backgroundColor: getBackgroundColor(index) }}>
         <Card.Body className="timesheet-grid">
-          <Form.Group controlId={`start${name}`}>
+          <Form.Group controlId={`start - ${id}`}>
             <Form.Label>Start Time</Form.Label>
-            <Form.Control type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+            <Form.Control
+              type="time"
+              value={startTime.filter((e) => e.id === id).startTime}
+              onChange={(e) => {
+                upDateArray(setStartTime, startTime, e.target.value);
+              }}
+            />
           </Form.Group>
-          <Form.Group controlId={`end${name}`}>
+          <Form.Group controlId={`end - ${id}`}>
             <Form.Label>End Time</Form.Label>
-            <Form.Control type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+            <Form.Control type="time" value={endTime.filter((e) => e.id === id).endTime} onChange={(e) => upDateArray(setEndTime, endTime, e.target.value)} />
           </Form.Group>
-          <Form.Group controlId={`job${name}`}>
+          <Form.Group controlId={`job - ${id}`}>
             <Form.Label>Job Number</Form.Label>
-            <Form.Control type="number" placeholder="eg - 21100" value={jobNumber} onChange={(e) => setJobNumber(e.target.value)} />
+            <Form.Control type="number" placeholder="eg - 21100" value={jobNumber.filter((e) => e.id === id).jobNumber} onChange={(e) => upDateArray(setJobNumber, jobNumber, e.target.value)} />
           </Form.Group>
         </Card.Body>
       </Card>

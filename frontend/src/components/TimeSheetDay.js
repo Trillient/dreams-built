@@ -6,7 +6,7 @@ import { Button, Card } from 'react-bootstrap';
 import TimeSheetEntry from './TimeSheetEntry';
 import { FaTrash } from 'react-icons/fa';
 
-const TimeSheetDay = ({ day }) => {
+const TimeSheetDay = ({ day, setJobNumber, setStartTime, setEndTime, jobNumber, startTime, endTime }) => {
   // const dispatch = useDispatch();
   const [inputList, setInputList] = useState([]);
 
@@ -27,7 +27,7 @@ const TimeSheetDay = ({ day }) => {
         {inputList.map(({ id }, index) => (
           <div className="m-2 timesheet-grid-container" key={id}>
             <Card>
-              <TimeSheetEntry name={id} index={index} />
+              <TimeSheetEntry id={id} index={index} day={day} setEndTime={setEndTime} setStartTime={setStartTime} setJobNumber={setJobNumber} endTime={endTime} startTime={startTime} jobNumber={jobNumber} />
             </Card>
             <Button className="btn-main" id={id} onClick={() => onDeleteClick(id)}>
               <FaTrash />
@@ -46,9 +46,5 @@ const TimeSheetDay = ({ day }) => {
 export default TimeSheetDay;
 
 // TODO - Replace inputList with redux state, CHECK entries in DAY array and display
-
-// TODO - onClick ADD - create new entry in DAY array
-
-// TODO - onClick DELETE - DELETE entry in DAY array
 
 // TODO - store day entries in LOCAL STORAGE until form submit
