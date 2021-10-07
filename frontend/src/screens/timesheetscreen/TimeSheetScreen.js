@@ -34,6 +34,10 @@ const TimeSheetScreen = () => {
   const endDate = moment().endOf('week').format('DD/MM/YYYY');
 
   const weekArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const dummyArray = [
+    { startDate: '27/09/2021', endDate: '03/10/2021' },
+    { startDate: '20/09/2021', endDate: '26/09/2021' },
+  ];
 
   return (
     <>
@@ -52,9 +56,11 @@ const TimeSheetScreen = () => {
               <Dropdown.Item eventKey={endDate} active>
                 {startDate} - {endDate}
               </Dropdown.Item>
-              <Dropdown.Item eventKey="2">Blue</Dropdown.Item>
-              <Dropdown.Item eventKey="3">Orange</Dropdown.Item>
-              <Dropdown.Item eventKey="1">Red-Orange</Dropdown.Item>
+              {dummyArray.map((date) => (
+                <Dropdown.Item eventKey={date.endDate}>
+                  {date.startDate} - {date.endDate}
+                </Dropdown.Item>
+              ))}
             </Dropdown.Menu>
           </Dropdown>
 

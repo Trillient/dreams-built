@@ -19,6 +19,11 @@
   margin: 0.5rem;
 }
 
+.dropdown-menu {
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
 @media only screen and (min-width: 50rem) {
   .timesheet-grid-container {
     display: grid;
