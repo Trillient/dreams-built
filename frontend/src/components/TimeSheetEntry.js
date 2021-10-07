@@ -8,8 +8,7 @@ const TimeSheetEntry = ({ id, index, day, setJobNumber, setStartTime, setEndTime
   // const [jobNumber, setJobNumber] = useState('');
 
   const upDateArray = (updateState, state, value) => {
-    updateState(state.filter((e) => e.id !== id));
-    updateState([...state, { id: id, day: day, startTime: value }]);
+    updateState([...state.filter((e) => e.id !== id), { id: id, day: day, startTime: value }]);
   };
 
   const getBackgroundColor = (value) => {
