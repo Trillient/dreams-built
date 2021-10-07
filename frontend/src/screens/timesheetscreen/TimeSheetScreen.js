@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
-import { Form, Button } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { timeSheet } from "../../actions/timeSheetActions";
-import TimeSheetDay from "../../components/TimeSheetDay";
-import Loader from "../../components/Loader";
-import Message from "../../components/Message";
-import "./timesheet.css";
+import React, { useEffect } from 'react';
+import { Form, Button } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { timeSheet } from '../../actions/timeSheetActions';
+import TimeSheetDay from '../../components/TimeSheetDay';
+import Loader from '../../components/Loader';
+import Message from '../../components/Message';
+import './timesheet.css';
 
 const TimeSheetScreen = () => {
   const dispatch = useDispatch();
@@ -21,6 +21,8 @@ const TimeSheetScreen = () => {
     e.preventDefault();
   };
 
+  const weekDay = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
   return (
     <>
       {loading ? (
@@ -30,14 +32,9 @@ const TimeSheetScreen = () => {
       ) : (
         <div className="background">
           <Form onSubmit={submitHandler}>
-            <TimeSheetDay day="Monday" />
-            <TimeSheetDay day="Tuesday" />
-            <TimeSheetDay day="Wednesday" />
-            <TimeSheetDay day="Thursday" />
-            <TimeSheetDay day="Friday" />
-            <TimeSheetDay day="Saturday" />
-            <TimeSheetDay day="Sunday" />
-
+            {weekDay.map((day, index) => (
+              <TimeSheetDay key={index} day={day} />
+            ))}
             <Button variant="primary" type="submit">
               Submit
             </Button>

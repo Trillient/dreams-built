@@ -1,26 +1,23 @@
-import React, { useState } from "react";
-import { Form, Card } from "react-bootstrap";
+import React, { useState } from 'react';
+import { Form, Card } from 'react-bootstrap';
 // import Message from "../components/Message";
 
-const TimeSheetEntry = ({ id, name }) => {
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [jobNumber, setJobNumber] = useState("");
-  //   const [message, setMessage] = useState(null);
+const TimeSheetEntry = ({ name, index }) => {
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [jobNumber, setJobNumber] = useState('');
 
   const getBackgroundColor = (value) => {
     let color;
     if (value % 2 === 0) {
-      color = "#DDDCDA";
+      color = '#DDDCDA';
     }
     return color;
   };
 
   return (
     <>
-      {/* {message && <Message variant="danger">{message}</Message>} */}
-      {/* {error && <Message variant="danger">{error}</Message>} */}
-      <Card className="p-3" style={{ backgroundColor: getBackgroundColor(id) }}>
+      <Card className="p-3" style={{ backgroundColor: getBackgroundColor(index) }}>
         <Card.Body className="timesheet-grid">
           <Form.Group controlId={`start${name}`}>
             <Form.Label>Start Time</Form.Label>
