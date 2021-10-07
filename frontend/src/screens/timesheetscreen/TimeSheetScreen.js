@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
 import { timeSheet } from '../../actions/timeSheetActions';
 import TimeSheetDay from '../../components/TimeSheetDay';
 import Loader from '../../components/Loader';
@@ -21,7 +22,17 @@ const TimeSheetScreen = () => {
     e.preventDefault();
   };
 
-  const weekDay = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  moment.updateLocale('en', {
+    week: {
+      dow: 1,
+      doy: 4,
+    },
+  });
+
+  const startDate = moment().startOf('week');
+  const endDate = moment().endOf('week');
+
+  const weekArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   return (
     <>
@@ -31,8 +42,11 @@ const TimeSheetScreen = () => {
         <Message variant="danger">{error}</Message>
       ) : (
         <div className="background">
+          <p>
+            Week: {startDate.format('DD/MM/YYYY')} - {endDate.format('DD/MM/YYYY')}
+          </p>
           <Form onSubmit={submitHandler}>
-            {weekDay.map((day, index) => (
+            {weekArray.map((day, index) => (
               <TimeSheetDay key={index} day={day} />
             ))}
             <Button variant="primary" type="submit">

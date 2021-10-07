@@ -19,7 +19,7 @@ const TimeSheetDay = ({ day }) => {
     setInputList(inputList.filter((e) => e.id !== id));
     // }
   };
-  console.log(inputList);
+
   return (
     <Card className="mt-5 mb-5 shadow">
       <Card.Body>
