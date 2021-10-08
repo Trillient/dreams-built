@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Card } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { updateEntry } from '../actions/timeSheetActions';
+
 // import Message from "../components/Message";
 
 const TimeSheetEntry = ({ id, index, day }) => {
@@ -21,6 +22,11 @@ const TimeSheetEntry = ({ id, index, day }) => {
     }
     return color;
   };
+  const a = endTime.split(':');
+  const timeA = +a[0] + +a[1] / 60;
+  const b = startTime.split(':');
+  const timeB = +b[0] + +b[1] / 60;
+  const time = (timeA - timeB).toFixed(2);
 
   return (
     <>
@@ -57,6 +63,7 @@ const TimeSheetEntry = ({ id, index, day }) => {
               }}
             />
           </Form.Group>
+          <p>Total: {time > 0 ? time : null}</p>
         </Card.Body>
       </Card>
     </>

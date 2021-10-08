@@ -15,7 +15,7 @@ const TimeSheetScreen = () => {
   const dispatch = useDispatch();
 
   const timeSheetData = useSelector((state) => state.timeSheetData);
-  const { loading, error, timesheets } = timeSheetData;
+  const { loading, error } = timeSheetData;
 
   const timeSheetEntries = useSelector((state) => state.timeSheet);
   const { dayEntries } = timeSheetEntries;
@@ -57,7 +57,7 @@ const TimeSheetScreen = () => {
         <div className="background">
           <Dropdown>
             <Dropdown.Toggle id="dropdown-button" variant="primary">
-              Week: {title}
+              Week: <strong>{title}</strong>
             </Dropdown.Toggle>
 
             <Dropdown.Menu as={CustomMenu}>
