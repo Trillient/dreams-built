@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createEntry, deleteEntry } from '../actions/timeSheetActions';
 import { Button, Card } from 'react-bootstrap';
 import TimeSheetEntry from './TimeSheetEntry';
@@ -10,15 +10,19 @@ const TimeSheetDay = ({ day }) => {
   const dispatch = useDispatch();
 
   const [inputList, setInputList] = useState([]);
+  const timeSheetEntries = useSelector((state) => state.timeSheet);
+  const { dayEntries } = timeSheetEntries;
+
+  useEffect(() => {
+    setInputList(dayEntries.filter((e) => e.day === day));
+  }, [dayEntries, day]);
 
   const onAddBtnClick = () => {
     const id = uuidv4();
-    setInputList([...inputList, { id: id }]);
     dispatch(createEntry(id, day));
   };
   const onDeleteClick = (id) => {
     // if (window.confirm('Are you sure')) {
-    setInputList(inputList.filter((e) => e.id !== id));
     dispatch(deleteEntry(id));
     // }
   };
