@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, Card } from 'react-bootstrap';
 // import Message from "../components/Message";
 
-const TimeSheetEntry = ({ id, index, day, setJobNumber, setStartTime, setEndTime, jobNumber, startTime, endTime }) => {
-  // const [startTime, setStartTime] = useState('');
-  // const [endTime, setEndTime] = useState('');
-  // const [jobNumber, setJobNumber] = useState('');
+const TimeSheetEntry = ({ id, index, day, inputList, setInputList }) => {
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [jobNumber, setJobNumber] = useState('');
 
-  const upDateArray = (updateState, state, value) => {
-    updateState([...state.filter((e) => e.id !== id), { id: id, day: day, startTime: value }]);
+  const upDateArray = (state, value) => {
+    const startTimeValue = state === setStartTime ? value : startTime;
+    const endTimeValue = state === setEndTime ? value : endTime;
+    const jobNumberValue = state === setJobNumber ? value : jobNumber;
+    setInputList(
+      inputList.map((item) => {
+        if (item.id === id) {
+          return {
+            id: id,
+            day: day,
+            startTime: startTimeValue,
+            endTime: endTimeValue,
+            jobNumber: jobNumberValue,
+          };
+        }
+        return item;
+      })
+    );
   };
 
   const getBackgroundColor = (value) => {
@@ -27,19 +43,35 @@ const TimeSheetEntry = ({ id, index, day, setJobNumber, setStartTime, setEndTime
             <Form.Label>Start Time</Form.Label>
             <Form.Control
               type="time"
-              value={startTime.filter((e) => e.id === id).startTime}
+              value={startTime}
               onChange={(e) => {
-                upDateArray(setStartTime, startTime, e.target.value);
+                setStartTime(e.target.value);
+                upDateArray(setStartTime, e.target.value);
               }}
             />
           </Form.Group>
           <Form.Group controlId={`end - ${id}`}>
             <Form.Label>End Time</Form.Label>
-            <Form.Control type="time" value={endTime.filter((e) => e.id === id).endTime} onChange={(e) => upDateArray(setEndTime, endTime, e.target.value)} />
+            <Form.Control
+              type="time"
+              value={endTime}
+              onChange={(e) => {
+                setEndTime(e.target.value);
+                upDateArray(setEndTime, e.target.value);
+              }}
+            />
           </Form.Group>
           <Form.Group controlId={`job - ${id}`}>
             <Form.Label>Job Number</Form.Label>
-            <Form.Control type="number" placeholder="eg - 21100" value={jobNumber.filter((e) => e.id === id).jobNumber} onChange={(e) => upDateArray(setJobNumber, jobNumber, e.target.value)} />
+            <Form.Control
+              type="number"
+              placeholder="eg - 21100"
+              value={jobNumber}
+              onChange={(e) => {
+                setJobNumber(e.target.value);
+                upDateArray(setJobNumber, e.target.value);
+              }}
+            />
           </Form.Group>
         </Card.Body>
       </Card>

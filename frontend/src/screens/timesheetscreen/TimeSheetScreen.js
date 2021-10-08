@@ -16,11 +16,6 @@ const TimeSheetScreen = () => {
 
   const timeSheetData = useSelector((state) => state.timeSheetData);
   const { loading, error, timeSheetEntry } = timeSheetData;
-  const [startTime, setStartTime] = useState([]);
-  const [endTime, setEndTime] = useState([]);
-  const [jobNumber, setJobNumber] = useState([]);
-
-  console.log(startTime);
 
   useEffect(() => {
     dispatch(timeSheet());
@@ -28,12 +23,6 @@ const TimeSheetScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    const submittedData = {
-      startTimes: startTime,
-      endTimes: endTime,
-      jobNumber: jobNumber,
-    };
-    console.log(submittedData);
   };
 
   moment.updateLocale('en', {
@@ -78,7 +67,7 @@ const TimeSheetScreen = () => {
 
           <Form onSubmit={submitHandler}>
             {weekArray.map((day, index) => (
-              <TimeSheetDay key={index} day={day} setEndTime={setEndTime} setStartTime={setStartTime} setJobNumber={setJobNumber} endTime={endTime} startTime={startTime} jobNumber={jobNumber} />
+              <TimeSheetDay key={index} day={day} />
             ))}
             <Button variant="primary" type="submit">
               Submit
@@ -93,8 +82,6 @@ const TimeSheetScreen = () => {
 export default TimeSheetScreen;
 
 // TODO - fetch the timesheet data from database and set as initial state, IF empty create empty
-
-// TODO - submit entered data onclick
 
 // TODO - ADD date selection for timesheet week that CREATES a database entry
 
