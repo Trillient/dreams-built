@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Button, Dropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { timeSheet } from '../../actions/timeSheetActions';
+import { getTimeSheet } from '../../actions/timeSheetActions';
 import TimeSheetDay from '../../components/TimeSheetDay';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
@@ -15,14 +15,15 @@ const TimeSheetScreen = () => {
   const dispatch = useDispatch();
 
   const timeSheetData = useSelector((state) => state.timeSheetData);
-  const { loading, error, timeSheetEntry } = timeSheetData;
+  const { loading, error, timesheets } = timeSheetData;
 
   useEffect(() => {
-    dispatch(timeSheet());
+    dispatch(getTimeSheet());
   }, [dispatch]);
 
   const submitHandler = (e) => {
     e.preventDefault();
+    console.log(timesheets);
   };
 
   moment.updateLocale('en', {

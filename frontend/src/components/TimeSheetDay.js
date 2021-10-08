@@ -1,24 +1,31 @@
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-// import { useDispatch } from 'react-redux';
-// import { deleteTimeSheetEntry } from '../actions/timeSheetActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { createDayEntryArray, deleteDayEntryArray } from '../actions/timeSheetActions';
 import { Button, Card } from 'react-bootstrap';
 import TimeSheetEntry from './TimeSheetEntry';
 import { FaTrash } from 'react-icons/fa';
 
 const TimeSheetDay = ({ day }) => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+
+  // TODO - useslector to assign id array to inputList
+  const timesheetDay = useSelector((state) => state.timeSheet);
   const [inputList, setInputList] = useState([]);
 
   const onAddBtnClick = () => {
     setInputList([...inputList, { id: uuidv4() }]);
+    dispatch(createDayEntryArray(uuidv4(), day));
+    console.log(timesheetDay);
   };
   const onDeleteClick = (id) => {
     // if (window.confirm('Are you sure')) {
     // dispatch(deleteTimeSheetEntry(id));
     setInputList(inputList.filter((e) => e.id !== id));
+    dispatch(deleteDayEntryArray(id));
     // }
   };
+  console.log(timesheetDay);
 
   return (
     <Card className="mt-5 mb-5 shadow">
