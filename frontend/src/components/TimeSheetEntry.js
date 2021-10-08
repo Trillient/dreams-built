@@ -1,32 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Card } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { updateEntry } from '../actions/timeSheetActions';
 // import Message from "../components/Message";
 
-const TimeSheetEntry = ({ id, index, day, inputList, setInputList }) => {
+const TimeSheetEntry = ({ id, index, day }) => {
+  const dispatch = useDispatch();
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [jobNumber, setJobNumber] = useState('');
 
-  const upDateArray = (state, value) => {
-    const startTimeValue = state === setStartTime ? value : startTime;
-    const endTimeValue = state === setEndTime ? value : endTime;
-    const jobNumberValue = state === setJobNumber ? value : jobNumber;
-    setInputList(
-      inputList.map((item) => {
-        if (item.id === id) {
-          return {
-            id: id,
-            day: day,
-            startTime: startTimeValue,
-            endTime: endTimeValue,
-            jobNumber: jobNumberValue,
-          };
-        }
-        return item;
-      })
-    );
-  };
+  useEffect(() => {
+    dispatch(updateEntry(startTime, endTime, jobNumber, id, day));
+  }, [startTime, endTime, jobNumber, dispatch, day, id]);
 
   const getBackgroundColor = (value) => {
     let color;
@@ -47,7 +33,6 @@ const TimeSheetEntry = ({ id, index, day, inputList, setInputList }) => {
               value={startTime}
               onChange={(e) => {
                 setStartTime(e.target.value);
-                upDateArray(setStartTime, e.target.value);
               }}
             />
           </Form.Group>
@@ -58,7 +43,6 @@ const TimeSheetEntry = ({ id, index, day, inputList, setInputList }) => {
               value={endTime}
               onChange={(e) => {
                 setEndTime(e.target.value);
-                upDateArray(setEndTime, e.target.value);
               }}
             />
           </Form.Group>
@@ -70,7 +54,6 @@ const TimeSheetEntry = ({ id, index, day, inputList, setInputList }) => {
               value={jobNumber}
               onChange={(e) => {
                 setJobNumber(e.target.value);
-                upDateArray(setJobNumber, e.target.value);
               }}
             />
           </Form.Group>

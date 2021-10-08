@@ -30,3 +30,10 @@ export const deleteEntry = (id) => (dispatch) => {
     payload: id,
   });
 };
+
+export const updateEntry = (startTime, endTime, jobNumber, id, day) => (dispatch) => {
+  dispatch({
+    type: actions.TIMESHEET_UPDATE_ENTRY,
+    payload: { id: id, day: day, startTime: startTime, endTime: endTime, jobNumber: jobNumber },
+  });
+};
