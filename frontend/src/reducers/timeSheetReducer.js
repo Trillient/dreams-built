@@ -21,7 +21,6 @@ export const entryArrayReducer = (state = { dayEntries: [] }, action) => {
       return { ...state, dayEntries: state.dayEntries.filter((x) => x.id !== action.payload) };
     case actions.TIMESHEET_UPDATE_ENTRY:
       return { ...state, dayEntries: state.dayEntries.map((x) => (x.id === action.payload.id ? action.payload : x)) };
-
     default:
       return state;
   }

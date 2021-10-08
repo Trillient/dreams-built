@@ -17,13 +17,16 @@ const TimeSheetScreen = () => {
   const timeSheetData = useSelector((state) => state.timeSheetData);
   const { loading, error, timesheets } = timeSheetData;
 
+  const timeSheetEntries = useSelector((state) => state.timeSheet);
+  const { dayEntries } = timeSheetEntries;
+
   useEffect(() => {
     dispatch(getTimeSheet());
   }, [dispatch]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(timesheets);
+    console.log(dayEntries);
   };
 
   moment.updateLocale('en', {
