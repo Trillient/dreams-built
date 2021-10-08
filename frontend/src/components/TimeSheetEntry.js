@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Card } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateEntry } from '../actions/timeSheetActions';
 
 // import Message from "../components/Message";
 
 const TimeSheetEntry = ({ id, index, day }) => {
   const dispatch = useDispatch();
+
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [jobNumber, setJobNumber] = useState('');
 
+  const timeSheetEntries = useSelector((state) => state.timeSheet);
+  const { dayEntries } = timeSheetEntries;
+
+  const entry = dayEntries.filter((e) => e.id === id);
+
+  useEffect(() => {
+    setStartTime(entry[0].startTime || '');
+    setEndTime(entry[0].endTime || '');
+    setJobNumber(entry[0].jobNumber || '');
+  }, []);
+
   useEffect(() => {
     dispatch(updateEntry(startTime, endTime, jobNumber, id, day));
-  }, [startTime, endTime, jobNumber, dispatch, day, id]);
+  }, [startTime, endTime, jobNumber]);
 
   const getBackgroundColor = (value) => {
     let color;
