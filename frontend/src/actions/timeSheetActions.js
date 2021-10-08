@@ -17,27 +17,16 @@ export const getTimeSheet = (data) => async (dispatch, getState) => {
   }
 };
 
-export const createDayEntryArray = (id, day, i) => (dispatch) => {
+export const createEntry = (id, day) => (dispatch) => {
   dispatch({
-    type: actions.TIMESHEET_CREATE_DAY_SUCCESS,
+    type: actions.TIMESHEET_CREATE_ENTRY,
     payload: { id: id, day: day },
   });
 };
 
-export const deleteDayEntryArray = (data) => (dispatch) => {
-  try {
-    dispatch({
-      type: actions.TIMESHEET_REQUEST,
-      payload: data,
-    });
-    dispatch({
-      type: actions.TIMESHEET_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: actions.TIMESHEET_FAIL,
-      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
-    });
-  }
+export const deleteEntry = (id) => (dispatch) => {
+  dispatch({
+    type: actions.TIMESHEET_DELETE_ENTRY,
+    payload: id,
+  });
 };

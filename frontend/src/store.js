@@ -1,11 +1,11 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { getTimeSheetReducer, createDayEntryArrayReducer } from './reducers/timeSheetReducer';
+import { getTimeSheetReducer, entryArrayReducer } from './reducers/timeSheetReducer';
 
 const reducer = combineReducers({
   timeSheetData: getTimeSheetReducer,
-  timeSheet: createDayEntryArrayReducer,
+  timeSheet: entryArrayReducer,
 });
 
 const timeSheetDataFromStorage = localStorage.getItem('timeSheetData') ? JSON.parse(localStorage.getItem('timeSheetData')) : [];

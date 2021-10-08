@@ -8,16 +8,17 @@ export const getTimeSheetReducer = (state = { timesheets: [] }, action) => {
       return { loading: false, timesheets: action.payload };
     case actions.TIMESHEET_FAIL:
       return { loading: false, error: action.payload };
-
     default:
       return state;
   }
 };
 
-export const createDayEntryArrayReducer = (state = { dayEntries: [] }, action) => {
+export const entryArrayReducer = (state = { dayEntries: [] }, action) => {
   switch (action.type) {
-    case actions.TIMESHEET_CREATE_DAY_SUCCESS:
+    case actions.TIMESHEET_CREATE_ENTRY:
       return { ...state, dayEntries: [...state.dayEntries, action.payload] };
+    case actions.TIMESHEET_DELETE_ENTRY:
+      return { ...state, dayEntries: state.dayEntries.filter((x) => x.id !== action.payload) };
     default:
       return state;
   }
