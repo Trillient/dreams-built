@@ -42,42 +42,47 @@ const TimeSheetEntry = ({ id, index, day }) => {
 
   return (
     <>
-      <Card className="p-3" style={{ backgroundColor: getBackgroundColor(index) }}>
-        <Card.Body className="timesheet-grid">
-          <Form.Group controlId={`start - ${id}`}>
-            <Form.Label>Start Time</Form.Label>
-            <Form.Control
-              type="time"
-              value={startTime}
-              onChange={(e) => {
-                setStartTime(e.target.value);
-              }}
-            />
-          </Form.Group>
-          <Form.Group controlId={`end - ${id}`}>
-            <Form.Label>End Time</Form.Label>
-            <Form.Control
-              type="time"
-              value={endTime}
-              onChange={(e) => {
-                setEndTime(e.target.value);
-              }}
-            />
-          </Form.Group>
-          <Form.Group controlId={`job - ${id}`}>
-            <Form.Label>Job Number</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="eg - 21100"
-              value={jobNumber}
-              onChange={(e) => {
-                setJobNumber(e.target.value);
-              }}
-            />
-          </Form.Group>
-          <p>Total: {time > 0 ? time : null}</p>
-        </Card.Body>
-      </Card>
+      <td>
+        <Form.Group controlId={`start - ${id}`}>
+          <Form.Label className="display-none_lg-screen">Start Time: </Form.Label>
+          <Form.Control
+            type="time"
+            value={startTime}
+            onChange={(e) => {
+              setStartTime(e.target.value);
+            }}
+          />
+        </Form.Group>
+      </td>
+      <td>
+        <Form.Group controlId={`end - ${id}`}>
+          <Form.Label className="display-none_lg-screen">End Time: </Form.Label>
+          <Form.Control
+            type="time"
+            value={endTime}
+            onChange={(e) => {
+              setEndTime(e.target.value);
+            }}
+          />
+        </Form.Group>
+      </td>
+      <td>
+        <Form.Group controlId={`job - ${id}`}>
+          <Form.Label className="display-none_lg-screen">Job Number: </Form.Label>
+          <Form.Control
+            type="number"
+            min={21000}
+            placeholder="eg - 21100"
+            value={jobNumber}
+            onChange={(e) => {
+              setJobNumber(e.target.value);
+            }}
+          />
+        </Form.Group>
+      </td>
+      <td className="right-align">
+        <strong className="display-none_lg-screen">Total:</strong> {time > 0 ? time : 0} <span className="display-none_lg-screen">hours</span>
+      </td>
     </>
   );
 };

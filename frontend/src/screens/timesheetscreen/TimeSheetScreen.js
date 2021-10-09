@@ -57,7 +57,7 @@ const TimeSheetScreen = () => {
         <div className="background">
           <Dropdown>
             <Dropdown.Toggle id="dropdown-button" variant="primary">
-              Week: <strong>{title}</strong>
+              Week: {title}
             </Dropdown.Toggle>
 
             <Dropdown.Menu as={CustomMenu}>
@@ -74,7 +74,7 @@ const TimeSheetScreen = () => {
               <TimeSheetDay key={index} day={day} />
             ))}
             <Button variant="primary" type="submit">
-              Submit
+              Save
             </Button>
           </Form>
         </div>

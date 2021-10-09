@@ -1,3 +1,7 @@
+th {
+  text-align: center;
+}
+
 .background {
   background-color: #dddcda;
 }
@@ -6,17 +10,9 @@
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-.btn-main {
-  width: 100%;
-}
-
 .btn-add {
   display: block;
-  margin: 2rem auto 1rem;
-}
-
-.init-timesheet-entry {
-  margin: 0.5rem;
+  margin: 0.5rem auto 0.5rem;
 }
 
 .dropdown-menu {
@@ -24,7 +20,26 @@
   overflow-y: auto;
 }
 
-@media only screen and (min-width: 50rem) {
+.right-align {
+  text-align: right;
+}
+
+.display-none_lg-screen {
+  display: none;
+}
+
+.btn-main {
+  width: 100%;
+}
+
+@media only screen and (max-width: 50rem) {
+  .display-none_lg-screen {
+    display: inline-block;
+  }
+
+  .display-none_mobile {
+    display: none;
+  }
   .timesheet-grid-container {
     display: grid;
     grid-template-columns: auto min-content;
@@ -33,16 +48,14 @@
 
   .timesheet-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    grid-template-rows: repeat(4, auto);
+    margin: 1rem 0;
   }
 
   .btn-main {
     height: min-content;
+    display: block;
+    width: 100%;
     margin: auto;
-  }
-
-  .init-timesheet-entry {
-    margin-right: 4rem;
   }
 }
