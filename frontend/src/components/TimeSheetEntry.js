@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Card } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateEntry } from '../actions/timeSheetActions';
 
 // import Message from "../components/Message";
 
-const TimeSheetEntry = ({ id, index, day }) => {
+const TimeSheetEntry = ({ id, day }) => {
   const dispatch = useDispatch();
 
   const [startTime, setStartTime] = useState('');
@@ -21,10 +21,12 @@ const TimeSheetEntry = ({ id, index, day }) => {
     setStartTime(entry[0].startTime || '');
     setEndTime(entry[0].endTime || '');
     setJobNumber(entry[0].jobNumber || '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     dispatch(updateEntry(startTime, endTime, jobNumber, id, day));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTime, endTime, jobNumber]);
 
   const a = endTime.split(':');
