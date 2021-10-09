@@ -26,6 +26,7 @@ const TimeSheetDay = ({ day }) => {
     dispatch(deleteEntry(id));
     // }
   };
+  console.log(inputList);
 
   return (
     <Card className="mt-5 mb-5 shadow">
@@ -33,16 +34,20 @@ const TimeSheetDay = ({ day }) => {
         <h2 className="text-center mb-4">{day}</h2>
         <Table striped bordered hover responsive className="table-sm timesheet-grid-container">
           <thead className="display-none_mobile">
-            <tr>
-              <th></th>
-              <th>Start Time</th>
-              <th>End Time</th>
-              <th>Job Number</th>
-              <th>
-                <em>Hrs</em>
-              </th>
-              <th></th>
-            </tr>
+            {inputList.length === 0 ? (
+              []
+            ) : (
+              <tr>
+                <th></th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Job Number</th>
+                <th>
+                  <em>Hrs</em>
+                </th>
+                <th></th>
+              </tr>
+            )}
           </thead>
           <tbody>
             {inputList.map(({ id }, index) => (

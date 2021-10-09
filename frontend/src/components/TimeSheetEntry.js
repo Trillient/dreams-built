@@ -27,13 +27,6 @@ const TimeSheetEntry = ({ id, index, day }) => {
     dispatch(updateEntry(startTime, endTime, jobNumber, id, day));
   }, [startTime, endTime, jobNumber]);
 
-  const getBackgroundColor = (value) => {
-    let color;
-    if (value % 2 === 0) {
-      color = '#DDDCDA';
-    }
-    return color;
-  };
   const a = endTime.split(':');
   const timeA = +a[0] + +a[1] / 60;
   const b = startTime.split(':');
