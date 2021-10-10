@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Form, Button, Dropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { getTimeSheet } from '../../actions/timeSheetActions';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { getTimeSheet, handleSubmit } from '../../actions/timeSheetActions';
 import TimeSheetDay from '../../components/TimeSheetDay';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
@@ -26,7 +28,7 @@ const TimeSheetScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(dayEntries);
+    dispatch(handleSubmit(dayEntries));
   };
 
   moment.updateLocale('en', {
@@ -49,6 +51,7 @@ const TimeSheetScreen = () => {
 
   return (
     <>
+      <ToastContainer theme="colored" />
       {loading ? (
         <Loader />
       ) : error ? (

@@ -26,7 +26,6 @@ const TimeSheetDay = ({ day }) => {
     dispatch(deleteEntry(id));
     // }
   };
-  console.log(inputList);
 
   return (
     <Card className="mt-5 mb-5 shadow">

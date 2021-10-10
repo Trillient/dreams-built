@@ -25,7 +25,7 @@ const TimeSheetEntry = ({ id, day }) => {
   }, []);
 
   useEffect(() => {
-    dispatch(updateEntry(startTime, endTime, jobNumber, id, day));
+    dispatch(updateEntry(startTime, endTime, jobNumber, id, day, time));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTime, endTime, jobNumber]);
 
@@ -67,6 +67,7 @@ const TimeSheetEntry = ({ id, day }) => {
           <Form.Control
             type="number"
             min={21000}
+            max={99999}
             placeholder="eg - 21100"
             value={jobNumber}
             onChange={(e) => {
