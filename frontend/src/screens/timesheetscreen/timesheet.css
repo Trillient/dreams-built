@@ -10,6 +10,10 @@ th {
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
+.btn-main {
+  width: 100%;
+}
+
 .btn-add {
   display: block;
   margin: 0.5rem auto 0.5rem;
@@ -28,14 +32,22 @@ th {
   display: none;
 }
 
-.btn-main {
-  width: 100%;
+.btn-time-save {
+  margin: 1rem 0 -1.5rem auto;
 }
 
 @media only screen and (min-width: 50rem) {
   .form-control {
     background-color: transparent;
     border-width: 0px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .btn-time-save {
+    margin-top: 0rem;
+    margin-bottom: 0rem;
   }
 }
 

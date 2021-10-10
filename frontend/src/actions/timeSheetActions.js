@@ -39,7 +39,7 @@ export const updateEntry = (startTime, endTime, jobNumber, id, day, time) => (di
   });
 };
 
-export const handleSubmit = (data) => async (dispatch, getState) => {
+export const handleSubmit = (data, startDate, endDate) => async (dispatch, getState) => {
   try {
     dispatch({
       type: actions.TIMESHEET_SUBMIT_REQUEST,
@@ -92,12 +92,14 @@ export const handleSubmit = (data) => async (dispatch, getState) => {
       if (e === 'Sunday') {
         return { Sunday: sorting(e) };
       }
+      toast.error('Something went wrong');
+      throw new Error('Something went wrong');
     });
 
     toast.success('Saved!');
     dispatch({
       type: actions.TIMESHEET_SUBMIT_SUCCESS,
-      payload: end,
+      payload: [{ startDate: startDate }, { endDate: endDate }, { entries: end }],
     });
   } catch (error) {
     dispatch({

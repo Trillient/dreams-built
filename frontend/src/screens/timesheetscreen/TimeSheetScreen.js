@@ -28,7 +28,7 @@ const TimeSheetScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(handleSubmit(dayEntries));
+    dispatch(handleSubmit(dayEntries, startDate, endDate));
   };
 
   moment.updateLocale('en', {
@@ -58,21 +58,26 @@ const TimeSheetScreen = () => {
         <Message variant="danger">{error}</Message>
       ) : (
         <div className="background">
-          <Dropdown>
-            <Dropdown.Toggle id="dropdown-button" variant="primary">
-              Week: {title}
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu as={CustomMenu}>
-              {dummyArray.map((date, index) => (
-                <Dropdown.Item eventKey={date.endDate} key={index} onClick={(e) => setDropdownTitle(date)}>
-                  {date.startDate} - {date.endDate}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-
           <Form onSubmit={submitHandler}>
+            <div className="grid-2">
+              <Dropdown>
+                <Dropdown.Toggle id="dropdown-button" variant="secondary">
+                  Week: {title}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu as={CustomMenu}>
+                  {dummyArray.map((date, index) => (
+                    <Dropdown.Item eventKey={date.endDate} key={index} onClick={(e) => setDropdownTitle(date)}>
+                      {date.startDate} - {date.endDate}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+
+              <Button variant="primary" type="submit" className="btn-time-save">
+                Save
+              </Button>
+            </div>
             {weekArray.map((day, index) => (
               <TimeSheetDay key={index} day={day} />
             ))}
