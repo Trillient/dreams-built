@@ -1,0 +1,30 @@
+{
+  "name": "dreams-built",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server",
+    "dev-server": "nodemon --watch . --exec npm --prefix backend start",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run dev-server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BaileyNepe/dreams-built.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BaileyNepe/dreams-built/issues"
+  },
+  "homepage": "https://github.com/BaileyNepe/dreams-built#readme",
+  "dependencies": {
+    "concurrently": "^6.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
