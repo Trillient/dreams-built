@@ -1,0 +1,40 @@
+.calendar {
+  background-color: white;
+  height: 50rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  margin: 2rem 0;
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: 10% 90%;
+  grid-template-rows: 10% 90%;
+  grid-template-areas: 'corner topLabel' 'sideLabel calendar';
+}
+
+.top-label {
+  grid-area: topLabel;
+  background-color: blue;
+}
+
+.calendar-corner {
+  grid-area: corner;
+}
+
+.side-label {
+  grid-area: sideLabel;
+  background-color: chartreuse;
+}
+
+.calendar-content {
+  grid-area: calendar;
+}
+
+.item-list {
+  display: grid;
+  grid-template-rows: auto;
+  justify-items: center;
+  align-items: center;
+  padding: 0;
+  list-style: none;
+}

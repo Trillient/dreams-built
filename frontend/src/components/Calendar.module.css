@@ -1,0 +1,18 @@
+.divider {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  justify-items: center;
+}
+
+.day {
+  display: grid;
+  grid-template-rows: auto;
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item {
+  border: darkgray 1px solid;
+}
