@@ -8,6 +8,26 @@
   padding: 0.5rem;
 }
 
+.header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+}
+.button {
+  justify-self: end;
+  margin-right: 1rem;
+}
+
+.search {
+  justify-self: start;
+}
+
+.search input {
+  border: 1px solid lightgray;
+  border-radius: 0.5rem;
+}
+
 .table {
   min-height: 70vh;
 }
