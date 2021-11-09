@@ -2,6 +2,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   justify-items: center;
+  outline: 1px solid black;
 }
 
 .day {
@@ -14,5 +15,6 @@
 }
 
 .item {
-  border: darkgray 1px solid;
+  padding: 0.2rem;
+  outline: lightgray 1px solid;
 }

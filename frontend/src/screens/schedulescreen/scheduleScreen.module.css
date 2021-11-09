@@ -8,22 +8,30 @@
   padding: 0.5rem;
   display: grid;
   grid-template-columns: 10% 90%;
-  grid-template-rows: 10% 90%;
+  grid-template-rows: 5% 95%;
   grid-template-areas: 'corner topLabel' 'sideLabel calendar';
 }
 
 .top-label {
   grid-area: topLabel;
-  background-color: blue;
+}
+
+.top-label ul {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  justify-items: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.top-label ul li {
+  align-self: center;
 }
 
 .calendar-corner {
   grid-area: corner;
-}
-
-.side-label {
-  grid-area: sideLabel;
-  background-color: chartreuse;
 }
 
 .calendar-content {
@@ -31,10 +39,12 @@
 }
 
 .item-list {
+  grid-area: sideLabel;
   display: grid;
   grid-template-rows: auto;
   justify-items: center;
   align-items: center;
   padding: 0;
+  margin: 0;
   list-style: none;
 }

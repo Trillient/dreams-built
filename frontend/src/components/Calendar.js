@@ -1,8 +1,6 @@
 import styles from './Calendar.module.css';
 
-const Calendar = ({ className, workItem }) => {
-  const week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
+const Calendar = ({ className, workItem, week }) => {
   return (
     <div className={`${className} ${styles.divider}`}>
       {week.map((day) => (
