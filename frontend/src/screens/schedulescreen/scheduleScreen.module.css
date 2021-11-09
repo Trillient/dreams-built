@@ -1,54 +1,24 @@
 .calendar {
   background-color: white;
-  min-height: 50rem;
+  min-height: auto;
   width: 100%;
   border-radius: 0.5rem;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   margin: 2rem 0;
   padding: 0.5rem;
-  display: grid;
-  grid-template-columns: 10% 90%;
-  grid-template-rows: 5% 95%;
-  grid-template-areas: 'corner topLabel' 'sideLabel calendar';
-  height: max-content;
-  overflow: scroll;
 }
 
-.top-label {
-  grid-area: topLabel;
+.table {
+  min-height: 70vh;
 }
 
-.top-label ul {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  justify-items: center;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  list-style: none;
+.first-coloumn {
+  width: 9%;
 }
 
-.top-label ul li {
-  font-weight: bold;
-}
-
-.calendar-corner {
-  grid-area: corner;
-}
-
-.calendar-content {
-  grid-area: calendar;
-  margin-bottom: 1rem;
-}
-
-.item-list {
-  grid-area: sideLabel;
-  display: grid;
-  grid-template-rows: auto;
-  justify-items: center;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  font-style: italic;
+.static-table {
+  width: 13%;
+  overflow-wrap: break-word;
+  position: sticky;
+  top: 1px;
 }

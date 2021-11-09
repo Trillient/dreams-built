@@ -1,3 +1,5 @@
+import { Table } from 'react-bootstrap';
+
 import Calendar from '../../components/Calendar';
 
 import styles from './scheduleScreen.module.css';
@@ -9,21 +11,21 @@ const ScheduleScreen = () => {
     <div>
       <div>Top bar ( Search && Calendar controls)</div>
       <div className={styles.calendar}>
-        <div className={styles['top-label']}>
-          <ul>
-            {week.map((day) => (
-              <li>{day}</li>
+        <Table responsive bordered className={styles.table}>
+          <thead>
+            <tr>
+              <th className={styles['first-coloumn']}>#</th>
+              {week.map((day) => (
+                <th className={styles['static-table']}>{day}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {workItem.map((item) => (
+              <Calendar key={item} item={item} week={week} />
             ))}
-          </ul>
-        </div>
-        <div className={styles['calendar-corner']}></div>
-        <ul className={styles['item-list']}>
-          {workItem.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-
-        <Calendar className={styles['calendar-content']} workItem={workItem} week={week} />
+          </tbody>
+        </Table>
       </div>
     </div>
   );

@@ -1,18 +1,16 @@
 import styles from './Calendar.module.css';
 
-const Calendar = ({ className, workItem, week }) => {
+const Calendar = ({ item, week }) => {
   return (
-    <div className={`${className} ${styles.divider}`}>
+    <tr>
+      <th>{item}</th>
       {week.map((day) => (
-        <ul key={day} className={styles.day}>
-          {workItem.map((item) => (
-            <li className={styles.item}>
-              <div className={styles['job-insert']}>{item}</div>
-            </li>
-          ))}
-        </ul>
+        <td key={day} className={styles.item}>
+          {/* <div className={styles['job-insert']}>{item}</div> */}
+          <div className={styles.blank}></div>
+        </td>
       ))}
-    </div>
+    </tr>
   );
 };
 
