@@ -21,6 +21,9 @@ const Header = () => {
               <LinkContainer to="/schedule">
                 <Nav.Link>Schedule</Nav.Link>
               </LinkContainer>
+              <LinkContainer to="/jobslist">
+                <Nav.Link>Jobs</Nav.Link>
+              </LinkContainer>
             </Nav>
           </Navbar.Collapse>
         </Container>
