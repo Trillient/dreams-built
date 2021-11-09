@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateEntry } from '../actions/timeSheetActions';
@@ -66,8 +66,6 @@ const TimeSheetEntry = ({ id, day }) => {
           <Form.Label className="display-none_lg-screen">Job Number: </Form.Label>
           <Form.Control
             type="number"
-            min={21000}
-            max={99999}
             placeholder="eg - 21100"
             value={jobNumber}
             onChange={(e) => {

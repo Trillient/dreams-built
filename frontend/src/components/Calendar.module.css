@@ -2,13 +2,15 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   justify-items: center;
-  outline: 1px solid black;
+  /* outline: 1px solid black; */
+  height: min-content;
 }
 
 .day {
   display: grid;
   grid-template-rows: auto;
   width: 100%;
+  min-height: 50rem;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -17,4 +19,15 @@
 .item {
   padding: 0.2rem;
   outline: lightgray 1px solid;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.job-insert {
+  width: 100%;
+  padding: 0.5rem;
+  height: min-content;
+  background-color: coral;
+  border-radius: 0.2rem;
+  cursor: pointer;
 }

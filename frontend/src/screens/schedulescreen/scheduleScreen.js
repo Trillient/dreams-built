@@ -4,7 +4,7 @@ import styles from './scheduleScreen.module.css';
 
 const ScheduleScreen = () => {
   const week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const workItem = ['process-plan', 'box', 'pour', 'strip', 'invoice', 'other'];
+  const workItem = ['Organise job', 'Setout', 'Deliver Boxing', 'Box-up', 'Plumber/Check', 'Poly/pods', 'Inspection', 'Pour floor', 'strip floor', 'sawcut', 'Fix-up'];
   return (
     <div>
       <div>Top bar ( Search && Calendar controls)</div>

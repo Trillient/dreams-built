@@ -1,6 +1,6 @@
 .calendar {
   background-color: white;
-  height: 50rem;
+  min-height: 50rem;
   width: 100%;
   border-radius: 0.5rem;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -10,6 +10,8 @@
   grid-template-columns: 10% 90%;
   grid-template-rows: 5% 95%;
   grid-template-areas: 'corner topLabel' 'sideLabel calendar';
+  height: max-content;
+  overflow: scroll;
 }
 
 .top-label {
@@ -27,7 +29,7 @@
 }
 
 .top-label ul li {
-  align-self: center;
+  font-weight: bold;
 }
 
 .calendar-corner {
@@ -36,6 +38,7 @@
 
 .calendar-content {
   grid-area: calendar;
+  margin-bottom: 1rem;
 }
 
 .item-list {
@@ -47,4 +50,5 @@
   padding: 0;
   margin: 0;
   list-style: none;
+  font-style: italic;
 }

@@ -6,7 +6,9 @@ const Calendar = ({ className, workItem, week }) => {
       {week.map((day) => (
         <ul key={day} className={styles.day}>
           {workItem.map((item) => (
-            <li className={styles.item}>{item}</li>
+            <li className={styles.item}>
+              <div className={styles['job-insert']}>{item}</div>
+            </li>
           ))}
         </ul>
       ))}
