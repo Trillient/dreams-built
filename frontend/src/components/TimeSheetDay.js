@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
-import { createEntry, deleteEntry } from '../actions/timeSheetActions';
 import { Button, Card, Table } from 'react-bootstrap';
-import TimeSheetEntry from './TimeSheetEntry';
 import { FaTrash } from 'react-icons/fa';
+
+import { createEntry, deleteEntry } from '../actions/timeSheetActions';
+import TimeSheetEntry from './TimeSheetEntry';
 
 const TimeSheetDay = ({ day }) => {
   const dispatch = useDispatch();
