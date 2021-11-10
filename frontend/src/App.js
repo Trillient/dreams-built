@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import TimeSheetScreen from './screens/timesheetscreen/TimeSheetScreen';
 import ScheduleScreen from './screens/schedulescreen/scheduleScreen';
 import JobListScreen from './screens/jobListScreen/JobListScreen';
+import jobDetailsScreen from './screens/jobDetailsScreen/jobDetailsScreen';
 
 const App = () => {
   return (
@@ -23,7 +24,7 @@ const App = () => {
             <Route path="/users" component={UserListScreen} />
             <Route path="/users/profile" component={ProfileScreen} /> */}
             <Route path="/schedule" component={ScheduleScreen} />
-            {/* <Route path="/job/details" component={JobDetailsScreen} /> */}
+            <Route path="/job/:jobNumber" component={jobDetailsScreen} />
             <Route path="/jobslist" component={JobListScreen} />
           </Container>
         </main>

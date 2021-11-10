@@ -10,10 +10,6 @@
   border-bottom: 2px solid black;
 }
 
-.row {
-  cursor: pointer;
-}
-
 .row td {
   padding: 1rem;
 }

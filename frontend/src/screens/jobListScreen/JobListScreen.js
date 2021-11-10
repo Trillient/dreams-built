@@ -1,4 +1,6 @@
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+import { FiEdit } from 'react-icons/fi';
 
 import styles from './jobListScreen.module.css';
 import jobList from '../../data/jobList.json';
@@ -18,17 +20,27 @@ const JobListScreen = () => {
             <th>Client</th>
             <th>m&sup2;</th>
             <th>Invoiced</th>
+            <th>Edit</th>
           </thead>
           <tbody>
             {jobList.map((job) => (
               <tr className={styles.row}>
-                <td>{job.jobNumber}</td>
+                <td>
+                  <strong>{job.jobNumber}</strong>
+                </td>
                 <td className={`${styles[job.company]} ${styles.company}`}>{job.company}</td>
                 <td>{job.address}</td>
                 <td>{job.city}</td>
                 <td>{job.client}</td>
                 <td>{job.squareMeters}</td>
                 <td>{job.isInvoiced}</td>
+                <td>
+                  <LinkContainer to={`/job/${job.jobNumber}`}>
+                    <Button className="btn-sm">
+                      <FiEdit />
+                    </Button>
+                  </LinkContainer>
+                </td>
               </tr>
             ))}
           </tbody>
