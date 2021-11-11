@@ -1,3 +1,4 @@
+import { LinkContainer } from 'react-router-bootstrap';
 import styles from './Calendar.module.css';
 
 const Calendar = ({ item, week, jobData }) => {
@@ -12,9 +13,9 @@ const Calendar = ({ item, week, jobData }) => {
           {actionItem
             .filter((job) => job.day === day)
             .map((job) => (
-              <div style={{ backgroundColor: job.color }} className={styles['job-insert']}>
-                {job.jobNumber}
-              </div>
+              <LinkContainer style={{ backgroundColor: job.color }} to={`/job/${job.jobNumber}`}>
+                <div className={styles['job-insert']}>{job.jobNumber}</div>
+              </LinkContainer>
             ))}
           <div className={styles.blank}></div>
         </td>
