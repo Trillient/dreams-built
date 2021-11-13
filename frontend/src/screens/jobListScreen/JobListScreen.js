@@ -11,7 +11,7 @@ const JobListScreen = () => {
       <h1>Jobs</h1>
       <div>Search job || Sort By customer/newest/oldest/paid || Update table columns</div>
       <section className={styles.table}>
-        <Table hover>
+        <Table hover responsive>
           <thead className={styles['table-head']}>
             <th>Job Number</th>
             <th>Company</th>
@@ -24,7 +24,7 @@ const JobListScreen = () => {
           </thead>
           <tbody>
             {jobList.map((job) => (
-              <tr className={styles.row}>
+              <tr className={styles.row} key={job.Number}>
                 <td>
                   <strong>{job.jobNumber}</strong>
                 </td>
