@@ -1,0 +1,35 @@
+.table {
+  padding: 2rem;
+  border-radius: 0.5rem;
+  background-color: white;
+}
+
+.table-head th {
+  text-align: left;
+  padding: 1rem;
+  border-bottom: 2px solid black;
+}
+
+.row td {
+  padding: 1rem;
+}
+
+.company {
+  font-weight: bold;
+  letter-spacing: 0.05rem;
+}
+
+.Probase {
+  background-color: #e84545 !important;
+  color: white;
+}
+
+.Urban {
+  background-color: #193498 !important;
+  color: white;
+}
+
+.Lattitude {
+  background-color: #00adb5 !important;
+  color: white;
+}

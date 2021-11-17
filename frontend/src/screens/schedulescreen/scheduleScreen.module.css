@@ -1,0 +1,44 @@
+.calendar {
+  background-color: white;
+  min-height: auto;
+  width: 100%;
+  border-radius: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  margin: 2rem 0;
+  padding: 0.5rem;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+}
+.button {
+  justify-self: end;
+  margin-right: 1rem;
+}
+
+.search {
+  justify-self: start;
+}
+
+.search input {
+  border: 1px solid lightgray;
+  border-radius: 0.5rem;
+}
+
+.table {
+  min-height: 70vh;
+}
+
+.first-coloumn {
+  width: 9%;
+}
+
+.static-table {
+  width: 13%;
+  overflow-wrap: break-word;
+  position: sticky;
+  top: 1px;
+}

@@ -1,6 +1,5 @@
-import React from "react";
-import { LinkContainer } from "react-router-bootstrap";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { LinkContainer } from 'react-router-bootstrap';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 
 const Header = () => {
   return (
@@ -18,6 +17,12 @@ const Header = () => {
               </LinkContainer>
               <LinkContainer to="/timesheet">
                 <Nav.Link>Sheet</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/schedule">
+                <Nav.Link>Schedule</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/jobslist">
+                <Nav.Link>Jobs</Nav.Link>
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>

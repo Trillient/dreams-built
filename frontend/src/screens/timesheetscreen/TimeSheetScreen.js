@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Button, Dropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import moment from 'moment';
+
 import { getTimeSheet, handleSubmit } from '../../actions/timeSheetActions';
 import TimeSheetDay from '../../components/TimeSheetDay';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 import CustomMenu from '../../components/CustomMenu';
+
+import 'react-toastify/dist/ReactToastify.css';
 import './timesheet.css';
 
 const TimeSheetScreen = () => {

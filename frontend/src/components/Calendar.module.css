@@ -1,0 +1,26 @@
+.item {
+  padding: 0.2rem;
+  height: auto;
+  transition: 0.1s ease-in-out;
+}
+
+.item:hover {
+  background-color: gainsboro;
+}
+
+.blank {
+  margin: 1rem;
+}
+
+.job-insert {
+  font-weight: 700;
+  color: white;
+  z-index: 100;
+  width: 100%;
+  padding: 0.5rem;
+  height: min-content;
+  background-color: coral;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  margin: 0.2rem 0.1rem;
+}
