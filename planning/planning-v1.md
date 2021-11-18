@@ -86,3 +86,7 @@ MongoDB allows us to create and store user information as well as store the user
 - Jobs can be created and dates and times added to the jobs
 - Can be integrated/displayed on a calendar
 - List of jobs displayed on a gnatt chart
+
+### Additionals
+
+- Job calendar filter and select and email/export button to contractorsx
