@@ -20,6 +20,6 @@ const jobSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const jobDetails = mongoose.model('jobDetails', jobSchema);
+const JobDetails = mongoose.model('JobDetails', jobSchema);
 
-export default jobDetails;
+export default JobDetails;

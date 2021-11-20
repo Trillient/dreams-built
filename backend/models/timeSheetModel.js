@@ -29,6 +29,6 @@ const timeSheetSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const timeSheet = mongoose.model('timeSheet', timeSheetSchema);
+const TimeSheet = mongoose.model('TimeSheet', timeSheetSchema);
 
-export default timeSheet;
+export default TimeSheet;
