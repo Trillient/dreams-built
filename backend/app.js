@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
 
 // import timesheetRoutes from './routes/timeSheetRoutes.js';
 // import userRoutes from './routes/userRoutes.js';
@@ -13,7 +14,6 @@ app.use(cors());
 app.use(express.json());
 
 if (process.env.NODE_ENV === 'development') {
-  import morgan from 'morgan';
   app.use(morgan('dev'));
 }
 
