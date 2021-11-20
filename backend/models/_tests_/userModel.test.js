@@ -15,7 +15,6 @@ describe('Given a User shema model has been updated', () => {
 
   it("A property named 'email' should be on the schema and is unique", () => {
     const email = User.schema.obj.email;
-    console.log(email);
     expect(email).toBeTruthy();
     expect(email.unique).toBeTruthy();
   });

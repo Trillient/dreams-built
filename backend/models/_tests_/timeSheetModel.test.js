@@ -1,40 +1,20 @@
 import TimeSheet from '../timeSheetModel.js';
 
-describe('Given a Petemon shema TimeSheet has been updated', () => {
-  test("A property named 'id' should be on the schema", () => {
-    const id = TimeSheet.schema.obj.id;
-    expect(id).toBeTruthy();
-  });
+describe('Given a timesheet shema model has been updated', () => {
+  it.todo('A property named "user" should be on the schema');
 
-  test("A property named 'name' should be on the schema and be an Object", () => {
-    const name = TimeSheet.schema.obj.name;
-    expect(name).toBeTruthy();
-    expect(_.isObject(name)).toBe(true);
-  });
+  it.todo('A property of "weekStart" should be on the shcema and be a date');
 
-  test("A property named 'name' should contain a property named 'english'", () => {
-    const name = TimeSheet.schema.obj.name;
-    expect(name).toBeTruthy();
-    expect(name.english).toBeTruthy();
-    expect(_.isObject(name.english)).toBeTruthy();
-  });
+  it.todo('A property of "weekEnd" should be on the shcema and be a date');
 
-  test('name.english should be of type String', () => {
-    const name = TimeSheet.schema.obj.name;
-    expect(name).toBeTruthy();
-    expect(name.english).toBeTruthy();
-    expect(name.english.type).toBeTruthy();
-    expect(typeof name.english.type()).toBe('string');
-  });
+  it.todo('A property of entries should be an array.');
 
-  test("A property named 'type' should be on the schema and be an Array", () => {
-    const type = TimeSheet.schema.obj.type;
-    expect(Array.isArray(type)).toBe(true);
-  });
-
-  test("A property named 'base' should be on the schema", () => {
-    const base = TimeSheet.schema.obj.base;
-    expect(base).toBeTruthy();
-    expect(_.isObject(base)).toBe(true);
+  describe('When an entry is added to the entries array,', () => {
+    it.todo('Then is should contain a unique entryID');
+    it.todo('Then is should contain the entry day property');
+    it.todo('Then is should contain the date the entry was made for');
+    it.todo('Then it should contain the startTime');
+    it.todo('Then it should contain the endTime');
+    it.todo('Then it should contain a jobNumber referenced to the list of jobs');
   });
 });
