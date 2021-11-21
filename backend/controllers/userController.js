@@ -19,9 +19,9 @@ const getUsers = asyncHandler(async (req, res) => {
  */
 
 const createUser = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email, isAdmin, birthDate, hourlyRate, startDate } = req.body;
+  const { userId, firstName, lastName, email, phoneNumber, isAdmin, birthDate, hourlyRate, startDate } = req.body;
 
-  const userExists = await User.findOne({ email });
+  const userExists = await User.findOne({ userId });
 
   if (userExists) {
     res.status(400);
@@ -29,9 +29,11 @@ const createUser = asyncHandler(async (req, res) => {
   }
 
   const user = await User.create({
+    userId,
     firstName,
     lastName,
     email,
+    phoneNumber,
     isAdmin,
     birthDate,
     hourlyRate,
@@ -41,9 +43,11 @@ const createUser = asyncHandler(async (req, res) => {
   if (user) {
     res.status(201).json({
       _id: user._id,
+      userId: user.userId,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      phoneNumber: user.phoneNumber,
       isAdmin: user.isAdmin,
       birthDate: user.birthDate,
       hourlyRate: user.hourlyRate,

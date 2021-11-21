@@ -17,11 +17,13 @@ afterAll(async () => {
 
 const token = process.env.AUTH0_TEST_TOKEN;
 
-const createNewUser = (firstName, lastName, email = 'abc@gmail.com', isAdmin = false, birthDate = '10-10-2020', hourlyRate = 10, startDate = '10-01-2020') => {
+const createNewUser = (userId, firstName, lastName, email = 'abc@gmail.com', phoneNumber = 2111111, isAdmin = false, birthDate = '10-10-2020', hourlyRate = 10, startDate = '10-01-2020') => {
   return {
+    userId: userId,
     firstName: firstName,
     lastName: lastName,
     email: email,
+    phoneNumber: phoneNumber,
     isAdmin: isAdmin,
     birthDate: birthDate,
     hourlyRate: hourlyRate,
@@ -32,7 +34,7 @@ const createNewUser = (firstName, lastName, email = 'abc@gmail.com', isAdmin = f
 describe('Given we have an "/api/users" endpoint', () => {
   describe('and make a GET request, ', () => {
     it('When a valid request is made then a 200 response with a list of jobs should be returned', async () => {
-      const newUser = createNewUser('mary', 'doe', 'mary@gmail.com');
+      const newUser = createNewUser(1, 'mary', 'doe', 'mary@gmail.com');
       const row = new User(newUser);
       await row.save();
 
@@ -42,7 +44,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       };
 
       await request(app)
-        .get('/api/user')
+        .get('/api/users')
         // .set(`Authorization`, `Bearer ${token}`) //TODO set token
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -52,7 +54,7 @@ describe('Given we have an "/api/users" endpoint', () => {
   });
   describe('and a POST method', () => {
     it('when an valid request is made then return a 200 response with the created user info', async () => {
-      const newUser = createNewUser('john', 'Doe');
+      const newUser = createNewUser(2, 'john', 'Doe');
 
       const checkBody = (res) => {
         expect(res.body.firstName).toBe('john');
@@ -60,7 +62,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       };
 
       await request(app)
-        .post('/api/user')
+        .post('/api/users')
         .send(newUser)
         // .set(`Authorization`, `Bearer ${token}`) //TODO set token
         .set('Content-Type', 'application/json')
