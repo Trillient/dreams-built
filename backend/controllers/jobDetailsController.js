@@ -89,4 +89,22 @@ const updateJob = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getJobs, getJob, createJob, updateJob };
+/**
+ * @Desc Delete a single Job
+ * @Route DELETE /api/jobdetails/:id
+ * @Access Private (only admin) //TODO - make private
+ */
+
+const deleteJob = asyncHandler(async (req, res) => {
+  const job = await JobDetails.findById(req.params.id);
+
+  if (job) {
+    await job.remove();
+    res.json({ message: 'Job removed' });
+  } else {
+    res.status(404);
+    throw new Error('Job not found');
+  }
+});
+
+module.exports = { getJobs, getJob, createJob, updateJob, deleteJob };

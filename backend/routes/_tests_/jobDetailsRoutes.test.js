@@ -125,4 +125,24 @@ describe('Given we have an "/api/jobdetails/:id" endpoint', () => {
         .expect(200);
     });
   });
+
+  describe('And make a DELETE request', () => {
+    it('When a valid request is made then the jobs details are deleted and returned with a 200 response', async () => {
+      const job = await JobDetails.find({ jobNumber: 22001 });
+      const jobObject = job[0];
+      const jobParams = await jobObject._id;
+
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('Job removed');
+      };
+
+      await request(app)
+        .delete(`/api/jobdetails/${jobParams}`)
+        .send(jobParams)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+  });
 });
