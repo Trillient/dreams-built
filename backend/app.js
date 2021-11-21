@@ -5,7 +5,7 @@ const morgan = require('morgan');
 
 //const timesheetRoutes = require('./routes/timeSheetRoutes.js');
 const jobDetailRoutes = require('./routes/jobDetailsRoutes');
-// const userRoutes = require('./routes/userRoutes.js');
+const userRoutes = require('./routes/userRoutes.js');
 const { checkJwt } = require('./middleware/authMiddleware');
 const { errorHandler, notFound, authorizationError } = require('./middleware/errorMiddleware.js');
 
@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+app.use('/api/user', userRoutes);
 //app.use('/api/timesheet', timesheetRoutes);
 app.use('/api/jobDetails', checkJwt, jobDetailRoutes);
 

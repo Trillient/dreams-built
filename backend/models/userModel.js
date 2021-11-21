@@ -7,11 +7,9 @@ const userSchema = mongoose.Schema(
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true, validate: [isEmail, 'invalid email'] },
     isAdmin: { type: Boolean, required: true, default: false },
-    userDetails: {
-      birthDate: Date,
-      hourlyRate: Number,
-      startDate: Date,
-    },
+    birthDate: Date,
+    hourlyRate: Number,
+    startDate: Date,
   },
   { timestamps: true }
 );
