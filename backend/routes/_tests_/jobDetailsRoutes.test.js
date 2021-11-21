@@ -15,6 +15,8 @@ afterAll(async () => {
   await mongoose.disconnect();
 });
 
+const token = process.env.AUTH0_TEST_TOKEN;
+
 const createNewJob = (jobId, company = 'warehouse', due = []) => {
   return {
     jobNumber: jobId,
@@ -43,6 +45,7 @@ describe('Given we have an "/api/jobdetails" endpoint', () => {
 
       await request(app)
         .get('/api/jobdetails/')
+        .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
@@ -56,6 +59,7 @@ describe('Given we have an "/api/jobdetails" endpoint', () => {
       await request(app)
         .post('/api/jobdetails')
         .send(newJob)
+        .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(201);
@@ -72,6 +76,7 @@ describe('Given we have an "/api/jobdetails" endpoint', () => {
       await request(app)
         .post('/api/jobdetails')
         .send(newJob)
+        .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
@@ -92,6 +97,7 @@ describe('Given we have an "/api/jobdetails/:id" endpoint', () => {
 
       await request(app)
         .get(`/api/jobdetails/${jobParams}`)
+        .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
@@ -119,6 +125,7 @@ describe('Given we have an "/api/jobdetails/:id" endpoint', () => {
       await request(app)
         .put(`/api/jobdetails/${jobParams}`)
         .send(updatedJob)
+        .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
@@ -139,6 +146,7 @@ describe('Given we have an "/api/jobdetails/:id" endpoint', () => {
       await request(app)
         .delete(`/api/jobdetails/${jobParams}`)
         .send(jobParams)
+        .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
