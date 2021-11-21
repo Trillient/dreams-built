@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+const jobDueDate = mongoose.Schema({
+  jobDescription: String,
+  dueDate: String,
+  contractor: String,
+});
+
 const jobSchema = mongoose.Schema(
   {
     jobNumber: { type: Number, required: true, unique: true, min: 22000 },
@@ -9,13 +15,7 @@ const jobSchema = mongoose.Schema(
     client: String,
     area: Number,
     isInvoiced: { type: Boolean, default: false },
-    dueDates: [
-      {
-        jobDescription: String,
-        dueDate: Date,
-        contractor: String,
-      },
-    ],
+    dueDates: [jobDueDate],
   },
   { timestamps: true }
 );

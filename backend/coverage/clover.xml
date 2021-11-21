@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1637458382126" clover="3.2.0">
-  <project timestamp="1637458382126" name="All files">
-    <metrics statements="72" coveredstatements="57" conditionals="16" coveredconditionals="7" methods="8" coveredmethods="3" elements="96" coveredelements="67" complexity="0" loc="72" ncloc="72" packages="6" files="8" classes="8"/>
+<coverage generated="1637461557792" clover="3.2.0">
+  <project timestamp="1637461557792" name="All files">
+    <metrics statements="78" coveredstatements="63" conditionals="16" coveredconditionals="7" methods="9" coveredmethods="4" elements="103" coveredelements="74" complexity="0" loc="78" ncloc="78" packages="6" files="8" classes="8"/>
     <package name="backend">
       <metrics statements="17" coveredstatements="15" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="0"/>
       <file name="app.js" path="/Users/baileynepe/000-self-projects/dreams-built/backend/app.js">
@@ -53,15 +53,20 @@
       </file>
     </package>
     <package name="backend.controllers">
-      <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
       <file name="jobDetailsController.js" path="/Users/baileynepe/000-self-projects/dreams-built/backend/controllers/jobDetailsController.js">
-        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
-        <line num="4" count="1" type="stmt"/>
-        <line num="5" count="1" type="stmt"/>
-        <line num="6" count="1" type="stmt"/>
-        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
       </file>
     </package>
     <package name="backend.middleware">
@@ -80,11 +85,12 @@
       </file>
     </package>
     <package name="backend.models">
-      <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="15" coveredstatements="15" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="jobModel.js" path="/Users/baileynepe/000-self-projects/dreams-built/backend/models/jobModel.js">
-        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
         <line num="23" count="1" type="stmt"/>
         <line num="25" count="1" type="stmt"/>
       </file>

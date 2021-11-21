@@ -48,3 +48,15 @@ describe('Given we have a GET /api/jobdetails endpoint', () => {
       .expect(200);
   });
 });
+
+describe('Given we have a POST /api/jobdetails endpoint', () => {
+  it('When a valid request is made then a 201 respose should be returned', async () => {
+    const newJob = createNewJob(22004);
+    await request(app)
+      .post('/api/jobdetails')
+      .send(newJob)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(201);
+  });
+});
