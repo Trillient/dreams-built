@@ -1,3 +1,5 @@
 const JobDetails = require('../jobModel.js');
 
-describe('Given a jobDetails shema model JobDetails has been updated', () => {});
+describe('Given a jobDetails schema model JobDetails has been updated', () => {
+  it.todo('create tests');
+});

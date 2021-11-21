@@ -61,4 +61,32 @@ const createJob = asyncHandler(async (req, res) => {
   res.status(201).json(createdJob);
 });
 
-module.exports = { getJobs, getJob, createJob };
+/**
+ * @Desc Update a single Job
+ * @Route PUT /api/jobdetails/:id
+ * @Access Private (only admin) //TODO - make private
+ */
+
+const updateJob = asyncHandler(async (req, res) => {
+  const { company, address, city, client, area, isInvoiced, dueDates } = req.body;
+
+  const job = await JobDetails.findById(req.params.id);
+
+  if (job) {
+    job.company = company;
+    job.address = address;
+    job.city = city;
+    job.client = client;
+    job.area = area;
+    job.isInvoiced = isInvoiced;
+    job.dueDates = dueDates;
+
+    const updatedJob = await job.save();
+    res.json(updatedJob);
+  } else {
+    res.status(404);
+    throw new Error('Job not found');
+  }
+});
+
+module.exports = { getJobs, getJob, createJob, updateJob };

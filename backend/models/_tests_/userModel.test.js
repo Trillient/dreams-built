@@ -1,6 +1,6 @@
 const User = require('../userModel.js');
 
-describe('Given a User shema model has been updated', () => {
+describe('Given a User schema model has been updated', () => {
   it("A property named 'firstName' should be on the schema", () => {
     const firstName = User.schema.obj.firstName;
     expect(firstName).toBeTruthy();

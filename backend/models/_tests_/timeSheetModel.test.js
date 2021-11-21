@@ -1,6 +1,6 @@
 const TimeSheet = require('../timeSheetModel.js');
 
-describe('Given a timesheet shema model has been updated', () => {
+describe('Given a timesheet schema model has been updated', () => {
   it.todo('A property named "user" should be on the schema');
 
   it.todo('A property of "weekStart" should be on the shcema and be a date');
