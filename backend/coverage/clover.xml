@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1637456665098" clover="3.2.0">
-  <project timestamp="1637456665098" name="All files">
-    <metrics statements="61" coveredstatements="46" conditionals="16" coveredconditionals="7" methods="7" coveredmethods="2" elements="84" coveredelements="55" complexity="0" loc="61" ncloc="61" packages="5" files="6" classes="6"/>
+<coverage generated="1637458382126" clover="3.2.0">
+  <project timestamp="1637458382126" name="All files">
+    <metrics statements="72" coveredstatements="57" conditionals="16" coveredconditionals="7" methods="8" coveredmethods="3" elements="96" coveredelements="67" complexity="0" loc="72" ncloc="72" packages="6" files="8" classes="8"/>
     <package name="backend">
       <metrics statements="17" coveredstatements="15" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="0"/>
       <file name="app.js" path="/Users/baileynepe/000-self-projects/dreams-built/backend/app.js">
@@ -52,6 +52,18 @@
         <line num="36" count="1" type="stmt"/>
       </file>
     </package>
+    <package name="backend.controllers">
+      <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="jobDetailsController.js" path="/Users/baileynepe/000-self-projects/dreams-built/backend/controllers/jobDetailsController.js">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+      </file>
+    </package>
     <package name="backend.middleware">
       <metrics statements="9" coveredstatements="3" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
       <file name="errorMiddleware.js" path="/Users/baileynepe/000-self-projects/dreams-built/backend/middleware/errorMiddleware.js">
@@ -68,7 +80,14 @@
       </file>
     </package>
     <package name="backend.models">
-      <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="jobModel.js" path="/Users/baileynepe/000-self-projects/dreams-built/backend/models/jobModel.js">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+      </file>
       <file name="timeSheetModel.js" path="/Users/baileynepe/000-self-projects/dreams-built/backend/models/timeSheetModel.js">
         <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
@@ -87,13 +106,14 @@
       </file>
     </package>
     <package name="backend.routes">
-      <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="jobDetailsRoutes.js" path="/Users/baileynepe/000-self-projects/dreams-built/backend/routes/jobDetailsRoutes.js">
-        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
         <line num="6" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
       </file>
     </package>
   </project>
