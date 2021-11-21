@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 const MONGO_PORT = process.env.MONGO_PORT || 27017;
 const MONGO_URL = process.env.MONGO_URL || `mongodb://localhost:${MONGO_PORT}`;
 let mongoUri = `${MONGO_URL}/dreamsbuilt`;
@@ -33,4 +33,4 @@ const disconnect = async () => {
   await mongoose.disconnect();
 };
 
-export { connect, disconnect };
+module.exports = { connect, disconnect };

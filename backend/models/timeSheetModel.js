@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const timeSheetEntry = mongoose.Schema(
   {
@@ -34,4 +34,4 @@ const timeSheetSchema = mongoose.Schema(
 
 const TimeSheet = mongoose.model('TimeSheet', timeSheetSchema);
 
-export default TimeSheet;
+module.exports = TimeSheet;

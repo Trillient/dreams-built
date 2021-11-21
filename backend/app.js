@@ -1,11 +1,12 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const morgan = require('morgan');
 
-// import timesheetRoutes from './routes/timeSheetRoutes.js';
-// import userRoutes from './routes/userRoutes.js';
-import { errorHandler } from './middleware/errorMiddleware.js';
+//const timesheetRoutes = require('./routes/timeSheetRoutes.js');
+const jobDetailRoutes = require('./routes/jobDetailsRoutes');
+// const userRoutes = require('./routes/userRoutes.js');
+const { errorHandler } = require('./middleware/errorMiddleware.js');
 
 dotenv.config();
 
@@ -17,7 +18,8 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// app.use('/api/timesheet', timesheetRoutes);
+//app.use('/api/timesheet', timesheetRoutes);
+app.use('/api/jobDetails', jobDetailRoutes);
 
 app.get('/', (req, res) => {
   res.json('API running...');
@@ -25,4 +27,4 @@ app.get('/', (req, res) => {
 
 app.use(errorHandler);
 
-export default app;
+module.exports = app;

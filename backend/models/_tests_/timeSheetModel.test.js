@@ -1,4 +1,4 @@
-import TimeSheet from '../timeSheetModel.js';
+const TimeSheet = require('../timeSheetModel.js');
 
 describe('Given a timesheet shema model has been updated', () => {
   it.todo('A property named "user" should be on the schema');
