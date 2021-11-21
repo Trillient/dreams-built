@@ -59,4 +59,21 @@ describe('Given we have a POST /api/jobdetails endpoint', () => {
       .expect('Content-Type', /application\/json/)
       .expect(201);
   });
+
+  it('When a request is made with a job number that already exists then a 400 respose with an error message should be returned', async () => {
+    const newJob = createNewJob(22004);
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job Number already exists!');
+      expect(res.body.statusCode).toBe(400);
+    };
+
+    await request(app)
+      .post('/api/jobdetails')
+      .send(newJob)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
 });

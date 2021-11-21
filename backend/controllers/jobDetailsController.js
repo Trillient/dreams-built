@@ -20,6 +20,14 @@ const getJobs = asyncHandler(async (req, res) => {
 
 const createJob = asyncHandler(async (req, res) => {
   const { jobNumber, company, address, city, client, area, isInvoiced, dueDates } = req.body;
+
+  const checkJobExists = await JobDetails.findOne({ jobNumber: jobNumber });
+
+  if (checkJobExists) {
+    res.status(400);
+    throw new Error('Job Number already exists!');
+  }
+
   const job = new JobDetails({
     jobNumber: jobNumber,
     company: company,
