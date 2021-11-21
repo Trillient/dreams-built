@@ -32,41 +32,41 @@ const createNewUser = (firstName, lastName, email = 'abc@gmail.com', isAdmin = f
 describe('Given we have an "/api/users" endpoint', () => {
   describe('and make a GET request, ', () => {
     it('When a valid request is made then a 200 response with a list of jobs should be returned', async () => {
-      //   for (let jobId = 22001; jobId < 22003; jobId++) {
-      //     const newJob = createNewJob(jobId);
-      //     const row = new JobDetails(newJob);
-      //     await row.save();
-      //   }
-      //   const checkBody = (res) => {
-      //     expect(res.body.length).toBe(2);
-      //   };
-      //   await request(app)
-      //     .get('/api/jobdetails/')
-      //     .set(`Authorization`, `Bearer ${token}`)
-      //     .set('Content-Type', 'application/json')
-      //     .expect('Content-Type', /application\/json/)
-      //     .expect(checkBody)
-      //     .expect(200);
-      // });
+      const newUser = createNewUser('mary', 'doe', 'mary@gmail.com');
+      const row = new User(newUser);
+      await row.save();
+
+      const checkBody = (res) => {
+        expect(res.body.length).toBe(1);
+        expect(res.body[0].firstName).toBe('mary');
+      };
+
+      await request(app)
+        .get('/api/user')
+        // .set(`Authorization`, `Bearer ${token}`) //TODO set token
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
     });
-    describe('and a POST method', () => {
-      fit('when an valid request is made then return a 200 response with the created user info', async () => {
-        const newUser = createNewUser('john', 'Doe');
+  });
+  describe('and a POST method', () => {
+    it('when an valid request is made then return a 200 response with the created user info', async () => {
+      const newUser = createNewUser('john', 'Doe');
 
-        const checkBody = (res) => {
-          expect(res.body.firstName).toBe('john');
-          expect(res.body.lastName).toBe('Doe');
-        };
+      const checkBody = (res) => {
+        expect(res.body.firstName).toBe('john');
+        expect(res.body.lastName).toBe('Doe');
+      };
 
-        await request(app)
-          .post('/api/user')
-          .send(newUser)
-          .set(`Authorization`, `Bearer ${token}`)
-          .set('Content-Type', 'application/json')
-          .expect('Content-Type', /application\/json/)
-          .expect(checkBody)
-          .expect(201);
-      });
+      await request(app)
+        .post('/api/user')
+        .send(newUser)
+        // .set(`Authorization`, `Bearer ${token}`) //TODO set token
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(201);
     });
   });
 });
