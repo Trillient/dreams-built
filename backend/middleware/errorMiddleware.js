@@ -1,3 +1,10 @@
+const authorizationError = (err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    res.status(403);
+  }
+  next(err);
+};
+
 const notFound = (req, res, next) => {
   const error = new Error(`Not Found - ${req.originalUrl}`);
   res.status(404);
@@ -14,4 +21,4 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
-module.exports = { notFound, errorHandler };
+module.exports = { authorizationError, notFound, errorHandler };

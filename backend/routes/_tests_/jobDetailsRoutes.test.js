@@ -51,6 +51,20 @@ describe('Given we have an "/api/jobdetails" endpoint', () => {
         .expect(checkBody)
         .expect(200);
     });
+
+    it('When a request is made without a correct access token, then an error 403', async () => {
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('invalid token');
+      };
+
+      await request(app)
+        .get('/api/jobdetails/')
+        .set(`Authorization`, `Bearer t${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(403);
+    });
   });
 
   describe('and make a POST request, ', () => {

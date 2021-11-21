@@ -6,7 +6,8 @@ const morgan = require('morgan');
 //const timesheetRoutes = require('./routes/timeSheetRoutes.js');
 const jobDetailRoutes = require('./routes/jobDetailsRoutes');
 // const userRoutes = require('./routes/userRoutes.js');
-const { errorHandler } = require('./middleware/errorMiddleware.js');
+const { checkJwt } = require('./middleware/authMiddleware');
+const { errorHandler, notFound, authorizationError } = require('./middleware/errorMiddleware.js');
 
 dotenv.config();
 
@@ -19,12 +20,14 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 //app.use('/api/timesheet', timesheetRoutes);
-app.use('/api/jobDetails', jobDetailRoutes);
+app.use('/api/jobDetails', checkJwt, jobDetailRoutes);
 
 app.get('/', (req, res) => {
   res.json('API running...');
 });
 
+app.use(authorizationError);
+app.use(notFound);
 app.use(errorHandler);
 
 module.exports = app;
