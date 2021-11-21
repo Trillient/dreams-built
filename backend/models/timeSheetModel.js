@@ -5,8 +5,8 @@ const timeSheetEntry = mongoose.Schema(
     entryId: { type: String, required: true, unique: true },
     day: { type: String, required: true },
     date: { type: Date, required: true },
-    startTime: { type: Number, required: true },
-    endTime: { type: Number, require: true },
+    startTime: { type: String, required: true },
+    endTime: { type: String, require: true },
     jobNumber: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

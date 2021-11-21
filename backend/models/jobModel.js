@@ -8,7 +8,7 @@ const jobSchema = mongoose.Schema(
     city: String,
     client: String,
     area: Number,
-    isInvoiced: Boolean,
+    isInvoiced: { type: Boolean, default: false },
     dueDates: [
       {
         jobDescription: String,
