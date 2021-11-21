@@ -33,7 +33,7 @@ describe('Given we have a GET /api/jobdetails endpoint', () => {
     for (let jobId = 22001; jobId < 22003; jobId++) {
       const newJob = createNewJob(jobId);
       const row = new JobDetails(newJob);
-      row.save();
+      await row.save();
     }
 
     const checkBody = (res) => {
@@ -42,6 +42,24 @@ describe('Given we have a GET /api/jobdetails endpoint', () => {
 
     await request(app)
       .get('/api/jobdetails/')
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+});
+
+describe('Given we have a GET /api/jobdetails/:id endpoint', () => {
+  it("When a valid request it made then the job's details are returned with a 200 response", async () => {
+    const job = await JobDetails.find({ jobNumber: 22001 });
+    const jobParams = await job[0]._id;
+
+    const checkBody = (res) => {
+      expect(res.body.jobNumber).toBe(22001);
+    };
+
+    await request(app)
+      .get(`/api/jobdetails/${jobParams}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
