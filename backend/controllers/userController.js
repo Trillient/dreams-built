@@ -21,7 +21,7 @@ const getUsers = asyncHandler(async (req, res) => {
 const createUser = asyncHandler(async (req, res) => {
   const { userId, firstName, lastName, email, phoneNumber, isAdmin, birthDate, hourlyRate, startDate } = req.body;
 
-  const userExists = await User.findOne({ userId });
+  const userExists = await User.findOne({ email });
 
   if (userExists) {
     res.status(400);
@@ -59,4 +59,12 @@ const createUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getUsers, createUser };
+/**
+ * @Desc Get a user's details
+ * @Route GET /api/users/:id
+ * @Access Private (user) //TODO - make private
+ */
+
+const getUser = asyncHandler(async (req, res) => {});
+
+module.exports = { getUsers, createUser, getUser };
