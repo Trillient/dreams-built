@@ -18,10 +18,10 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
-
+app.use(checkJwt);
 app.use('/api/users', userRoutes);
 //app.use('/api/timesheet', timesheetRoutes);
-app.use('/api/jobDetails', checkJwt, jobDetailRoutes);
+app.use('/api/jobDetails', jobDetailRoutes);
 
 app.get('/', (req, res) => {
   res.json('API running...');

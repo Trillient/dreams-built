@@ -65,6 +65,15 @@ const createUser = asyncHandler(async (req, res) => {
  * @Access Private (user) //TODO - make private
  */
 
-const getUser = asyncHandler(async (req, res) => {});
+const getUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
 
 module.exports = { getUsers, createUser, getUser };

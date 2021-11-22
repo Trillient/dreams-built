@@ -31,6 +31,9 @@ const createNewUser = (userId, firstName, lastName, email = 'abc@gmail.com', pho
   };
 };
 
+/**
+ * @Route /api/users
+ */
 describe('Given we have an "/api/users" endpoint', () => {
   describe('and make a GET request, ', () => {
     it('When a valid request is made then a 200 response with a list of jobs should be returned', async () => {
@@ -45,7 +48,7 @@ describe('Given we have an "/api/users" endpoint', () => {
 
       await request(app)
         .get('/api/users')
-        // .set(`Authorization`, `Bearer ${token}`) //TODO set token
+        .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
@@ -64,11 +67,40 @@ describe('Given we have an "/api/users" endpoint', () => {
       await request(app)
         .post('/api/users')
         .send(newUser)
-        // .set(`Authorization`, `Bearer ${token}`) //TODO set token
+        .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
         .expect(201);
+    });
+  });
+});
+
+/**
+ * @Route /api/users/:id
+ */
+describe('Given we have an "/api/users/:id" endpoint', () => {
+  describe('and a GET method', () => {
+    it("when a valid request is made then it should return a 200 response with the user's details", async () => {
+      const newUser = createNewUser(5, 'oscar', 'doe', 'oscar@gmail.com');
+      const row = new User(newUser);
+      await row.save();
+
+      const user = await User.findOne({ email: 'oscar@gmail.com' });
+      const userParams = await user._id;
+
+      const checkBody = (res) => {
+        expect(res.body.firstName).toBe('oscar');
+        expect(res.body.email).toBe('oscar@gmail.com');
+      };
+
+      await request(app)
+        .get(`/api/users/${userParams}`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
     });
   });
 });
