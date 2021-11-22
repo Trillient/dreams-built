@@ -132,7 +132,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
     });
   });
 
-  describe('and a DELETE methon', () => {
+  describe('and a DELETE method', () => {
     it('when a valid request is made then it should return with a 200 repsonse and delete the user', async () => {
       const newUser = createNewUser(7, 'allen', 'doe', 'allen@gmail.com');
       const row = new User(newUser);
@@ -146,6 +146,66 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
 
       await request(app)
         .delete(`/api/users/${user._id}`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+  });
+});
+
+/**
+ * @Route /api/users/profile/:id
+ */
+
+describe('Given we have an "/api/users/profile/:id" endpoint', () => {
+  describe('and a GET method', () => {
+    it("when a valid request is made then it should return a 200 response with the user's details", async () => {
+      const newUser = createNewUser(9, 'falter', 'doe', 'falter@gmail.com');
+      const row = new User(newUser);
+      await row.save();
+
+      const user = await User.findOne({ email: 'falter@gmail.com' });
+
+      const checkBody = (res) => {
+        expect(res.body.firstName).toBe('falter');
+        expect(res.body.email).toBe('falter@gmail.com');
+        expect(res.body.hourlyPay).toBeUndefined();
+      };
+
+      await request(app)
+        .get(`/api/users/profile/${user._id}`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+  });
+
+  describe('and a PUT method', () => {
+    it('when a valid request is made then it should return a 200 response with an updated user', async () => {
+      const newUser = createNewUser(12, 'craig', 'doe', 'craig@gmail.com');
+      const row = new User(newUser);
+      await row.save();
+
+      const user = await User.findOne({ email: 'craig@gmail.com' });
+      const userParams = await user._id;
+
+      const updatedUserDetails = {
+        email: 'kraig@gmail.com',
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.firstName).toBe('craig');
+        expect(res.body.email).toBe('kraig@gmail.com');
+        expect(res.body.hourlyPay).toBeUndefined();
+      };
+
+      await request(app)
+        .put(`/api/users/${userParams}`)
+        .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)

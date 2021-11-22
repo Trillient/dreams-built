@@ -129,4 +129,86 @@ const deleteUser = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { getUsers, createUser, getUser, updateUser, deleteUser };
+/**
+ * @Desc Get a user's profile
+ * @Route GET /api/users/profile/:id
+ * @Access Private
+ */
+
+const getUserProfile = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    //TODO cross check JWT with userID to confirm correct user
+
+    const userProfile = {
+      _id: user._id,
+      userId: user.userId,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      isAdmin: user.isAdmin,
+    };
+
+    res.json(userProfile);
+  } catch (err) {
+    if (err.message.indexOf('Cast to ObjectId failed') !== -1) {
+      res.status(404);
+      throw new Error('User not found');
+    } else {
+      next(err);
+    }
+  }
+});
+
+/**
+ * @Desc Update a single user
+ * @Route PUT /api/users/:id
+ * @Access Private
+ */
+
+const updateUserProfile = asyncHandler(async (req, res) => {
+  try {
+    const { firstName, lastName, email, phoneNumber } = req.body;
+
+    const user = await User.findById(req.params.id);
+
+    //TODO cross check JWT with userID to confirm correct user
+
+    if (user) {
+      user.firstName = firstName || user.firstName;
+      user.lastName = lastName || user.lastName;
+      user.email = email || user.email;
+      user.phoneNumber = phoneNumber || user.phoneNumber;
+      user.isAdmin = user.isAdmin;
+      user.birthDate = user.birthDate;
+      user.hourlyRate = user.hourlyRate;
+      user.startDate = user.startDate;
+
+      await user.save();
+
+      const userProfile = {
+        _id: user._id,
+        userId: user.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        isAdmin: user.isAdmin,
+      };
+      res.json(userProfile);
+    } else {
+      throw new Error('Something went wrong');
+    }
+  } catch (err) {
+    if (err.message.indexOf('Cast to ObjectId failed') !== -1) {
+      res.status(404);
+      throw new Error('User not found');
+    } else {
+      next(err);
+    }
+  }
+});
+
+module.exports = { getUsers, createUser, getUser, updateUser, deleteUser, getUserProfile, updateUserProfile };
