@@ -103,4 +103,54 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
         .expect(200);
     });
   });
+  describe('and a PUT method', () => {
+    it('when a valid request is made then it should return a 200 response with an updated user', async () => {
+      const newUser = createNewUser(6, 'jaople', 'doe', 'jap@gmail.com');
+      const row = new User(newUser);
+      await row.save();
+
+      const user = await User.findOne({ email: 'jap@gmail.com' });
+      const userParams = await user._id;
+
+      const updatedUserDetails = {
+        email: 'newemail@gmail.com',
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.firstName).toBe('jaople');
+        expect(res.body.email).toBe('newemail@gmail.com');
+      };
+
+      await request(app)
+        .put(`/api/users/${userParams}`)
+        .send(updatedUserDetails)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+  });
+
+  describe('and a DELETE methon', () => {
+    it('when a valid request is made then it should return with a 200 repsonse and delete the user', async () => {
+      const newUser = createNewUser(7, 'allen', 'doe', 'allen@gmail.com');
+      const row = new User(newUser);
+      await row.save();
+
+      const user = await User.findOne({ email: 'allen@gmail.com' });
+
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('User removed');
+      };
+
+      await request(app)
+        .delete(`/api/users/${user._id}`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+  });
 });
