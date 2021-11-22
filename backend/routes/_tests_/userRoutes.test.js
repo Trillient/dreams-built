@@ -31,6 +31,8 @@ const createNewUser = (userId, firstName, lastName, email = 'abc@gmail.com', pho
   };
 };
 
+//TODO - Add error and edgecase tests
+
 /**
  * @Route /api/users
  */
@@ -54,6 +56,8 @@ describe('Given we have an "/api/users" endpoint', () => {
         .expect(checkBody)
         .expect(200);
     });
+    it.todo('When a request is made without a valid admin token then a 403 response should be returned');
+    it.todo('When a request is made and there are no users then should return a 200 response with an empty array');
   });
   describe('and a POST method', () => {
     it('when an valid request is made then return a 200 response with the created user info', async () => {
@@ -73,6 +77,8 @@ describe('Given we have an "/api/users" endpoint', () => {
         .expect(checkBody)
         .expect(201);
     });
+    it.todo('when a request is made without a required field then should return a 400 response with an error message');
+    it.todo('when a request is made with an email that is not unique then should return a 400 response with an error message');
   });
 });
 
