@@ -1,7 +1,9 @@
-import express from 'express';
+const express = require('express');
 const router = express.Router();
 
-router.route('/').get();
-router.route('/:id').get().post().delete().put();
+const { createUserEntry } = require('../controllers/timeSheetController');
 
-export default router;
+router.route('/');
+router.route('/user/:id').post(createUserEntry);
+
+module.exports = router;

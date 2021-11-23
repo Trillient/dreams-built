@@ -8,9 +8,8 @@ const timeSheetEntry = mongoose.Schema(
     startTime: { type: String, required: true },
     endTime: { type: String, require: true },
     jobNumber: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Number,
       required: true,
-      ref: 'JobSchema',
     },
     updated: String,
     jobTime: { type: Number, require: true },
@@ -25,6 +24,7 @@ const timeSheetSchema = mongoose.Schema(
       required: true,
       ref: 'User',
     },
+    userId: { type: String, required: true },
     weekStart: { type: Date, required: true },
     weekEnd: { type: Date, required: true },
     entries: [timeSheetEntry],
