@@ -54,7 +54,7 @@ const createSingleEntry = (entryId = '1', day = 'Monday', date = '12/12/2021', s
 
 describe('Given we have an /api/timesheet/user/:id endpoint', () => {
   describe('and a POST method', () => {
-    it('when a authenticated user makes a valid request then it should return a 201 response with the created data', async () => {
+    it.skip('when a authenticated user makes a valid request then it should return a 201 response with the created data', async () => {
       // Create and save a user
       const newUser = createNewUser(clientId, 'mary', 'doe', 'mary@gmail.com');
       const row = new User(newUser);
@@ -85,7 +85,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
         .expect(201);
     });
 
-    it('when a authenticated user makes a request to the wrong "/:id" endpoint then it should return 401 with an error message', async () => {
+    it.skip('when a authenticated user makes a request to the wrong "/:id" endpoint then it should return 401 with an error message', async () => {
       // Create and save a user
       const newUser = createNewUser(2, 'craig', 'doe', 'craig@gmail.com');
       const row = new User(newUser);

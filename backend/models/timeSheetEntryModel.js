@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const timeSheetSingleEntrySchema = mongoose.Schema(
+const timeSheetEntrySchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -10,7 +10,7 @@ const timeSheetSingleEntrySchema = mongoose.Schema(
     userId: { type: String, required: true },
     entryId: { type: String, required: true },
     day: { type: String, required: true },
-    date: { type: String, required: true },
+    date: { type: Date, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
     jobNumber: { type: Number, required: true },
@@ -22,6 +22,6 @@ const timeSheetSingleEntrySchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const TimeSheetSingleEntry = mongoose.model('TimeSheetSingleEntry', timeSheetSingleEntrySchema);
+const TimeSheetEntry = mongoose.model('TimeSheetEntry', timeSheetEntrySchema);
 
-module.exports = TimeSheetSingleEntry;
+module.exports = TimeSheetEntry;

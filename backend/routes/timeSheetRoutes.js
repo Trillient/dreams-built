@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const { createUserEntry, test, deleteArchive } = require('../controllers/timeSheetController');
+const { createUserEntry, getAllUsers, deleteArchive } = require('../controllers/timeSheetController');
 
-router.route('/').get(test).delete(deleteArchive);
+router.route('/');
 router.route('/user/:id').post(createUserEntry);
+router.route('/admin').get(getAllUsers);
+router.route('/admin/archive').delete(deleteArchive);
 
 module.exports = router;

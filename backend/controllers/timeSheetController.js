@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const TimeSheetSingleEntry = require('../models/timeSheetSingleEntryModel');
+const TimeSheetEntry = require('../models/TimeSheetEntryModel');
 const User = require('../models/userModel');
 
 /**
@@ -20,10 +20,10 @@ const createUserEntry = asyncHandler(async (req, res) => {
 
   // TODO - Run validation on parameters
 
-  await TimeSheetSingleEntry.updateMany({ weekStart: weekStart, user: req.params.id, userId: req.user.azp }, { $set: { isArchive: true } });
+  await TimeSheetEntry.updateMany({ weekStart: weekStart, user: req.params.id, userId: req.user.azp }, { $set: { isArchive: true } });
 
   await entries.map((entry) => {
-    TimeSheetSingleEntry.create({
+    TimeSheetEntry.create({
       user: req.params.id,
       userId: req.user.azp,
       entryId: entry.entryId,
@@ -42,28 +42,31 @@ const createUserEntry = asyncHandler(async (req, res) => {
 });
 
 /**
- * @Desc Create a user timesheet entry
- * @Route POST /api/timesheet/user/:id
- * @Access Private
+ * @Desc Get all users timesheet entries for week
+ * @Route GET /api/timesheet/admin
+ * @Access Private - Admin
  */
 
-const test = asyncHandler(async (req, res) => {
-  const result = await TimeSheetSingleEntry.find({ jobNumber: 21110 });
+const getAllUsers = asyncHandler(async (req, res) => {
+  const result = await TimeSheetEntry.find({ weekStart: req.query.weekstart }).populate('user', 'firstName lastName hourlyRate');
 
   res.json(result);
 });
 
 /**
- * @Desc Create a user timesheet entry
- * @Route POST /api/timesheet/user/:id
- * @Access Private
+ * @Desc Delete user archive timesheet entries
+ * @Route POST /api/timesheet/admin/archive
+ * @Access Private - Admin
  */
 
 const deleteArchive = asyncHandler(async (req, res) => {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 14);
-  await TimeSheetSingleEntry.deleteMany({ isArchive: true, updatedAt: { $lt: cutoff } });
-  res.json({ date: cutoff });
+  const fields = { isArchive: true, updatedAt: { $lt: cutoff } };
+
+  const entries = await TimeSheetEntry.find(fields);
+  await TimeSheetEntry.deleteMany(fields);
+  res.json({ cutOffDate: cutoff, deletedEntries: entries.length });
 });
 
-module.exports = { createUserEntry, test, deleteArchive };
+module.exports = { createUserEntry, getAllUsers, deleteArchive };
