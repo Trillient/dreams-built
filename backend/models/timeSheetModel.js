@@ -1,18 +1,15 @@
 const mongoose = require('mongoose');
 
-const timeSheetEntry = mongoose.Schema(
+const timeSheetEntrySchema = mongoose.Schema(
   {
     entryId: { type: String, required: true, unique: true },
     day: { type: String, required: true },
-    date: { type: Date, required: true },
+    date: { type: String, required: true },
     startTime: { type: String, required: true },
-    endTime: { type: String, require: true },
-    jobNumber: {
-      type: Number,
-      required: true,
-    },
+    endTime: { type: String, required: true },
+    jobNumber: { type: Number, required: true },
     updated: String,
-    jobTime: { type: Number, require: true },
+    jobTime: { type: Number, required: true },
   },
   { timestamps: true }
 );
@@ -25,9 +22,9 @@ const timeSheetSchema = mongoose.Schema(
       ref: 'User',
     },
     userId: { type: String, required: true },
-    weekStart: { type: Date, required: true },
-    weekEnd: { type: Date, required: true },
-    entries: [timeSheetEntry],
+    weekStart: { type: String, required: true },
+    weekEnd: { type: String, required: true },
+    entries: [timeSheetEntrySchema],
   },
   { timestamps: true }
 );

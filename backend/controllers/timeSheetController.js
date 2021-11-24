@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const TimeSheet = require('../models/timeSheetModel');
+const User = require('../models/userModel');
 
 /**
  * @Desc Create a user timesheet entry
@@ -10,10 +11,16 @@ const TimeSheet = require('../models/timeSheetModel');
 const createUserEntry = asyncHandler(async (req, res) => {
   const { weekStart, weekEnd, entries } = req.body;
 
-  console.log(req.user);
+  const user = await User.findById(req.params.id);
+
+  if (user.userId !== req.user.azp) {
+    res.status(401);
+    throw new Error('Invalid user credentials');
+  }
+
   const timeSheetEntry = new TimeSheet({
-    user: req.params._id,
-    userId: req.token.userId,
+    user: req.params.id,
+    userId: req.user.azp,
     weekStart: weekStart,
     weekEnd: weekEnd,
     entries: entries,

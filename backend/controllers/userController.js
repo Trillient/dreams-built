@@ -67,13 +67,7 @@ const createUser = asyncHandler(async (req, res) => {
 
 const getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
-
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404);
-    throw new Error('User not found');
-  }
+  res.json(user);
 });
 
 /**
@@ -99,9 +93,6 @@ const updateUser = asyncHandler(async (req, res) => {
 
     await user.save();
     res.json(user);
-  } else {
-    res.status(404);
-    throw new Error('Job not found');
   }
 });
 
@@ -111,21 +102,12 @@ const updateUser = asyncHandler(async (req, res) => {
  * @Access Private (only admin) //TODO add admin constraints
  */
 
-const deleteUser = asyncHandler(async (req, res, next) => {
-  try {
-    const user = await User.findById(req.params.id);
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
 
-    if (user) {
-      await user.remove();
-      res.json({ message: 'User removed' });
-    }
-  } catch (err) {
-    if (err.message.indexOf('Cast to ObjectId failed') !== -1) {
-      res.status(404);
-      throw new Error('User not found');
-    } else {
-      next(err);
-    }
+  if (user) {
+    await user.remove();
+    res.json({ message: 'User removed' });
   }
 });
 
@@ -136,10 +118,47 @@ const deleteUser = asyncHandler(async (req, res, next) => {
  */
 
 const getUserProfile = asyncHandler(async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id);
 
-    //TODO cross check JWT with userID to confirm correct user
+  //TODO cross check JWT with userID to confirm correct user
+
+  const userProfile = {
+    _id: user._id,
+    userId: user.userId,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    isAdmin: user.isAdmin,
+  };
+
+  res.json(userProfile);
+});
+
+/**
+ * @Desc Update a single user
+ * @Route PUT /api/users/:id
+ * @Access Private
+ */
+
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const { firstName, lastName, email, phoneNumber } = req.body;
+
+  const user = await User.findById(req.params.id);
+
+  //TODO cross check JWT with userID to confirm correct user
+
+  if (user) {
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+    user.email = email || user.email;
+    user.phoneNumber = phoneNumber || user.phoneNumber;
+    user.isAdmin = user.isAdmin;
+    user.birthDate = user.birthDate;
+    user.hourlyRate = user.hourlyRate;
+    user.startDate = user.startDate;
+
+    await user.save();
 
     const userProfile = {
       _id: user._id,
@@ -150,64 +169,9 @@ const getUserProfile = asyncHandler(async (req, res) => {
       phoneNumber: user.phoneNumber,
       isAdmin: user.isAdmin,
     };
-
     res.json(userProfile);
-  } catch (err) {
-    if (err.message.indexOf('Cast to ObjectId failed') !== -1) {
-      res.status(404);
-      throw new Error('User not found');
-    } else {
-      next(err);
-    }
-  }
-});
-
-/**
- * @Desc Update a single user
- * @Route PUT /api/users/:id
- * @Access Private
- */
-
-const updateUserProfile = asyncHandler(async (req, res) => {
-  try {
-    const { firstName, lastName, email, phoneNumber } = req.body;
-
-    const user = await User.findById(req.params.id);
-
-    //TODO cross check JWT with userID to confirm correct user
-
-    if (user) {
-      user.firstName = firstName || user.firstName;
-      user.lastName = lastName || user.lastName;
-      user.email = email || user.email;
-      user.phoneNumber = phoneNumber || user.phoneNumber;
-      user.isAdmin = user.isAdmin;
-      user.birthDate = user.birthDate;
-      user.hourlyRate = user.hourlyRate;
-      user.startDate = user.startDate;
-
-      await user.save();
-
-      const userProfile = {
-        _id: user._id,
-        userId: user.userId,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        isAdmin: user.isAdmin,
-      };
-      res.json(userProfile);
-    } else {
-      throw new Error('Something went wrong');
-    }
-  } catch (err) {
-    if (err.message.indexOf('Cast to ObjectId failed') !== -1) {
-      res.status(404);
-      throw new Error('User not found');
-    } else {
-      next(err);
-    }
+  } else {
+    throw new Error('Something went wrong');
   }
 });
 
