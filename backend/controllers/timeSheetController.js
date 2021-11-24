@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const TimeSheet = require('../models/timeSheetModel');
+const TimeSheetSingleEntry = require('../models/timeSheetSingleEntryModel');
 const User = require('../models/userModel');
 
 /**
@@ -18,17 +18,52 @@ const createUserEntry = asyncHandler(async (req, res) => {
     throw new Error('Invalid user credentials');
   }
 
-  const timeSheetEntry = new TimeSheet({
-    user: req.params.id,
-    userId: req.user.azp,
-    weekStart: weekStart,
-    weekEnd: weekEnd,
-    entries: entries,
+  // TODO - Run validation on parameters
+
+  await TimeSheetSingleEntry.updateMany({ weekStart: weekStart, user: req.params.id, userId: req.user.azp }, { $set: { isArchive: true } });
+
+  await entries.map((entry) => {
+    TimeSheetSingleEntry.create({
+      user: req.params.id,
+      userId: req.user.azp,
+      entryId: entry.entryId,
+      day: entry.day,
+      date: entry.date,
+      startTime: entry.startTime,
+      endTime: entry.endTime,
+      jobNumber: entry.jobNumber,
+      jobTime: entry.jobTime,
+      weekStart: weekStart,
+      weekEnd: weekEnd,
+    });
   });
 
-  const createdEntry = await timeSheetEntry.save();
-
-  res.status(201).json(createdEntry);
+  res.status(201).json({ message: 'timesheet data saved!' });
 });
 
-module.exports = { createUserEntry };
+/**
+ * @Desc Create a user timesheet entry
+ * @Route POST /api/timesheet/user/:id
+ * @Access Private
+ */
+
+const test = asyncHandler(async (req, res) => {
+  const result = await TimeSheetSingleEntry.find({ jobNumber: 21110 });
+
+  res.json(result);
+});
+
+/**
+ * @Desc Create a user timesheet entry
+ * @Route POST /api/timesheet/user/:id
+ * @Access Private
+ */
+
+const deleteArchive = asyncHandler(async (req, res) => {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 14);
+  await TimeSheetSingleEntry.deleteMany({ isArchive: true, updatedAt: { $lt: cutoff } });
+  res.json({ date: cutoff });
+});
+
+module.exports = { createUserEntry, test, deleteArchive };

@@ -5,7 +5,6 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const database = require('../../config/database');
 const User = require('../../models/userModel');
-const TimeSheet = require('../../models/timeSheetModel');
 
 beforeAll(async () => {
   const mongoServer = await MongoMemoryServer.create();
