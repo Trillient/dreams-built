@@ -32,15 +32,15 @@ const createNewUser = (userId, firstName, lastName, email = 'abc@gmail.com', pho
   };
 };
 
-const createTimeSheetEntry = (entries = [], weekStart = '21/10/2020', weekEnd = '27/10/2020') => {
+const createTimeSheetEntry = (entries = null, weekStart = '2021/12/14', weekEnd = '2021/12/20') => {
   return {
     weekStart: weekStart,
     weekEnd: weekEnd,
-    entries: entries,
+    entries: [entries],
   };
 };
 
-const createSingleEntry = (entryId = '1', day = 'Monday', date = '12/12/2021', startTime = '10:50am', endTime = '11:50am', jobNumber = 22001, jobTime = 1) => {
+const createSingleEntry = (entryId = '1', day = 'Monday', date = '2021/12/14', startTime = '10:50am', endTime = '11:50am', jobNumber = 22001, jobTime = 1) => {
   return {
     entryId: entryId,
     day: day,
@@ -48,13 +48,13 @@ const createSingleEntry = (entryId = '1', day = 'Monday', date = '12/12/2021', s
     startTime: startTime,
     endTime: endTime,
     jobNumber: jobNumber,
-    jobTime: jobNumber,
+    jobTime: jobTime,
   };
 };
 
 describe('Given we have an /api/timesheet/user/:id endpoint', () => {
   describe('and a POST method', () => {
-    it.skip('when a authenticated user makes a valid request then it should return a 201 response with the created data', async () => {
+    it('when an authenticated user makes a valid request then it should return a 201 response with the created data', async () => {
       // Create and save a user
       const newUser = createNewUser(clientId, 'mary', 'doe', 'mary@gmail.com');
       const row = new User(newUser);
@@ -70,8 +70,8 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
 
       // Check response
       const checkBody = (res) => {
-        expect(res.body.userId).toBe(clientId);
-        expect(res.body.entries[0].entryId).toBe('2');
+        expect(res.body.entriesCreated).toBe(1);
+        expect(res.body.entriesArchived).toBe(0);
       };
 
       // Make request
@@ -85,7 +85,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
         .expect(201);
     });
 
-    it.skip('when a authenticated user makes a request to the wrong "/:id" endpoint then it should return 401 with an error message', async () => {
+    it('when a authenticated user makes a request to the wrong "/:id" endpoint then it should return 401 with an error message', async () => {
       // Create and save a user
       const newUser = createNewUser(2, 'craig', 'doe', 'craig@gmail.com');
       const row = new User(newUser);

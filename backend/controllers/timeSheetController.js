@@ -19,10 +19,11 @@ const createUserEntry = asyncHandler(async (req, res) => {
   }
 
   // TODO - Run validation on parameters
-
+  const archive = await TimeSheetEntry.find({ weekStart: weekStart, user: req.params.id, userId: req.user.azp, isArchive: false });
+  const totalEntriesArchieved = await TimeSheetEntry.find({ weekStart: weekStart, user: req.params.id, userId: req.user.azp, isArchive: true });
   await TimeSheetEntry.updateMany({ weekStart: weekStart, user: req.params.id, userId: req.user.azp }, { $set: { isArchive: true } });
 
-  await entries.map((entry) => {
+  const data = await entries.map((entry) => {
     TimeSheetEntry.create({
       user: req.params.id,
       userId: req.user.azp,
@@ -38,7 +39,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
     });
   });
 
-  res.status(201).json({ message: 'timesheet data saved!' });
+  res.status(201).json({ entriesCreated: data.length, entriesArchived: archive.length, totalArchived: totalEntriesArchieved.length + archive.length });
 });
 
 /**
