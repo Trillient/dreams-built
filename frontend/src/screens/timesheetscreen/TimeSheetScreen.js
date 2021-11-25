@@ -40,8 +40,9 @@ const TimeSheetScreen = () => {
     },
   });
 
-  const startDate = moment().startOf('week').format('DD/MM/YYYY');
-  const endDate = moment().endOf('week').format('DD/MM/YYYY');
+  const startDate = moment().startOf('week').format('DDMMYYYY');
+  const endDate = moment().endOf('week').format('DDMMYYYY');
+  const weekNumber = moment().week();
 
   const weekArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const dummyArray = [

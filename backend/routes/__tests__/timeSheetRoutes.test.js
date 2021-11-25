@@ -5,10 +5,15 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const database = require('../../config/database');
 const User = require('../../models/userModel');
+const TimeSheetEntry = require('../../models/TimeSheetEntryModel');
 
 beforeAll(async () => {
   const mongoServer = await MongoMemoryServer.create();
   await database.connect(mongoServer.getUri());
+});
+
+afterEach(async () => {
+  await User.deleteMany();
 });
 
 afterAll(async () => {
@@ -40,7 +45,7 @@ const createTimeSheetEntry = (entries = null, weekStart = '2021/12/14', weekEnd 
   };
 };
 
-const createSingleEntry = (entryId = '1', day = 'Monday', date = '2021/12/14', startTime = '10:50am', endTime = '11:50am', jobNumber = 22001, jobTime = 1) => {
+const createSingleEntry = (entryId = '1', day = 'Monday', date = '2021/12/14', startTime = '10:50am', endTime = '11:50am', jobNumber = 22001, jobTime = 10) => {
   return {
     entryId: entryId,
     day: day,
@@ -52,7 +57,68 @@ const createSingleEntry = (entryId = '1', day = 'Monday', date = '2021/12/14', s
   };
 };
 
+const createReturnedEntry = (
+  user,
+  userId = clientId,
+  entryId = '1',
+  day = 'Monday',
+  date = '2021/12/14',
+  startTime = '10:50am',
+  endTime = '11:50am',
+  jobNumber = 22001,
+  jobTime = 10,
+  weekStart = '2021/12/14',
+  weekEnd = '2021/12/20',
+  isArchive = false
+) => {
+  return {
+    user: user,
+    userId: userId,
+    entryId: entryId,
+    day: day,
+    date: date,
+    startTime: startTime,
+    endTime: endTime,
+    jobNumber: jobNumber,
+    jobTime: jobTime,
+    weekStart: weekStart,
+    weekEnd: weekEnd,
+    isArchive,
+  };
+};
+
 describe('Given we have an /api/timesheet/user/:id endpoint', () => {
+  describe('and a GET method', () => {
+    it("when an authenticated user makes a valid request then it should return a 200 response with the user's weekly entries", async () => {
+      // Create and save a user
+      const newUser = createNewUser(clientId, 'eric', 'doe', 'eric@gmail.com');
+      const row = new User(newUser);
+      await row.save();
+
+      // Retrieve user _id
+      const user = await User.findOne({ email: 'eric@gmail.com' });
+      const userParams = await user._id;
+
+      // Create timesheet entry
+      await TimeSheetEntry.create(createReturnedEntry(userParams));
+
+      // Check response
+      const checkBody = (res) => {
+        console.log(res.body);
+        expect(res.body[0].userId).toBe(clientId);
+        expect(res.body[0].entryId).toBe(2);
+      };
+
+      // Make request
+      await request(app)
+        .get(`/api/timesheet/user/${userParams}?weekday=$2021/12/14`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+  });
   describe('and a POST method', () => {
     it('when an authenticated user makes a valid request then it should return a 201 response with the created data', async () => {
       // Create and save a user
@@ -85,7 +151,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
         .expect(201);
     });
 
-    it('when a authenticated user makes a request to the wrong "/:id" endpoint then it should return 401 with an error message', async () => {
+    it('when an authenticated user makes a request to the wrong "/:id" endpoint then it should return 401 with an error message', async () => {
       // Create and save a user
       const newUser = createNewUser(2, 'craig', 'doe', 'craig@gmail.com');
       const row = new User(newUser);

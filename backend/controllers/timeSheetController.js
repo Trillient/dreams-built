@@ -8,6 +8,24 @@ const User = require('../models/userModel');
  * @Access Private
  */
 
+const getUserEntries = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  const { weekStart } = req.query.weekstart;
+  if (user.userId !== req.user.azp) {
+    res.status(401);
+    throw new Error('Invalid user credentials');
+  }
+  const entries = await TimeSheetEntry.find({ weekStart: weekStart, user: req.params.id, userId: req.user.azp });
+
+  res.json(entries);
+});
+
+/**
+ * @Desc Create a user timesheet entry
+ * @Route POST /api/timesheet/user/:id
+ * @Access Private
+ */
+
 const createUserEntry = asyncHandler(async (req, res) => {
   const { weekStart, weekEnd, entries } = req.body;
 
@@ -23,6 +41,10 @@ const createUserEntry = asyncHandler(async (req, res) => {
   const totalEntriesArchieved = await TimeSheetEntry.find({ weekStart: weekStart, user: req.params.id, userId: req.user.azp, isArchive: true });
   await TimeSheetEntry.updateMany({ weekStart: weekStart, user: req.params.id, userId: req.user.azp }, { $set: { isArchive: true } });
 
+  const date = Date(weekStart).weekNumber;
+
+  console.log(date);
+
   const data = await entries.map((entry) => {
     TimeSheetEntry.create({
       user: req.params.id,
@@ -36,6 +58,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
       jobTime: entry.jobTime,
       weekStart: weekStart,
       weekEnd: weekEnd,
+      weekNumber: Date(weekStart).weekNumber,
     });
   });
 
@@ -70,4 +93,4 @@ const deleteArchive = asyncHandler(async (req, res) => {
   res.json({ cutOffDate: cutoff, deletedEntries: entries.length });
 });
 
-module.exports = { createUserEntry, getAllUsers, deleteArchive };
+module.exports = { getUserEntries, createUserEntry, getAllUsers, deleteArchive };
