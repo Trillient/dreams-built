@@ -104,14 +104,13 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
 
       // Check response
       const checkBody = (res) => {
-        console.log(res.body);
-        expect(res.body[0].userId).toBe(clientId);
-        expect(res.body[0].entryId).toBe(2);
+        expect(res.body.entries[0].userId).toBe(clientId);
+        expect(res.body.entries[0].entryId).toBe('1');
       };
 
       // Make request
       await request(app)
-        .get(`/api/timesheet/user/${userParams}?weekday=$2021/12/14`)
+        .get(`/api/timesheet/user/${userParams}?weekstart=2021/12/14`)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)

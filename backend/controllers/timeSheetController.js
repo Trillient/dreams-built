@@ -10,14 +10,14 @@ const User = require('../models/userModel');
 
 const getUserEntries = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
-  const { weekStart } = req.query.weekstart;
+  const weekStart = req.query.weekstart;
   if (user.userId !== req.user.azp) {
     res.status(401);
     throw new Error('Invalid user credentials');
   }
   const entries = await TimeSheetEntry.find({ weekStart: weekStart, user: req.params.id, userId: req.user.azp });
 
-  res.json(entries);
+  res.json({ weekStart: weekStart, entries: entries });
 });
 
 /**
@@ -38,12 +38,10 @@ const createUserEntry = asyncHandler(async (req, res) => {
 
   // TODO - Run validation on parameters
   const archive = await TimeSheetEntry.find({ weekStart: weekStart, user: req.params.id, userId: req.user.azp, isArchive: false });
+
   const totalEntriesArchieved = await TimeSheetEntry.find({ weekStart: weekStart, user: req.params.id, userId: req.user.azp, isArchive: true });
+
   await TimeSheetEntry.updateMany({ weekStart: weekStart, user: req.params.id, userId: req.user.azp }, { $set: { isArchive: true } });
-
-  const date = Date(weekStart).weekNumber;
-
-  console.log(date);
 
   const data = await entries.map((entry) => {
     TimeSheetEntry.create({
@@ -58,7 +56,6 @@ const createUserEntry = asyncHandler(async (req, res) => {
       jobTime: entry.jobTime,
       weekStart: weekStart,
       weekEnd: weekEnd,
-      weekNumber: Date(weekStart).weekNumber,
     });
   });
 
@@ -86,10 +83,12 @@ const getAllUsers = asyncHandler(async (req, res) => {
 const deleteArchive = asyncHandler(async (req, res) => {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 14);
-  const fields = { isArchive: true, updatedAt: { $lt: cutoff } };
 
+  const fields = { isArchive: true, updatedAt: { $lt: cutoff } };
   const entries = await TimeSheetEntry.find(fields);
+
   await TimeSheetEntry.deleteMany(fields);
+
   res.json({ cutOffDate: cutoff, deletedEntries: entries.length });
 });
 
