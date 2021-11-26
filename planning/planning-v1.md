@@ -90,3 +90,13 @@ MongoDB allows us to create and store user information as well as store the user
 ### Additionals
 
 - Job calendar filter and select and email/export button to contractorsx
+
+## TODO
+
+- Complete timesheet routes
+- Docker compose
+- connect frontend and backend
+- work on data flow
+- timesheet
+- calendar
+- jobs

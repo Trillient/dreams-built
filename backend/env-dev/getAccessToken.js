@@ -22,8 +22,8 @@ const getToken = async () => {
       throw new Error(error);
     }
     const jwt = await JSON.parse(body);
+    console.log(jwt.access_token);
     return jwt.access_token;
   });
 };
-
-module.exports = { getToken };
+getToken();

@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  client:
+    container_name: DreamsBuilt-client
+    build:
+      context: ./frontend
+    ports:
+      - '3333:3000'
+    environment:
+      - REACT_APP_API_URL=http://localhost:5001/api
+    depends_on:
+      - server
+    volumes:
+      - ./frontend:/app/
+      - /app/node_modules
+  server:
+    container_name: DreamsBuilt-server
+    build:
+      context: ./backend
+    ports:
+      - '5001:5000'
+    env_file: ./backend/.env
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+    depends_on:
+      - mongodb
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+  mongodb:
+    container_name: DreamsBuilt-mongodb
+    image: mongo:latest
+    volumes:
+      - ~/mongodb:/data/db
+    ports:
+      - '27017:27017'
+volumes:
+  mongodb:

@@ -1,0 +1,20 @@
+version: '3'
+services:
+  supertest:
+    build:
+      context: ./backend
+    env_file: ./backend/.env
+    environment:
+      - NODE_ENV=test
+    depends_on:
+      - test_db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    entrypoint: ['npm', 'test']
+  test_db:
+    image: mongo:latest
+    volumes:
+      - test-db-volume:/data/db
+volumes:
+  test-db-volume:
