@@ -3,7 +3,7 @@ info:
   title: Dreams Built
   version: '1.0'
 servers:
-  - url: 'http://localhost:3000'
+  - url: 'http://localhost:5001'
 paths:
   /api/user:
     get:
