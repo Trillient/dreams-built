@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true, validate: [isEmail, 'invalid email'] },
-    phoneNumber: Number,
+    phoneNumber: Number || String,
     isAdmin: { type: Boolean, required: true, default: false },
     birthDate: Date,
     hourlyRate: Number,

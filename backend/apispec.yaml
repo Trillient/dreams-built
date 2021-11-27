@@ -1,0 +1,257 @@
+openapi: 3.1.0
+info:
+  title: Dreams Built
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /api/user:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+          headers: {}
+      operationId: get-api-user
+      description: get a list of users
+      security:
+        - Auth0 - Admin:
+            - roles
+            - azp
+      parameters: []
+    post:
+      summary: ''
+      operationId: post-api-user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      description: create a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                phoneNumber:
+                  type: string
+                isAdmin:
+                  type: boolean
+                birthDate:
+                  type: string
+                hourlyRate:
+                  type: string
+                startDate:
+                  type: string
+              required:
+                - userId
+                - firstName
+                - lastName
+                - email
+components:
+  schemas:
+    Job:
+      title: Job
+      type: object
+      properties:
+        _id:
+          type: string
+        jobNumber:
+          type: integer
+          description: jobNumber for each new contracted job to identify job for company
+          minimum: 21000
+        company:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        client:
+          type: string
+        area:
+          type: string
+        isInvoiced:
+          type: boolean
+          default: false
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - _id
+        - jobNumber
+    JobPart:
+      title: JobPart
+      type: object
+      properties:
+        _id:
+          type: string
+          description: object Id created by mongodb
+        jobPartTitle:
+          type: string
+          description: Description of job part of main job(s)
+        jobDescription:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - _id
+        - jobPartTitle
+    JobPartDueDate:
+      title: JobPartDueDate
+      type: object
+      properties:
+        _id:
+          type: string
+          description: object id created by mongodb
+        job:
+          $ref: '#/components/schemas/Job'
+        jobDescription:
+          $ref: '#/components/schemas/JobPart'
+        dueDate:
+          type: string
+          description: due date of the sub job for a give job
+        contractor:
+          type: string
+      required:
+        - _id
+        - job
+        - jobDescription
+    TimesheetEntry:
+      title: TimesheetEntry
+      type: object
+      properties:
+        _id:
+          type: string
+          description: object Id created by mongodb
+        user:
+          $ref: '#/components/schemas/User'
+        userId:
+          type: string
+          description: |
+            auth0 created client Id
+        entryId:
+          type: string
+          description: unique id created by react client for each entry
+        day:
+          type: string
+        date:
+          type: string
+        startTime:
+          type: string
+        endTime:
+          type: string
+        jobNumber:
+          type: integer
+        jobTime:
+          type: number
+        weekStart:
+          type: string
+        weekEnd:
+          type: string
+        weekNumber:
+          type: number
+        isArchive:
+          type: boolean
+          default: false
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - _id
+        - user
+        - userId
+        - entryId
+        - day
+        - date
+        - startTime
+        - endTime
+        - jobNumber
+        - jobTime
+        - weekStart
+        - weekEnd
+        - isArchive
+      description: Timesheet entry for time spent on a job each day
+    User:
+      title: User
+      type: object
+      x-internal: false
+      description: User created by Auth0 on register
+      properties:
+        _id:
+          type: string
+          description: Unique user Id created by mongoDB
+        userId:
+          type: string
+          description: User Id created by Auth0
+        firstName:
+          type: string
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type:
+            - string
+            - number
+            - integer
+        isAdmin:
+          type: boolean
+          default: false
+        birthDate:
+          type: string
+          format: date
+        hourlyRate:
+          type: number
+        startDate:
+          type: string
+          format: date
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - _id
+        - userId
+        - firstName
+        - email
+        - isAdmin
+  securitySchemes:
+    Auth0-Admin:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: 'auth0'
+          scopes:
+            azp: userId
+            roles: 'admin:write'
+    Auth0-user:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: 'auth0'
+          scopes:
+            azp: clientId
+      description: ''
