@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { withAuthenticationRequired } from '@auth0/auth0-react';
 import { Form, Button, Dropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
@@ -24,6 +25,9 @@ const TimeSheetScreen = () => {
   const timeSheetEntries = useSelector((state) => state.timeSheet);
   const { dayEntries } = timeSheetEntries;
 
+  // TODO create a use state for weekStart that is the fetched date OR the created startDate-- how to get back to current week if not filled out?
+
+  // TODO - useEffect - getTimeSheet to take week startDate as a parameter
   useEffect(() => {
     dispatch(getTimeSheet());
   }, [dispatch]);
@@ -42,9 +46,10 @@ const TimeSheetScreen = () => {
 
   const startDate = moment().startOf('week').format('DDMMYYYY');
   const endDate = moment().endOf('week').format('DDMMYYYY');
-  const weekNumber = moment().week();
 
   const weekArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  // TODO - create an array that searches the last 4 weeks, then onClick will create a get request
   const dummyArray = [
     { startDate: startDate, endDate: endDate },
     { startDate: '27/09/2021', endDate: '03/10/2021' },
@@ -70,7 +75,7 @@ const TimeSheetScreen = () => {
 
                 <Dropdown.Menu as={CustomMenu}>
                   {dummyArray.map((date, index) => (
-                    <Dropdown.Item eventKey={date.endDate} key={index} onClick={(e) => setDropdownTitle(date)}>
+                    <Dropdown.Item eventKey={date.endDate} key={index} onClick={() => setDropdownTitle(date)}>
                       {date.startDate} - {date.endDate}
                     </Dropdown.Item>
                   ))}
@@ -81,8 +86,8 @@ const TimeSheetScreen = () => {
                 Save
               </Button>
             </div>
-            {weekArray.map((day, index) => (
-              <TimeSheetDay key={index} day={day} />
+            {weekArray.map((day) => (
+              <TimeSheetDay key={day} day={day} />
             ))}
             <Button variant="primary" type="submit">
               Save
@@ -94,12 +99,8 @@ const TimeSheetScreen = () => {
   );
 };
 
-export default TimeSheetScreen;
+export default withAuthenticationRequired(TimeSheetScreen, {
+  onRedirecting: () => <Loader />,
+});
 
 // TODO - fetch the timesheet data from database and set as initial state, IF empty create empty
-
-// TODO - ADD date selection for timesheet week that CREATES a database entry
-
-// TODO - PUT request on submit
-
-// TODO - CREATES new week each sunday
