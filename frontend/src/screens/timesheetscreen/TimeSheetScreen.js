@@ -19,31 +19,27 @@ const TimeSheetScreen = () => {
 
   const { getAccessTokenSilently, user } = useAuth0();
 
-  const id = user.sub;
+  const userId = user.sub;
 
   const dispatch = useDispatch();
 
-  const timeSheetData = useSelector((state) => state.timeSheetData);
-  const { loading, error } = timeSheetData;
-
   const timeSheetEntries = useSelector((state) => state.timeSheet);
-  const { dayEntries } = timeSheetEntries;
+  const { loading, error, dayEntries } = timeSheetEntries;
 
   // TODO create a use state for weekStart that is the fetched date OR the created weekStart-- how to get back to current week if not filled out?
 
-  // TODO - useEffect - getTimeSheet to take week weekStart as a parameter
   useEffect(() => {
     let token;
     const getToken = async () => {
       token = await getAccessTokenSilently();
     };
-    getToken().then(() => dispatch(getTimeSheet(token, id, weekStart)));
+    getToken().then(() => dispatch(getTimeSheet(token, userId, weekStart)));
   }, []);
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
+  const submitHandler = async (event) => {
+    event.preventDefault();
     const token = await getAccessTokenSilently();
-    dispatch(handleSubmit(dayEntries, weekStart, endDate, token, id));
+    dispatch(handleSubmit(dayEntries, weekStart, endDate, token, userId));
   };
 
   moment.updateLocale('en', {
@@ -83,8 +79,8 @@ const TimeSheetScreen = () => {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu as={CustomMenu}>
-                  {dummyArray.map((date, index) => (
-                    <Dropdown.Item eventKey={date.endDate} key={index} onClick={() => setDropdownTitle(date)}>
+                  {dummyArray.map((date) => (
+                    <Dropdown.Item eventKey={date.endDate} key={date.weekStart} onClick={() => setDropdownTitle(date)}>
                       {date.weekStart} - {date.endDate}
                     </Dropdown.Item>
                   ))}

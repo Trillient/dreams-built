@@ -13,8 +13,8 @@ const getUserEntries = asyncHandler(async (req, res) => {
 
   const weekStart = req.query.weekstart;
 
-  const entries = await TimeSheetEntry.find({ weekStart: weekStart, userId: req.params.id });
-  console.log(entries);
+  const entries = await TimeSheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: false });
+
   res.json({ weekStart: weekStart, entries: entries });
 });
 

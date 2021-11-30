@@ -19,13 +19,11 @@ const TimeSheetDay = ({ day }) => {
   }, [dayEntries, day]);
 
   const onAddBtnClick = () => {
-    const id = uuidv4();
-    dispatch(createEntry(id, day));
+    const entryId = uuidv4();
+    dispatch(createEntry(entryId, day));
   };
-  const onDeleteClick = (id) => {
-    // if (window.confirm('Are you sure')) {
-    dispatch(deleteEntry(id));
-    // }
+  const onDeleteClick = (entryId) => {
+    dispatch(deleteEntry(entryId));
   };
 
   return (
@@ -50,12 +48,12 @@ const TimeSheetDay = ({ day }) => {
             )}
           </thead>
           <tbody>
-            {inputList.map(({ id }, index) => (
-              <tr className="timesheet-grid" key={id}>
+            {inputList.map(({ entryId }, index) => (
+              <tr className="timesheet-grid" key={entryId}>
                 <td className="display-none_mobile">{index + 1}</td>
-                <TimeSheetEntry id={id} index={index} day={day} setInputList={setInputList} inputList={inputList} />
+                <TimeSheetEntry entryId={entryId} day={day} />
                 <td>
-                  <Button className="btn-main" id={id} onClick={() => onDeleteClick(id)}>
+                  <Button className="btn-main" onClick={() => onDeleteClick(entryId)}>
                     <FaTrash />
                   </Button>
                 </td>

@@ -6,27 +6,31 @@ import { updateEntry } from '../actions/timeSheetActions';
 
 // import Message from "../components/Message";
 
-const TimeSheetEntry = ({ id, day }) => {
+const TimeSheetEntry = ({ entryId, day }) => {
   const dispatch = useDispatch();
-
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [jobNumber, setJobNumber] = useState('');
 
   const timeSheetEntries = useSelector((state) => state.timeSheet);
   const { dayEntries } = timeSheetEntries;
 
-  const entry = dayEntries.filter((e) => e.id === id);
+  const entry = dayEntries.filter((entry) => entry.entryId === entryId);
+
+  const initialStartTime = entry[0].startTime ? entry[0].startTime : '';
+  const initialEndTime = entry[0].endTime ? entry[0].endTime : '';
+  const intialJobNumber = entry[0].jobNumber ? entry[0].jobNumber : '';
+
+  const [startTime, setStartTime] = useState(initialStartTime);
+  const [endTime, setEndTime] = useState(initialEndTime);
+  const [jobNumber, setJobNumber] = useState(intialJobNumber);
+
+  // useEffect(() => {
+  //   setStartTime(entry[0].startTime || '');
+  //   setEndTime(entry[0].endTime || '');
+  //   setJobNumber(entry[0].jobNumber || '');
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   useEffect(() => {
-    setStartTime(entry[0].startTime || '');
-    setEndTime(entry[0].endTime || '');
-    setJobNumber(entry[0].jobNumber || '');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    dispatch(updateEntry(startTime, endTime, jobNumber, id, day, time));
+    dispatch(updateEntry(startTime, endTime, jobNumber, entryId, day, time));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTime, endTime, jobNumber]);
 
@@ -39,7 +43,7 @@ const TimeSheetEntry = ({ id, day }) => {
   return (
     <>
       <td>
-        <Form.Group controlId={`start - ${id}`}>
+        <Form.Group controlId={`start - ${entryId}`}>
           <Form.Label className="display-none_lg-screen">Start Time: </Form.Label>
           <Form.Control
             type="time"
@@ -51,7 +55,7 @@ const TimeSheetEntry = ({ id, day }) => {
         </Form.Group>
       </td>
       <td>
-        <Form.Group controlId={`end - ${id}`}>
+        <Form.Group controlId={`end - ${entryId}`}>
           <Form.Label className="display-none_lg-screen">End Time: </Form.Label>
           <Form.Control
             type="time"
@@ -63,7 +67,7 @@ const TimeSheetEntry = ({ id, day }) => {
         </Form.Group>
       </td>
       <td>
-        <Form.Group controlId={`job - ${id}`}>
+        <Form.Group controlId={`job - ${entryId}`}>
           <Form.Label className="display-none_lg-screen">Job Number: </Form.Label>
           <Form.Control
             type="number"
@@ -83,5 +87,3 @@ const TimeSheetEntry = ({ id, day }) => {
 };
 
 export default TimeSheetEntry;
-
-// TODO - onChange update global state for a given ID of entry

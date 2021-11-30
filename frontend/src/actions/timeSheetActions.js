@@ -2,7 +2,7 @@ import * as actions from '../constants/timeSheetConstants';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-export const getTimeSheet = (token, id, weekStart) => async (dispatch) => {
+export const getTimeSheet = (token, userId, weekStart) => async (dispatch) => {
   try {
     dispatch({
       type: actions.TIMESHEET_REQUEST,
@@ -14,7 +14,7 @@ export const getTimeSheet = (token, id, weekStart) => async (dispatch) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/timesheet/user/${id}?weekstart=${weekStart}`, config);
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/timesheet/user/${userId}?weekstart=${weekStart}`, config);
 
     dispatch({
       type: actions.TIMESHEET_SUCCESS,
@@ -33,28 +33,28 @@ export const getTimeSheet = (token, id, weekStart) => async (dispatch) => {
   }
 };
 
-export const createEntry = (id, day) => (dispatch) => {
+export const createEntry = (entryId, day) => (dispatch) => {
   dispatch({
     type: actions.TIMESHEET_CREATE_ENTRY,
-    payload: { id: id, day: day },
+    payload: { entryId: entryId, day: day },
   });
 };
 
-export const deleteEntry = (id) => (dispatch) => {
+export const deleteEntry = (entryId) => (dispatch) => {
   dispatch({
     type: actions.TIMESHEET_DELETE_ENTRY,
-    payload: id,
+    payload: entryId,
   });
 };
 
-export const updateEntry = (startTime, endTime, jobNumber, id, day, time) => (dispatch) => {
+export const updateEntry = (startTime, endTime, jobNumber, entryId, day, time) => (dispatch) => {
   dispatch({
     type: actions.TIMESHEET_UPDATE_ENTRY,
-    payload: { id: id, day: day, startTime: startTime, endTime: endTime, jobNumber: jobNumber, updated: Date().toLocaleString(), jobTime: time },
+    payload: { entryId: entryId, day: day, startTime: startTime, endTime: endTime, jobNumber: jobNumber, updated: Date().toLocaleString(), jobTime: time },
   });
 };
 
-export const handleSubmit = (data, startDate, endDate, token, id) => async (dispatch, getState) => {
+export const handleSubmit = (data, startDate, endDate, token, userId) => async (dispatch) => {
   try {
     dispatch({
       type: actions.TIMESHEET_SUBMIT_REQUEST,
@@ -87,7 +87,7 @@ export const handleSubmit = (data, startDate, endDate, token, id) => async (disp
         Authorization: `Bearer ${token}`,
       },
     };
-    await axios.post(`${process.env.REACT_APP_API_URL}/timesheet/user/${id}`, { weekStart: startDate, weekEnd: endDate, entries: finalisedData }, config).catch(function (error) {
+    await axios.post(`${process.env.REACT_APP_API_URL}/timesheet/user/${userId}`, { weekStart: startDate, weekEnd: endDate, entries: finalisedData }, config).catch(function (error) {
       dispatch({
         type: actions.TIMESHEET_SUBMIT_FAIL,
         payload: error.response && error.response.data.message ? error.response.data.message : error.message,

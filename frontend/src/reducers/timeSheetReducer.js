@@ -1,28 +1,21 @@
 import * as actions from '../constants/timeSheetConstants';
 
-export const getTimeSheetReducer = (state = { timesheets: [] }, action) => {
+export const entryArrayReducer = (state = { dayEntries: [], error: false }, action) => {
   switch (action.type) {
     case actions.TIMESHEET_REQUEST:
-      return { loading: true };
-    case actions.TIMESHEET_SUCCESS:
-      return { loading: false };
-    case actions.TIMESHEET_FAIL:
-      return { loading: false, error: action.payload };
-    default:
-      return state;
-  }
-};
-
-export const entryArrayReducer = (state = { dayEntries: [] }, action) => {
-  switch (action.type) {
+      return { ...state, loading: true };
     case actions.TIMESHEET_POPULATE:
       return { ...state, dayEntries: action.payload };
     case actions.TIMESHEET_CREATE_ENTRY:
       return { ...state, dayEntries: [...state.dayEntries, action.payload] };
     case actions.TIMESHEET_DELETE_ENTRY:
-      return { ...state, dayEntries: state.dayEntries.filter((x) => x.id !== action.payload) };
+      return { ...state, dayEntries: state.dayEntries.filter((entry) => entry.entryId !== action.payload) };
     case actions.TIMESHEET_UPDATE_ENTRY:
-      return { ...state, dayEntries: state.dayEntries.map((x) => (x.id === action.payload.id ? action.payload : x)) };
+      return { ...state, dayEntries: state.dayEntries.map((entry) => (entry.entryId === action.payload.entryId ? action.payload : entry)) };
+    case actions.TIMESHEET_SUCCESS:
+      return { ...state, loading: false };
+    case actions.TIMESHEET_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }
