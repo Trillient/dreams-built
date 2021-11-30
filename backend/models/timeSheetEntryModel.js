@@ -10,7 +10,7 @@ const timeSheetEntrySchema = mongoose.Schema(
     userId: { type: String, required: true },
     entryId: { type: String, required: true },
     day: { type: String, required: true },
-    date: { type: Date, required: true },
+    date: { type: Date },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
     jobNumber: { type: Number, required: true },

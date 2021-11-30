@@ -3,9 +3,9 @@ import * as actions from '../constants/timeSheetConstants';
 export const getTimeSheetReducer = (state = { timesheets: [] }, action) => {
   switch (action.type) {
     case actions.TIMESHEET_REQUEST:
-      return { loading: true, timesheets: [] };
+      return { loading: true };
     case actions.TIMESHEET_SUCCESS:
-      return { loading: false, timesheets: action.payload };
+      return { loading: false };
     case actions.TIMESHEET_FAIL:
       return { loading: false, error: action.payload };
     default:
@@ -15,6 +15,8 @@ export const getTimeSheetReducer = (state = { timesheets: [] }, action) => {
 
 export const entryArrayReducer = (state = { dayEntries: [] }, action) => {
   switch (action.type) {
+    case actions.TIMESHEET_POPULATE:
+      return { ...state, dayEntries: action.payload };
     case actions.TIMESHEET_CREATE_ENTRY:
       return { ...state, dayEntries: [...state.dayEntries, action.payload] };
     case actions.TIMESHEET_DELETE_ENTRY:

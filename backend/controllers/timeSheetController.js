@@ -9,44 +9,42 @@ const User = require('../models/userModel');
  */
 
 const getUserEntries = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-  const weekStart = req.query.weekstart;
-  if (user.userId !== req.user.azp) {
-    res.status(401);
-    throw new Error('Invalid user credentials');
-  }
-  const entries = await TimeSheetEntry.find({ weekStart: weekStart, user: req.params.id, userId: req.user.azp });
+  const user = await User.findOne({ userId: req.params.id });
 
+  const weekStart = req.query.weekstart;
+
+  const entries = await TimeSheetEntry.find({ weekStart: weekStart, userId: req.params.id });
+  console.log(entries);
   res.json({ weekStart: weekStart, entries: entries });
 });
 
 /**
  * @Desc Create a user timesheet entry
- * @Route POST /api/timesheet/user/:id
+ * @Route POST /api/timesheet/user
  * @Access Private
  */
 
 const createUserEntry = asyncHandler(async (req, res) => {
   const { weekStart, weekEnd, entries } = req.body;
 
-  const user = await User.findById(req.params.id);
+  const user = await User.findOne({ userId: req.params.id });
 
-  if (user.userId !== req.user.azp) {
+  if (user.userId !== req.params.id) {
     res.status(401);
     throw new Error('Invalid user credentials');
   }
 
   // TODO - Run validation on parameters
-  const archive = await TimeSheetEntry.find({ weekStart: weekStart, user: req.params.id, userId: req.user.azp, isArchive: false });
+  const archive = await TimeSheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: false });
 
-  const totalEntriesArchieved = await TimeSheetEntry.find({ weekStart: weekStart, user: req.params.id, userId: req.user.azp, isArchive: true });
+  const totalEntriesArchieved = await TimeSheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: true });
 
-  await TimeSheetEntry.updateMany({ weekStart: weekStart, user: req.params.id, userId: req.user.azp }, { $set: { isArchive: true } });
+  await TimeSheetEntry.updateMany({ weekStart: weekStart, userId: req.params.id }, { $set: { isArchive: true } });
 
   const data = await entries.map((entry) => {
     TimeSheetEntry.create({
-      user: req.params.id,
-      userId: req.user.azp,
+      user: user._id,
+      userId: req.params.id,
       entryId: entry.entryId,
       day: entry.day,
       date: entry.date,

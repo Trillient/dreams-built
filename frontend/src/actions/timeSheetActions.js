@@ -1,14 +1,29 @@
 import * as actions from '../constants/timeSheetConstants';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
-export const getTimeSheet = (data) => async (dispatch, getState) => {
+export const getTimeSheet = (token, id, weekStart) => async (dispatch) => {
   try {
     dispatch({
       type: actions.TIMESHEET_REQUEST,
     });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/timesheet/user/${id}?weekstart=${weekStart}`, config);
+
     dispatch({
       type: actions.TIMESHEET_SUCCESS,
-      payload: data,
+      payload: data.entries,
+    });
+
+    dispatch({
+      type: actions.TIMESHEET_POPULATE,
+      payload: data.entries,
     });
   } catch (error) {
     dispatch({
@@ -39,11 +54,12 @@ export const updateEntry = (startTime, endTime, jobNumber, id, day, time) => (di
   });
 };
 
-export const handleSubmit = (data, startDate, endDate) => async (dispatch, getState) => {
+export const handleSubmit = (data, startDate, endDate, token, id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: actions.TIMESHEET_SUBMIT_REQUEST,
     });
+
     dispatch({
       type: actions.TIMESHEET_SUBMIT_VALIDATE,
     });
@@ -65,41 +81,23 @@ export const handleSubmit = (data, startDate, endDate) => async (dispatch, getSt
 
     const finalisedData = data.filter((e) => e.startTime !== '' && e.endTime !== '' && e.jobNumber !== '');
 
-    const dayArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    const sorting = (day) => {
-      return finalisedData.filter((e) => e.day === day);
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     };
-
-    const end = dayArray.map((e) => {
-      if (e === 'Monday') {
-        return { Monday: sorting(e) };
-      }
-      if (e === 'Tuesday') {
-        return { Tuesday: sorting(e) };
-      }
-      if (e === 'Wednesday') {
-        return { Wednesday: sorting(e) };
-      }
-      if (e === 'Thursday') {
-        return { Thursday: sorting(e) };
-      }
-      if (e === 'Friday') {
-        return { Friday: sorting(e) };
-      }
-      if (e === 'Saturday') {
-        return { Saturday: sorting(e) };
-      }
-      if (e === 'Sunday') {
-        return { Sunday: sorting(e) };
-      }
-      toast.error('Something went wrong');
-      throw new Error('Something went wrong');
+    await axios.post(`${process.env.REACT_APP_API_URL}/timesheet/user/${id}`, { weekStart: startDate, weekEnd: endDate, entries: finalisedData }, config).catch(function (error) {
+      dispatch({
+        type: actions.TIMESHEET_SUBMIT_FAIL,
+        payload: error.response && error.response.data.message ? error.response.data.message : error.message,
+      });
     });
 
     toast.success('Saved!');
     dispatch({
       type: actions.TIMESHEET_SUBMIT_SUCCESS,
-      payload: [{ startDate: startDate }, { endDate: endDate }, { entries: end }],
+      payload: [{ startDate: startDate }, { endDate: endDate }, { entries: finalisedData }],
     });
   } catch (error) {
     dispatch({
