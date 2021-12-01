@@ -4,8 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { updateEntry } from '../actions/timeSheetActions';
 
-// import Message from "../components/Message";
-
 const TimeSheetEntry = ({ entryId, day }) => {
   const dispatch = useDispatch();
 
@@ -14,31 +12,30 @@ const TimeSheetEntry = ({ entryId, day }) => {
 
   const entry = dayEntries.filter((entry) => entry.entryId === entryId);
 
-  const initialStartTime = entry[0].startTime ? entry[0].startTime : '';
-  const initialEndTime = entry[0].endTime ? entry[0].endTime : '';
-  const intialJobNumber = entry[0].jobNumber ? entry[0].jobNumber : '';
+  if (entry.length > 1) {
+    throw new Error('Duplicate entries, contact support');
+  }
 
-  const [startTime, setStartTime] = useState(initialStartTime);
-  const [endTime, setEndTime] = useState(initialEndTime);
-  const [jobNumber, setJobNumber] = useState(intialJobNumber);
+  const initStartTime = entry.length === 1 ? entry[0].startTime : '';
+  const initEndTime = entry.length === 1 ? entry[0].endTime : '';
+  const initJobNumber = entry.length === 1 ? entry[0].jobNumber : '';
 
-  // useEffect(() => {
-  //   setStartTime(entry[0].startTime || '');
-  //   setEndTime(entry[0].endTime || '');
-  //   setJobNumber(entry[0].jobNumber || '');
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  const [startTime, setStartTime] = useState(initStartTime || '');
+  const [endTime, setEndTime] = useState(initEndTime || '');
+  const [jobNumber, setJobNumber] = useState(initJobNumber || '');
 
   useEffect(() => {
     dispatch(updateEntry(startTime, endTime, jobNumber, entryId, day, time));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTime, endTime, jobNumber]);
 
-  const a = endTime.split(':');
-  const timeA = +a[0] + +a[1] / 60;
-  const b = startTime.split(':');
-  const timeB = +b[0] + +b[1] / 60;
-  const time = (timeA - timeB).toFixed(2);
+  let time;
+  if (startTime && endTime) {
+    const a = endTime.split(':');
+    const timeA = +a[0] + +a[1] / 60;
+    const b = startTime.split(':');
+    const timeB = +b[0] + +b[1] / 60;
+    time = (timeA - timeB).toFixed(2);
+  }
 
   return (
     <>
@@ -87,3 +84,5 @@ const TimeSheetEntry = ({ entryId, day }) => {
 };
 
 export default TimeSheetEntry;
+
+// TODO - onChange update global state for a given ID of entry
