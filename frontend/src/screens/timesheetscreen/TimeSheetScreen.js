@@ -26,22 +26,6 @@ const TimeSheetScreen = () => {
   const timeSheetEntries = useSelector((state) => state.timeSheet);
   const { loading, error, dayEntries } = timeSheetEntries;
 
-  // TODO create a use state for weekStart that is the fetched date OR the created weekStart-- how to get back to current week if not filled out?
-
-  useEffect(() => {
-    let token;
-    const getToken = async () => {
-      token = await getAccessTokenSilently();
-    };
-    getToken().then(() => dispatch(getTimeSheet(token, userId, weekStart)));
-  }, []);
-
-  const submitHandler = async (event) => {
-    event.preventDefault();
-    const token = await getAccessTokenSilently();
-    dispatch(handleSubmit(dayEntries, weekStart, endDate, token, userId));
-  };
-
   moment.updateLocale('en', {
     week: {
       dow: 1,
@@ -53,6 +37,22 @@ const TimeSheetScreen = () => {
   const endDate = moment().endOf('week').format('DDMMYYYY');
 
   const weekArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  // TODO create a use state for weekStart that is the fetched date OR the created weekStart-- how to get back to current week if not filled out?
+
+  useEffect(() => {
+    let token;
+    const getToken = async () => {
+      token = await getAccessTokenSilently();
+    };
+    getToken().then(() => dispatch(getTimeSheet(token, userId, weekStart)));
+  }, [dispatch, getAccessTokenSilently, userId, weekStart]);
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    const token = await getAccessTokenSilently();
+    dispatch(handleSubmit(dayEntries, weekStart, endDate, token, userId));
+  };
 
   // TODO - create an array that searches the last 4 weeks, then onClick will create a get request
   const dummyArray = [
@@ -107,5 +107,3 @@ const TimeSheetScreen = () => {
 export default withAuthenticationRequired(TimeSheetScreen, {
   onRedirecting: () => <Loader />,
 });
-
-// TODO - fetch the timesheet data from database and set as initial state, IF empty create empty

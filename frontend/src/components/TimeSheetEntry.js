@@ -26,6 +26,7 @@ const TimeSheetEntry = ({ entryId, day }) => {
 
   useEffect(() => {
     dispatch(updateEntry(startTime, endTime, jobNumber, entryId, day, time));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTime, endTime, jobNumber]);
 
   let time;
@@ -84,5 +85,3 @@ const TimeSheetEntry = ({ entryId, day }) => {
 };
 
 export default TimeSheetEntry;
-
-// TODO - onChange update global state for a given ID of entry
