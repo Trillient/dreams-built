@@ -97,7 +97,7 @@ export const handleSubmit = (data, startDate, endDate, token, userId) => async (
     toast.success('Saved!');
     dispatch({
       type: actions.TIMESHEET_SUBMIT_SUCCESS,
-      payload: [{ startDate: startDate }, { endDate: endDate }, { entries: finalisedData }],
+      payload: { startDate: startDate, endDate: endDate, entries: finalisedData },
     });
   } catch (error) {
     dispatch({
