@@ -32,9 +32,9 @@ const Header = () => {
               <LinkContainer to="/profile">
                 <Nav.Link>Profile</Nav.Link>
               </LinkContainer>
+              {isAuthenticated ? <LogoutButton /> : <LoginButton />}
             </Nav>
           </Navbar.Collapse>
-          <Nav className="justify-content-end">{isAuthenticated ? <LogoutButton /> : <LoginButton />}</Nav>
         </Container>
       </Navbar>
     </header>
