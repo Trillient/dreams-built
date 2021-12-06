@@ -25,11 +25,10 @@ describe('Given a timesheet schema model has been updated', () => {
     expect(entry.type()).toEqual(expect.any(String));
     expect(entry.required).toBeTruthy();
   });
-  it('Then is should contain the date the entry was made for', () => {
+  it('Then it may contain the date the entry was made for', () => {
     const entry = TimeSheetEntry.schema.obj.date;
     expect(entry).toBeTruthy();
     expect(entry.type()).toEqual(expect.any(String));
-    expect(entry.required).toBeTruthy();
   });
   it('Then it should contain the startTime', () => {
     const entry = TimeSheetEntry.schema.obj.startTime;

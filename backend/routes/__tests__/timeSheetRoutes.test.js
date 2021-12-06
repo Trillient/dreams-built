@@ -97,10 +97,11 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
 
       // Retrieve user _id
       const user = await User.findOne({ email: 'eric@gmail.com' });
-      const userParams = await user._id;
+      const userId = await user._id;
+      const userParams = await user.userId;
 
       // Create timesheet entry
-      await TimeSheetEntry.create(createReturnedEntry(userParams));
+      await TimeSheetEntry.create(createReturnedEntry(userId, userParams));
 
       // Check response
       const checkBody = (res) => {
@@ -127,7 +128,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
 
       // Retrieve user _id
       const user = await User.findOne({ email: 'mary@gmail.com' });
-      const userParams = await user._id;
+      const userParams = await user.userId;
 
       // Create timesheet entry
       const singleEntry = createSingleEntry('2');
@@ -136,7 +137,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
       // Check response
       const checkBody = (res) => {
         expect(res.body.entriesCreated).toBe(1);
-        expect(res.body.entriesArchived).toBe(0);
+        expect(res.body.entriesArchived).toBe(1);
       };
 
       // Make request
@@ -150,34 +151,6 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
         .expect(201);
     });
 
-    it('when an authenticated user makes a request to the wrong "/:id" endpoint then it should return 401 with an error message', async () => {
-      // Create and save a user
-      const newUser = createNewUser(2, 'craig', 'doe', 'craig@gmail.com');
-      const row = new User(newUser);
-      await row.save();
-
-      // Retrieve user _id
-      const user = await User.findOne({ email: 'craig@gmail.com' });
-      const userParams = await user._id;
-
-      // Create timesheet entry
-      const singleEntry = createSingleEntry('3');
-      const newTimeSheet = createTimeSheetEntry(singleEntry);
-
-      // Check response
-      const checkBody = (res) => {
-        expect(res.body.message).toBe('Invalid user credentials');
-      };
-
-      // Make request
-      await request(app)
-        .post(`/api/timesheet/user/${userParams}`)
-        .send(newTimeSheet)
-        .set(`Authorization`, `Bearer ${token}`)
-        .set('Content-Type', 'application/json')
-        .expect('Content-Type', /application\/json/)
-        .expect(checkBody)
-        .expect(401);
-    });
+    it.todo('when an authenticated user makes a request to the wrong "/:id" endpoint then it should return 401 with an error message');
   });
 });
