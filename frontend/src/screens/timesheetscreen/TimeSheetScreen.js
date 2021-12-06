@@ -19,8 +19,6 @@ const TimeSheetScreen = () => {
 
   const { getAccessTokenSilently, user } = useAuth0();
 
-  const userId = user.sub;
-
   const dispatch = useDispatch();
 
   const timeSheetEntries = useSelector((state) => state.timeSheet);
@@ -45,13 +43,13 @@ const TimeSheetScreen = () => {
     const getToken = async () => {
       token = await getAccessTokenSilently();
     };
-    getToken().then(() => dispatch(getTimeSheet(token, userId, weekStart)));
-  }, [dispatch, getAccessTokenSilently, userId, weekStart]);
+    getToken().then(() => dispatch(getTimeSheet(token, user.sub, weekStart)));
+  }, [dispatch, getAccessTokenSilently, user, weekStart]);
 
   const submitHandler = async (event) => {
     event.preventDefault();
     const token = await getAccessTokenSilently();
-    dispatch(handleSubmit(dayEntries, weekStart, endDate, token, userId));
+    dispatch(handleSubmit(dayEntries, weekStart, endDate, token, user.sub));
   };
 
   // TODO - create an array that searches the last 4 weeks, then onClick will create a get request
