@@ -15,7 +15,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import './timesheet.css';
 
 const TimeSheetScreen = () => {
+  const startWeekInit = DateTime.now().startOf('week');
+  const endWeekInit = DateTime.now().endOf('week');
+
   const [dropdownTitle, setDropdownTitle] = useState('');
+  const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
+  const [endDate, setEndDate] = useState(endWeekInit.toFormat('dd/MM/yyyy'));
 
   const { getAccessTokenSilently, user } = useAuth0();
 
@@ -24,15 +29,7 @@ const TimeSheetScreen = () => {
   const timeSheetEntries = useSelector((state) => state.timeSheet);
   const { loading, error, dayEntries } = timeSheetEntries;
 
-  const startWeekInit = DateTime.now().startOf('week');
-  const endWeekInit = DateTime.now().endOf('week');
-
-  const weekStart = startWeekInit.toFormat('dd/MM/yyyy');
-  const endDate = endWeekInit.toFormat('dd/MM/yyyy');
-
   const weekArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-  // TODO create a use state for weekStart that is the fetched date OR the created weekStart-- how to get back to current week if not filled out?
 
   useEffect(() => {
     let token;
@@ -48,13 +45,18 @@ const TimeSheetScreen = () => {
     dispatch(handleSubmit(dayEntries, weekStart, endDate, token, user.sub));
   };
 
-  // TODO - create an array that searches the last 4 weeks, then onClick will create a get request
-  let dummyArray = [{ weekStart: weekStart, endDate: endDate }];
+  let timeSheetPeriods = [{ weekStart: startWeekInit.toFormat('dd/MM/yyyy'), endDate: endWeekInit.toFormat('dd/MM/yyyy') }];
   for (let i = 1; i < 5; i++) {
-    dummyArray.push({ weekStart: startWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy'), endDate: endWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy') });
+    timeSheetPeriods.push({ weekStart: startWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy'), endDate: endWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy') });
   }
 
   const title = !dropdownTitle ? `${weekStart} - ${endDate}` : `${dropdownTitle.weekStart} - ${dropdownTitle.endDate}`;
+
+  const weekSelect = (date) => {
+    setDropdownTitle(date);
+    setWeekStart(date.weekStart);
+    setEndDate(date.endDate);
+  };
 
   return (
     <>
@@ -73,8 +75,8 @@ const TimeSheetScreen = () => {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu as={CustomMenu}>
-                  {dummyArray.map((date) => (
-                    <Dropdown.Item eventKey={date.endDate} key={date.weekStart} onClick={() => setDropdownTitle(date)}>
+                  {timeSheetPeriods.map((date) => (
+                    <Dropdown.Item eventKey={date.endDate} key={date.weekStart} onClick={() => weekSelect(date)}>
                       {date.weekStart} - {date.endDate}
                     </Dropdown.Item>
                   ))}
