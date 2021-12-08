@@ -3,7 +3,7 @@ import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { Form, Button, Dropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 
 import { getTimeSheet, handleSubmit } from '../../actions/timeSheetActions';
 import TimeSheetDay from '../../components/TimeSheetDay';
@@ -24,15 +24,11 @@ const TimeSheetScreen = () => {
   const timeSheetEntries = useSelector((state) => state.timeSheet);
   const { loading, error, dayEntries } = timeSheetEntries;
 
-  moment.updateLocale('en', {
-    week: {
-      dow: 1,
-      doy: 4,
-    },
-  });
+  const startWeekInit = DateTime.now().startOf('week');
+  const endWeekInit = DateTime.now().endOf('week');
 
-  const weekStart = moment().startOf('week').format('DDMMYYYY');
-  const endDate = moment().endOf('week').format('DDMMYYYY');
+  const weekStart = startWeekInit.toFormat('dd/MM/yyyy');
+  const endDate = endWeekInit.toFormat('dd/MM/yyyy');
 
   const weekArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -53,11 +49,11 @@ const TimeSheetScreen = () => {
   };
 
   // TODO - create an array that searches the last 4 weeks, then onClick will create a get request
-  const dummyArray = [
-    { weekStart: weekStart, endDate: endDate },
-    { weekStart: '27/09/2021', endDate: '03/10/2021' },
-    { weekStart: '20/09/2021', endDate: '26/09/2021' },
-  ];
+  let dummyArray = [{ weekStart: weekStart, endDate: endDate }];
+  for (let i = 1; i < 5; i++) {
+    dummyArray.push({ weekStart: startWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy'), endDate: endWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy') });
+  }
+
   const title = !dropdownTitle ? `${weekStart} - ${endDate}` : `${dropdownTitle.weekStart} - ${dropdownTitle.endDate}`;
 
   return (
