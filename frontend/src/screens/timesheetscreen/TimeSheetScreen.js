@@ -15,19 +15,28 @@ import 'react-toastify/dist/ReactToastify.css';
 import './timesheet.css';
 
 const TimeSheetScreen = () => {
-  const startWeekInit = DateTime.now().startOf('week');
-  const endWeekInit = DateTime.now().endOf('week');
-
-  const [dropdownTitle, setDropdownTitle] = useState('');
-  const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
-  const [endDate, setEndDate] = useState(endWeekInit.toFormat('dd/MM/yyyy'));
-
   const { getAccessTokenSilently, user } = useAuth0();
 
   const dispatch = useDispatch();
-
   const timeSheetEntries = useSelector((state) => state.timeSheet);
   const { loading, error, dayEntries } = timeSheetEntries;
+
+  const startWeekInit = DateTime.now().startOf('week');
+  const endWeekInit = DateTime.now().endOf('week');
+
+  const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
+  const [endDate, setEndDate] = useState(endWeekInit.toFormat('dd/MM/yyyy'));
+
+  let timeSheetPeriods = [{ weekStart: startWeekInit.toFormat('dd/MM/yyyy'), endDate: endWeekInit.toFormat('dd/MM/yyyy') }];
+  for (let i = 1; i < 5; i++) {
+    timeSheetPeriods.push({ weekStart: startWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy'), endDate: endWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy') });
+  }
+
+  const weekSelect = (date) => {
+    setWeekStart(date.weekStart);
+    setEndDate(date.endDate);
+  };
+  // TODO - create a week array that holds the long date ( ie, Monday 8th December )
 
   const weekArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -45,19 +54,6 @@ const TimeSheetScreen = () => {
     dispatch(handleSubmit(dayEntries, weekStart, endDate, token, user.sub));
   };
 
-  let timeSheetPeriods = [{ weekStart: startWeekInit.toFormat('dd/MM/yyyy'), endDate: endWeekInit.toFormat('dd/MM/yyyy') }];
-  for (let i = 1; i < 5; i++) {
-    timeSheetPeriods.push({ weekStart: startWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy'), endDate: endWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy') });
-  }
-
-  const title = !dropdownTitle ? `${weekStart} - ${endDate}` : `${dropdownTitle.weekStart} - ${dropdownTitle.endDate}`;
-
-  const weekSelect = (date) => {
-    setDropdownTitle(date);
-    setWeekStart(date.weekStart);
-    setEndDate(date.endDate);
-  };
-
   return (
     <>
       <ToastContainer theme="colored" />
@@ -71,7 +67,7 @@ const TimeSheetScreen = () => {
             <div className="grid-2">
               <Dropdown>
                 <Dropdown.Toggle id="dropdown-button" variant="secondary">
-                  Week: {title}
+                  Week: {weekStart} - {endDate}
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu as={CustomMenu}>
