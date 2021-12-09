@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 const jobSchema = mongoose.Schema(
   {
     jobNumber: { type: Number, required: true, unique: true, min: 22000 },
-    company: String,
+    company: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Client',
+    },
     address: String,
     city: String,
     client: String,

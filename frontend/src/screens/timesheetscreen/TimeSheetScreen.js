@@ -36,9 +36,11 @@ const TimeSheetScreen = () => {
     setWeekStart(date.weekStart);
     setEndDate(date.endDate);
   };
-  // TODO - create a week array that holds the long date ( ie, Monday 8th December )
 
-  const weekArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  let weekArray = [];
+  for (let i = 0; i < 7; i++) {
+    weekArray.push({ day: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('EEEE'), date: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('d MMMM') });
+  }
 
   useEffect(() => {
     let token;
@@ -84,7 +86,7 @@ const TimeSheetScreen = () => {
               </Button>
             </div>
             {weekArray.map((day) => (
-              <TimeSheetDay key={day} day={day} />
+              <TimeSheetDay key={day.date} day={day.day} date={day.date} />
             ))}
             <Button variant="primary" type="submit">
               Save

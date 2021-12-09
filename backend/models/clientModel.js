@@ -8,6 +8,6 @@ const clientSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const client = mongoose.model('client', clientSchema);
+const Client = mongoose.model('Client', clientSchema);
 
-module.exports = client;
+module.exports = Client;

@@ -7,7 +7,7 @@ import { FaTrash } from 'react-icons/fa';
 import { createEntry, deleteEntry } from '../actions/timeSheetActions';
 import TimeSheetEntry from './TimeSheetEntry';
 
-const TimeSheetDay = ({ day }) => {
+const TimeSheetDay = ({ day, date }) => {
   const dispatch = useDispatch();
 
   const [inputList, setInputList] = useState([]);
@@ -29,7 +29,9 @@ const TimeSheetDay = ({ day }) => {
   return (
     <Card className="mt-5 mb-5 shadow">
       <Card.Body>
-        <h2 className="text-center mb-4">{day}</h2>
+        <h2 className="text-center mb-4">
+          {day} - {date}
+        </h2>
         <Table striped bordered hover responsive className="table-sm timesheet-grid-container">
           <thead className="display-none_mobile">
             {inputList.length === 0 ? (
