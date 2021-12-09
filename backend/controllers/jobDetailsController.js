@@ -8,7 +8,7 @@ const JobDetails = require('../models/jobModel');
  */
 
 const getJobs = asyncHandler(async (req, res) => {
-  const jobList = await JobDetails.find();
+  const jobList = await JobDetails.find({}).populate('client', 'id clientName color');
   res.json(jobList);
 });
 
@@ -36,7 +36,7 @@ const getJob = asyncHandler(async (req, res) => {
  */
 
 const createJob = asyncHandler(async (req, res) => {
-  const { jobNumber, company, address, city, client, area, isInvoiced, dueDates } = req.body;
+  const { jobNumber, client, address, city, area, isInvoiced, endClient, color, dueDates } = req.body;
 
   const checkJobExists = await JobDetails.findOne({ jobNumber: jobNumber });
 
@@ -47,12 +47,13 @@ const createJob = asyncHandler(async (req, res) => {
 
   const job = new JobDetails({
     jobNumber: jobNumber,
-    company: company,
+    client: client,
     address: address,
     city: city,
-    client: client,
     area: area,
     isInvoiced: isInvoiced,
+    endClient: endClient,
+    color: color,
     dueDates: dueDates,
   });
 
@@ -68,17 +69,18 @@ const createJob = asyncHandler(async (req, res) => {
  */
 
 const updateJob = asyncHandler(async (req, res) => {
-  const { company, address, city, client, area, isInvoiced, dueDates } = req.body;
+  const { client, address, city, area, isInvoiced, endClient, color, dueDates } = req.body;
 
   const job = await JobDetails.findById(req.params.id);
 
   if (job) {
-    job.company = company;
+    job.client = client;
     job.address = address;
     job.city = city;
-    job.client = client;
     job.area = area;
     job.isInvoiced = isInvoiced;
+    job.endClient = endClient;
+    job.color = color;
     job.dueDates = dueDates;
 
     const updatedJob = await job.save();

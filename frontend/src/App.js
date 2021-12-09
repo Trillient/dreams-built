@@ -11,6 +11,7 @@ import ScheduleScreen from './screens/schedulescreen/scheduleScreen';
 import JobListScreen from './screens/jobListScreen/JobListScreen';
 import jobDetailsScreen from './screens/jobDetailsScreen/jobDetailsScreen';
 import Profile from './screens/profileScreen/ProfileScreen';
+import CreateJobScreen from './screens/createJobScreen/CreateJobScreen';
 
 const App = () => {
   return (
@@ -21,13 +22,13 @@ const App = () => {
           <Container>
             <Route path="/timesheet" component={TimeSheetScreen} />
             {/* <Route path="/timesheetdetails" component={TimeSheetDetailsScreen} />
-            <Route path="/profile" component={ProfileScreen} />
             <Route path="/users" component={UserListScreen} />
             <Route path="/users/profile" component={ProfileScreen} /> */}
             <Route path="/profile" component={Profile} />
             <Route path="/schedule" component={ScheduleScreen} />
-            <Route path="/job/:jobNumber" component={jobDetailsScreen} />
+            <Route path="/job/details/:jobNumber" component={jobDetailsScreen} />
             <Route path="/jobslist" component={JobListScreen} />
+            <Route path="/job/add" component={CreateJobScreen} />
           </Container>
         </main>
         <Footer />

@@ -2,10 +2,14 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { entryArrayReducer, validateReducer } from './reducers/timeSheetReducer';
+import { getClientsReducer, getJobsReducer, jobCreateReducer } from './reducers/jobReducer';
 
 const reducer = combineReducers({
   timeSheet: entryArrayReducer,
   validatedTimesheet: validateReducer,
+  jobCreation: jobCreateReducer,
+  clients: getClientsReducer,
+  jobsList: getJobsReducer,
 });
 
 const middleware = [thunk];
