@@ -22,7 +22,9 @@ const ScheduleScreen = () => {
           <tr>
             <th className={styles['first-coloumn']}>#</th>
             {week.map((day) => (
-              <th className={styles['static-table']}>{day}</th>
+              <th key={day} className={styles['static-table']}>
+                {day}
+              </th>
             ))}
           </tr>
         </thead>

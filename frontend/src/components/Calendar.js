@@ -4,7 +4,6 @@ import styles from './Calendar.module.css';
 const Calendar = ({ item, week, jobData }) => {
   const actionItem = jobData.filter((job) => job.jobPart === item);
 
-  console.log(actionItem);
   return (
     <tr>
       <th>{item}</th>
@@ -12,8 +11,8 @@ const Calendar = ({ item, week, jobData }) => {
         <td key={day} className={styles.item}>
           {actionItem
             .filter((job) => job.day === day)
-            .map((job) => (
-              <LinkContainer style={{ backgroundColor: job.color }} to={`/job/${job.jobNumber}`}>
+            .map((job, index) => (
+              <LinkContainer key={index} style={{ backgroundColor: job.color }} to={`/job/details/${job.jobNumber}`}>
                 <div className={styles['job-insert']}>{job.jobNumber}</div>
               </LinkContainer>
             ))}
