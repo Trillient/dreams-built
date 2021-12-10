@@ -15,7 +15,7 @@ export const getJobList = (token) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/jobdetails`, config);
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/details`, config);
 
     dispatch({
       type: actions.JOBLIST_FETCH_SUCCESS,
@@ -45,7 +45,7 @@ export const createJob =
         },
       };
 
-      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/jobdetails`, job, config);
+      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/job/details`, job, config);
 
       toast.success('Saved!');
       dispatch({

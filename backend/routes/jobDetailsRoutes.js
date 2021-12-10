@@ -5,8 +5,8 @@ const { getJobs, getJob, createJob, updateJob, deleteJob } = require('../control
 const { getJobParts, createJobPart, getJobPart, updateJobPart, deleteJobPart } = require('../controllers/jobPartsController');
 const { getJobPartDueDates, deleteJobPartDueDates, createJobPartDueDate, updateJobPartDueDate, deleteJobPartDueDate } = require('../controllers/jobDueDatesController');
 
-router.route('/').get(getJobs).post(createJob);
-router.route('/:id').get(getJob).put(updateJob).delete(deleteJob);
+router.route('/details').get(getJobs).post(createJob);
+router.route('/details/:id').get(getJob).put(updateJob).delete(deleteJob);
 
 // /api/jobdetails/parts - creates a job part ie, box up, strip + gets a list of all parts
 router.route('/parts').get(getJobParts).post(createJobPart);

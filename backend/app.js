@@ -24,7 +24,7 @@ app.use(authorizationError);
 
 app.use('/api/users', userRoutes);
 app.use('/api/timesheet', timesheetRoutes);
-app.use('/api/jobDetails', jobDetailRoutes);
+app.use('/api/job', jobDetailRoutes);
 app.use('/api/clients', clientRoutes);
 
 app.get('/', (req, res) => {
