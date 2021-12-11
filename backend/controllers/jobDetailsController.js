@@ -4,7 +4,7 @@ const JobDetails = require('../models/jobModel');
 /**
  * @Desc Get a list of all Jobs
  * @Route GET /api/job/details
- * @Access Private (every user) //TODO - make private
+ * @Access Private (employee, admin) //TODO - make private
  */
 
 const getJobs = asyncHandler(async (req, res) => {
@@ -15,7 +15,7 @@ const getJobs = asyncHandler(async (req, res) => {
 /**
  * @Desc Get a single Job
  * @Route GET /api/job/details/:id
- * @Access Private (only admin) //TODO - make private
+ * @Access Private (admin) //TODO - make private
  */
 
 const getJob = asyncHandler(async (req, res) => {
@@ -32,7 +32,7 @@ const getJob = asyncHandler(async (req, res) => {
 /**
  * @Desc Create a new Job
  * @Route POST /api/job/details
- * @Access Private (only admin) //TODO - make private
+ * @Access Private (admin) //TODO - make private
  */
 
 const createJob = asyncHandler(async (req, res) => {
@@ -65,7 +65,7 @@ const createJob = asyncHandler(async (req, res) => {
 /**
  * @Desc Update a single Job
  * @Route PUT /api/job/details/:id
- * @Access Private (only admin) //TODO - make private
+ * @Access Private (admin) //TODO - make private
  */
 
 const updateJob = asyncHandler(async (req, res) => {
@@ -94,7 +94,7 @@ const updateJob = asyncHandler(async (req, res) => {
 /**
  * @Desc Delete a single Job
  * @Route DELETE /api/job/details/:id
- * @Access Private (only admin) //TODO - make private
+ * @Access Private (admin) //TODO - make private
  */
 
 const deleteJob = asyncHandler(async (req, res) => {

@@ -15,6 +15,6 @@ const jobDueDateSchema = mongoose.Schema({
   contractor: String,
 });
 
-const JobDueDateDetail = mongoose.model('JobDueDateDetail', jobDueDateSchema);
+const JobDueDate = mongoose.model('JobDueDate', jobDueDateSchema);
 
-module.exports = JobDueDateDetail;
+module.exports = JobDueDate;
