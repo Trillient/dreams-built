@@ -9,10 +9,10 @@ router.route('/details').get(getJobs).post(createJob);
 router.route('/details/:id').get(getJob).put(updateJob).delete(deleteJob);
 
 router.route('/parts').get(getJobParts).post(createJobPart);
-router.route('/parts/:id').get(getJobPart).put(updateJobPart).delete(deleteJobPart);
+router.route('/parts/partsid/:id').get(getJobPart).put(updateJobPart).delete(deleteJobPart);
 
 router.route('/parts/duedates').get(getAllJobDueDates);
-router.route('/:id/parts/duedates').get(getJobPartDueDates).post(createJobPartDueDate).delete(deleteJobPartDueDates);
-router.route('/:jobid/parts/:partid/duedates').put(updateJobPartDueDate).delete(deleteJobPartDueDate);
+router.route('/jobid/:id/parts/duedates').get(getJobPartDueDates).post(createJobPartDueDate).delete(deleteJobPartDueDates);
+router.route('/jobid/:jobid/partsid/:partid/duedates').put(updateJobPartDueDate).delete(deleteJobPartDueDate);
 
 module.exports = router;

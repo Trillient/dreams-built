@@ -7,7 +7,11 @@ const JobDueDate = require('../models/jobPartDueDateModel');
  * @Access Private (employee, admin)
  */
 
-const getAllJobDueDates = asyncHandler(async (req, res) => {});
+const getAllJobDueDates = asyncHandler(async (req, res) => {
+  const jobList = await JobDueDate.find({}).populate('job jobDescription', 'jobNumber client address jobPartTitle jobOrder');
+
+  res.json(jobList);
+});
 
 /**
  * @Desc Get a list of all due dates for a job
@@ -27,11 +31,26 @@ const deleteJobPartDueDates = asyncHandler(async (req, res) => {});
 
 /**
  * @Desc Create a job's part duedates
- * @Route /api/job/:id/parts/duedates
+ * @Route /api/job/jobid/:id/parts/duedates
  * @Access Private (admin)
  */
 
-const createJobPartDueDate = asyncHandler(async (req, res) => {});
+const createJobPartDueDate = asyncHandler(async (req, res) => {
+  const jobParts = req.body;
+  const jobId = req.params.id;
+
+  for (job of jobParts) {
+    const exists = await JobDueDate.findOne({ job: jobId, jobDescription: job.jobPart });
+    if (exists) {
+      res.status(400);
+      throw new Error('Due date already exists');
+    } else {
+      await JobDueDate.create({ job: jobId, jobDescription: job.jobPart, dueDate: job.dueDate });
+    }
+  }
+
+  res.status(201).json({ message: 'success' });
+});
 
 /**
  * @Desc Update a job's part's duedate

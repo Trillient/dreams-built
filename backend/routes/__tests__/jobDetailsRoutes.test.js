@@ -7,6 +7,8 @@ const database = require('../../config/database');
 const JobDetails = require('../../models/jobModel');
 const Client = require('../../models/clientModel');
 const JobPart = require('../../models/jobPartModel');
+const { findOne } = require('../../models/jobModel');
+const JobDueDate = require('../../models/jobPartDueDateModel');
 
 beforeAll(async () => {
   const mongoServer = await MongoMemoryServer.create();
@@ -267,6 +269,37 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
 
     await request(app)
       .delete(`/api/job/parts/${jobPart._id}`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+});
+
+describe('Given we have a "/api/job/parts/duedates" endpoint', () => {
+  beforeAll(async () => {
+    await Client.create({ clientName: 'Coca-cola' });
+    const clientId = await Client.findOne({ clientName: 'Coca-cola' });
+    await JobDetails.create(createNewJob(23000, clientId._id));
+    await JobPart.create({ jobPartTitle: 'strip walls' });
+  });
+  it('When a valid and authenticated GET request is made, then a 200 respose with all due dates is recieved', async () => {
+    const databaseJob = await JobDetails.findOne({ clientName: 'Coca-cola' });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    await JobDueDate.create({
+      job: databaseJob._id,
+      jobDescription: databaseJobPart._id,
+      dueDate: '11/12/2021',
+    });
+
+    const checkBody = (res) => {
+      expect(res.body.length).toBe(1);
+    };
+
+    await request(app)
+      .get('/api/job/parts/duedates')
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
