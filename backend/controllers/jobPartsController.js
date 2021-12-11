@@ -20,7 +20,7 @@ const getJobParts = asyncHandler(async (req, res) => {
  */
 
 const createJobPart = asyncHandler(async (req, res) => {
-  const { jobPartTitle, jobDescription } = req.body;
+  const { jobPartTitle, jobDescription, jobOrder } = req.body;
 
   const checkJobPartExists = await JobPart.findOne({ jobPartTitle: jobPartTitle });
 
@@ -32,6 +32,7 @@ const createJobPart = asyncHandler(async (req, res) => {
   const createdJobPart = await JobPart.create({
     jobPartTitle: jobPartTitle,
     jobDescription: jobDescription,
+    jobOrder: jobOrder,
   });
 
   res.status(201).json(createdJobPart);
@@ -60,13 +61,14 @@ const getJobPart = asyncHandler(async (req, res) => {
  */
 
 const updateJobPart = asyncHandler(async (req, res) => {
-  const { jobPartTitle, jobDescription } = req.body;
+  const { jobPartTitle, jobDescription, jobOrder } = req.body;
 
   const jobPartData = await JobPart.findById(req.params.id);
 
   if (jobPartData) {
     jobPartData.jobPartTitle = jobPartTitle;
     jobPartData.jobDescription = jobDescription;
+    jobPartData.jobOrder = jobOrder;
 
     const updatedJobPart = await jobPartData.save();
     res.json(updatedJobPart);
