@@ -233,4 +233,44 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
       .expect(checkBody)
       .expect(404);
   });
+  it('When a valid PUT request is made then the jobs part is updated and returned with a 200 response', async () => {
+    await JobPart.create({ jobPartTitle: 'go shopping' });
+
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'go shopping' });
+
+    updatedJobPart = {
+      jobPartTitle: 'call owners',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.jobPartTitle).toBe(updatedJobPart.jobPartTitle);
+    };
+
+    await request(app)
+      .put(`/api/job/parts/${jobPart._id}`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+
+  it('When a valid DELETE request is made then the jobs part is deleted and returned with a 200 response', async () => {
+    await JobPart.create({ jobPartTitle: 'make calls' });
+
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'make calls' });
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job part removed');
+    };
+
+    await request(app)
+      .delete(`/api/job/parts/${jobPart._id}`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
 });

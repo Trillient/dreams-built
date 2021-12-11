@@ -59,7 +59,21 @@ const getJobPart = asyncHandler(async (req, res) => {
  * @Access Private (admin)
  */
 
-const updateJobPart = asyncHandler(async (req, res) => {});
+const updateJobPart = asyncHandler(async (req, res) => {
+  const { jobPartTitle, jobDescription } = req.body;
+
+  const jobPartData = await JobPart.findById(req.params.id);
+
+  if (jobPartData) {
+    jobPartData.jobPartTitle = jobPartTitle;
+    jobPartData.jobDescription = jobDescription;
+
+    const updatedJobPart = await jobPartData.save();
+    res.json(updatedJobPart);
+  } else {
+    res.status(404);
+  }
+});
 
 /**
  * @Desc Delete a job part
@@ -67,6 +81,16 @@ const updateJobPart = asyncHandler(async (req, res) => {});
  * @Access Private (admin)
  */
 
-const deleteJobPart = asyncHandler(async (req, res) => {});
+const deleteJobPart = asyncHandler(async (req, res) => {
+  const jobPart = await JobPart.findById(req.params.id);
+
+  if (jobPart) {
+    await jobPart.remove();
+    res.json({ message: 'Job part removed' });
+  } else {
+    res.status(404);
+    throw new Error('Job part not found');
+  }
+});
 
 module.exports = { getJobParts, createJobPart, getJobPart, updateJobPart, deleteJobPart };
