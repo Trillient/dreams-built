@@ -8,7 +8,6 @@ const authorizationError = (err, req, res, next) => {
 const idNotFound = (err, req, res, next) => {
   if (err.message.indexOf('Cast to ObjectId failed') !== -1) {
     res.status(404);
-    console.log(res);
     throw new Error(`Resource not found`);
   } else {
     next(err);
