@@ -3,7 +3,7 @@ const JobDueDate = require('../models/jobPartDueDateModel');
 
 /**
  * @Desc Get a list of all due dates for every job
- * @Route /api/job/parts/duedates
+ * @Route /api/job/duedates/parts
  * @Access Private (employee, admin)
  */
 
@@ -15,15 +15,19 @@ const getAllJobDueDates = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Get a list of all due dates for a job
- * @Route /api/job/:id/parts/duedates
+ * @Route /api/job/duedates/parts/:jobid
  * @Access Private (employee, admin)
  */
 
-const getJobPartDueDates = asyncHandler(async (req, res) => {});
+const getJobPartDueDates = asyncHandler(async (req, res) => {
+  const jobId = req.params.jobid;
+  const jobDueDates = await JobDueDate.find({ job: jobId });
+  res.json(jobDueDates);
+});
 
 /**
  * @Desc Delete all of a job's duedates
- * @Route /api/job/:id/parts/duedates
+ * @Route /api/job/duedates/parts/:jobid
  * @Access Private (admin)
  */
 
@@ -31,13 +35,13 @@ const deleteJobPartDueDates = asyncHandler(async (req, res) => {});
 
 /**
  * @Desc Create a job's part duedates
- * @Route /api/job/jobid/:id/parts/duedates
+ * @Route /api/job/duedates/parts/:jobid
  * @Access Private (admin)
  */
 
 const createJobPartDueDate = asyncHandler(async (req, res) => {
   const jobParts = req.body;
-  const jobId = req.params.id;
+  const jobId = req.params.jobid;
 
   for (job of jobParts) {
     const exists = await JobDueDate.findOne({ job: jobId, jobDescription: job.jobPart });
@@ -49,12 +53,12 @@ const createJobPartDueDate = asyncHandler(async (req, res) => {
     }
   }
 
-  res.status(201).json({ message: 'success' });
+  res.status(201).json({ message: 'Due date saved!' });
 });
 
 /**
  * @Desc Update a job's part's duedate
- * @Route /api/job/:jobid/parts/:partid/duedates
+ * @Route /api/job/
  * @Access Private (admin)
  */
 
@@ -62,7 +66,7 @@ const updateJobPartDueDate = asyncHandler(async (req, res) => {});
 
 /**
  * @Desc Delete a job's part's duedate
- * @Route /api/job/:jobid/parts/:partid/duedates
+ * @Route /api/job/
  * @Access Private (admin)
  */
 

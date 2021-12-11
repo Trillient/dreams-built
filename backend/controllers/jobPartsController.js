@@ -39,7 +39,7 @@ const createJobPart = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Get a job part
- * @Route GET /api/job/parts/partsid/:id
+ * @Route GET /api/job/parts/:id
  * @Access Private (admin)
  */
 
@@ -55,7 +55,7 @@ const getJobPart = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Update a job part
- * @Route PUT /api/job/parts/partsid/:id
+ * @Route PUT /api/job/parts/:id
  * @Access Private (admin)
  */
 
@@ -78,7 +78,7 @@ const updateJobPart = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Delete a job part
- * @Route DELETE /api/job/parts/partsid/:id
+ * @Route DELETE /api/job/parts/:id
  * @Access Private (admin)
  */
 

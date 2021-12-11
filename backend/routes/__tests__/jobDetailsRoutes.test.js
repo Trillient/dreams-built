@@ -102,7 +102,7 @@ describe('Given we have an "/api/job/details" endpoint', () => {
   });
 });
 
-describe('Given we have an "/api/jobdetails/:id" endpoint', () => {
+describe('Given we have an "/api/job/details/:id" endpoint', () => {
   it("When a valid GET request is made then the job's details are returned with a 200 response", async () => {
     const job = await JobDetails.findOne({ jobNumber: 22001 });
     const jobParams = await job._id;
@@ -277,7 +277,7 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
   });
 });
 
-describe('Given we have a "/api/job/parts/duedates" endpoint', () => {
+describe('Given we have a "/api/job/duedates" endpoint', () => {
   beforeAll(async () => {
     await Client.create({ clientName: 'Coca-cola' });
     const clientId = await Client.findOne({ clientName: 'Coca-cola' });
@@ -299,7 +299,52 @@ describe('Given we have a "/api/job/parts/duedates" endpoint', () => {
     };
 
     await request(app)
-      .get('/api/job/parts/duedates')
+      .get('/api/job/duedates/parts')
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+});
+
+describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
+  beforeAll(async () => {
+    await Client.create({ clientName: 'Cherry' });
+    const clientId = await Client.findOne({ clientName: 'Cherry' });
+    await JobDetails.create(createNewJob(23002, clientId._id));
+    await JobPart.create({ jobPartTitle: 'box-up' });
+  });
+  it("When a valid and authenticated GET request is made, then a 200 response with the given job's due dates is recieved", async () => {
+    const databaseClient = await Client.findOne({ clientName: 'Cherry' });
+    const databaseJob = await JobDetails.findOne({ jobNumber: 23002 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'box-up' });
+
+    await JobDueDate.create({
+      job: databaseJob._id,
+      jobDescription: databaseJobPart._id,
+      dueDate: '10/12/2021',
+    });
+
+    await JobDetails.create(createNewJob(23003, databaseClient._id));
+    const databaseDifferentJob = await JobDetails.findOne({ jobNumber: 23003 });
+
+    const differentJob = {
+      job: databaseDifferentJob._id,
+      jobDescription: databaseJobPart._id,
+      dueDate: '12/12/2022',
+    };
+
+    await JobDueDate.create(differentJob);
+
+    const checkBody = (res) => {
+      console.log(res.body);
+      expect(res.body.length).toBe(1);
+      expect(res.body[0]).not.toEqual(expect.objectContaining(differentJob));
+    };
+
+    await request(app)
+      .get(`/api/job/duedates/parts/${databaseJob._id}`)
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
