@@ -17,9 +17,11 @@ export const getJobList = (token) => async (dispatch) => {
 
     const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/details`, config);
 
+    const sortedData = data.sort((a, b) => b.jobNumber - a.jobNumber);
+
     dispatch({
       type: actions.JOBLIST_FETCH_SUCCESS,
-      payload: data,
+      payload: sortedData,
     });
   } catch (error) {
     const message = error.response && error.response.data.message ? error.response.data.message : error.message;
