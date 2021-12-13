@@ -13,6 +13,6 @@ router.route('/parts/:id').get(getJobPart).put(updateJobPart).delete(deleteJobPa
 
 router.route('/duedates/parts').get(getAllJobDueDates);
 router.route('/duedates/parts/:jobid').get(getJobPartDueDates).post(createJobPartDueDate).delete(deleteJobPartDueDates);
-router.route('/duedates/job/:jobid/part/:partid').put(updateJobPartDueDate).delete(deleteJobPartDueDate);
+router.route('/duedates/job/part/:id').put(updateJobPartDueDate).delete(deleteJobPartDueDate);
 
 module.exports = router;

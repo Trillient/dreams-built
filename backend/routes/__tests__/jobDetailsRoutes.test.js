@@ -278,11 +278,17 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
 });
 
 describe('Given we have a "/api/job/duedates" endpoint', () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await Client.create({ clientName: 'Coca-cola' });
     const clientId = await Client.findOne({ clientName: 'Coca-cola' });
     await JobDetails.create(createNewJob(23000, clientId._id));
     await JobPart.create({ jobPartTitle: 'strip walls' });
+  });
+
+  afterEach(async () => {
+    await Client.deleteMany();
+    await JobDetails.deleteMany();
+    await JobPart.deleteMany();
   });
   it('When a valid and authenticated GET request is made, then a 200 respose with all due dates is recieved', async () => {
     const databaseJob = await JobDetails.findOne({ clientName: 'Coca-cola' });
@@ -338,13 +344,99 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
     await JobDueDate.create(differentJob);
 
     const checkBody = (res) => {
-      console.log(res.body);
       expect(res.body.length).toBe(1);
       expect(res.body[0]).not.toEqual(expect.objectContaining(differentJob));
     };
 
     await request(app)
       .get(`/api/job/duedates/parts/${databaseJob._id}`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a valid authenticated DELETE request is made, then is should return a 200 response with a success message', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 23002 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'box-up' });
+
+    await JobDueDate.create({
+      job: databaseJob._id,
+      jobDescription: databaseJobPart._id,
+      dueDate: '10/12/2021',
+    });
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('deleted!');
+    };
+
+    await request(app)
+      .delete(`/api/job/duedates/parts/${databaseJob._id}`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+});
+
+describe('Given we have a "/api/job/duedates/job/:jobid/part/:partid" endpoint', () => {
+  beforeAll(async () => {
+    await Client.create({ clientName: 'Liquidify' });
+    const clientId = await Client.findOne({ clientName: 'Liquidify' });
+    await JobDetails.create(createNewJob(23004, clientId._id));
+    await JobPart.create({ jobPartTitle: 'lay-concrete' });
+  });
+  it('When a valid authenticated PUT request is made then is should update the job part due date and return a 200 response with the updated due date.', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 23004 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'lay-concrete' });
+
+    await JobDueDate.create({
+      job: databaseJob._id,
+      jobDescription: databaseJobPart._id,
+      dueDate: '10/12/2021',
+      contractor: 'Builders R us',
+    });
+
+    const dueDateParams = await JobDueDate.findOne({ job: databaseJob._id, jobDescription: databaseJobPart._id });
+
+    const updatedDueDate = {
+      dueDate: '5/12/2021',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body).toEqual(expect.objectContaining(updatedDueDate));
+      expect(res.body.contractor).toBe('Builders R us');
+    };
+
+    await request(app)
+      .put(`/api/job/duedates/job/part/${dueDateParams._id}`)
+      .send(updatedDueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a valid authenticated DELETE request is made then is should return a 200 response with a success message.', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 23004 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'lay-concrete' });
+
+    await JobDueDate.create({
+      job: databaseJob._id,
+      jobDescription: databaseJobPart._id,
+      dueDate: '20/12/2020',
+      contractor: 'Builders',
+    });
+
+    const dueDateParams = await JobDueDate.findOne({ job: databaseJob._id, jobDescription: databaseJobPart._id });
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Deleted!');
+    };
+
+    await request(app)
+      .delete(`/api/job/duedates/job/part/${dueDateParams._id}`)
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)

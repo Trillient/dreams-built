@@ -85,13 +85,8 @@ const updateJobPart = asyncHandler(async (req, res) => {
 const deleteJobPart = asyncHandler(async (req, res) => {
   const jobPart = await JobPart.findById(req.params.id);
 
-  if (jobPart) {
-    await jobPart.remove();
-    res.json({ message: 'Job part removed' });
-  } else {
-    res.status(404);
-    throw new Error('Job part not found');
-  }
+  await jobPart.remove();
+  res.json({ message: 'Job part removed' });
 });
 
 module.exports = { getJobParts, createJobPart, getJobPart, updateJobPart, deleteJobPart };
