@@ -13,7 +13,7 @@ import Message from '../../components/Message';
 import CustomMenu from '../../components/CustomMenu';
 
 import 'react-toastify/dist/ReactToastify.css';
-import './timesheet.css';
+import styles from './timesheet.module.css';
 
 const TimeSheetScreen = () => {
   const { getAccessTokenSilently, user } = useAuth0();
@@ -66,7 +66,7 @@ const TimeSheetScreen = () => {
       ) : (
         <div className="background">
           <Form onSubmit={submitHandler}>
-            <div className="grid-2">
+            <div className={styles['grid-2']}>
               <Dropdown>
                 <Dropdown.Toggle id="dropdown-button" variant="secondary">
                   Week: {weekStart} - {endDate}
@@ -88,7 +88,7 @@ const TimeSheetScreen = () => {
                 </Dropdown.Menu>
               </Dropdown>
 
-              <Button variant="primary" type="submit" className="btn-time-save">
+              <Button variant="primary" type="submit" className={styles['btn-time-save']}>
                 Save
               </Button>
             </div>

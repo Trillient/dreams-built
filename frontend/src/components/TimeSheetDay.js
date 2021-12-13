@@ -7,6 +7,8 @@ import { FaTrash } from 'react-icons/fa';
 import { createEntry, deleteEntry } from '../actions/timeSheetActions';
 import TimeSheetEntry from './TimeSheetEntry';
 
+import styles from '../screens/timesheetscreen/timesheet.module.css';
+
 const TimeSheetDay = ({ day, date }) => {
   const dispatch = useDispatch();
 
@@ -38,7 +40,7 @@ const TimeSheetDay = ({ day, date }) => {
         {inputList.length === 0 ? (
           []
         ) : (
-          <Table striped bordered hover responsive className="table-sm timesheet-grid-container">
+          <Table striped bordered hover responsive className={(styles['timesheet-grid-container'], styles['table-sm'])}>
             <thead className="display-none_mobile">
               <tr>
                 <th>Start Time</th>
@@ -52,7 +54,7 @@ const TimeSheetDay = ({ day, date }) => {
             </thead>
             <tbody>
               {inputList.map(({ entryId }) => (
-                <tr className="timesheet-grid" key={entryId}>
+                <tr className={styles['timesheet-grid']} key={entryId}>
                   <TimeSheetEntry entryId={entryId} day={day} />
                   <td>
                     <Button className="btn-main" onClick={() => onDeleteClick(entryId)}>
@@ -61,7 +63,7 @@ const TimeSheetDay = ({ day, date }) => {
                   </td>
                 </tr>
               ))}
-              <tr>
+              <tr className="display-none_mobile">
                 <th colSpan="3" className="right-align">
                   Total
                 </th>

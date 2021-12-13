@@ -1,0 +1,38 @@
+.btn-time-save {
+  margin: 1rem 0 -1.5rem auto;
+}
+
+.select {
+  background-image: linear-gradient(45deg, transparent 50%, black 60%), linear-gradient(135deg, black 40%, transparent 50%) !important;
+  background-position: calc(100% - 30px) 14px, calc(100% - 20px) 14px, 100% 0;
+  background-size: 5px 5px, 10px 5px;
+  background-repeat: no-repeat;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+@media only screen and (min-width: 50rem) {
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .btn-time-save {
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+  }
+}
+
+@media only screen and (max-width: 50rem) {
+  .timesheet-grid-container {
+    display: grid;
+    grid-template-columns: auto min-content;
+    gap: 1rem;
+  }
+
+  .timesheet-grid {
+    display: grid;
+    grid-template-rows: repeat(4, auto);
+    margin: 1rem 0;
+  }
+}

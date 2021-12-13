@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { updateEntry } from '../actions/timeSheetActions';
 
+import styles from '../screens/timesheetscreen/timesheet.module.css';
+
 const TimeSheetEntry = ({ entryId, day }) => {
   const dispatch = useDispatch();
 
@@ -69,6 +71,7 @@ const TimeSheetEntry = ({ entryId, day }) => {
         <Form.Group controlId={`job - ${entryId}`}>
           <Form.Label className="display-none_lg-screen">Job Number: </Form.Label>
           <Form.Control
+            className={styles.select}
             as="select"
             value={jobNumber}
             onChange={(e) => {
