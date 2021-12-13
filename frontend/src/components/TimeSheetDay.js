@@ -11,6 +11,7 @@ const TimeSheetDay = ({ day, date }) => {
   const dispatch = useDispatch();
 
   const [inputList, setInputList] = useState([]);
+
   const timeSheetEntries = useSelector((state) => state.timeSheet);
   const { dayEntries } = timeSheetEntries;
 

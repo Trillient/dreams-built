@@ -37,10 +37,10 @@ th {
 }
 
 @media only screen and (min-width: 50rem) {
-  .form-control {
+  /* .form-control {
     background-color: transparent;
     border-width: 0px;
-  }
+  } */
   .grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;

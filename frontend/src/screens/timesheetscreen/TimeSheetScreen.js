@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import { DateTime } from 'luxon';
 
 import { getTimeSheet, handleSubmit } from '../../actions/timeSheetActions';
+import { getJobList } from '../../actions/jobActions';
 import TimeSheetDay from '../../components/TimeSheetDay';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
@@ -32,22 +33,21 @@ const TimeSheetScreen = () => {
     timeSheetPeriods.push({ weekStart: startWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy'), endDate: endWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy') });
   }
 
-  const weekSelect = (date) => {
-    setWeekStart(date.weekStart);
-    setEndDate(date.endDate);
-  };
-
   let weekArray = [];
   for (let i = 0; i < 7; i++) {
     weekArray.push({ day: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('EEEE'), date: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('d MMMM') });
   }
 
   useEffect(() => {
-    let token;
-    const getToken = async () => {
-      token = await getAccessTokenSilently();
-    };
-    getToken().then(() => dispatch(getTimeSheet(token, user.sub, weekStart)));
+    (async () => {
+      try {
+        const token = await getAccessTokenSilently();
+        dispatch(getJobList(token));
+        dispatch(getTimeSheet(token, user.sub, weekStart));
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   }, [dispatch, getAccessTokenSilently, user, weekStart]);
 
   const submitHandler = async (event) => {
@@ -74,7 +74,14 @@ const TimeSheetScreen = () => {
 
                 <Dropdown.Menu as={CustomMenu}>
                   {timeSheetPeriods.map((date) => (
-                    <Dropdown.Item eventKey={date.endDate} key={date.weekStart} onClick={() => weekSelect(date)}>
+                    <Dropdown.Item
+                      eventKey={date.endDate}
+                      key={date.weekStart}
+                      onClick={() => {
+                        setWeekStart(date.weekStart);
+                        setEndDate(date.endDate);
+                      }}
+                    >
                       {date.weekStart} - {date.endDate}
                     </Dropdown.Item>
                   ))}

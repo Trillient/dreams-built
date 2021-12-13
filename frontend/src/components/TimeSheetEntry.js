@@ -9,7 +9,8 @@ const TimeSheetEntry = ({ entryId, day }) => {
 
   const timeSheetEntries = useSelector((state) => state.timeSheet);
   const { dayEntries } = timeSheetEntries;
-
+  const jobsList = useSelector((state) => state.jobsList);
+  const { jobList } = jobsList;
   const entry = dayEntries.filter((entry) => entry.entryId === entryId);
 
   if (entry.length > 1) {
@@ -18,11 +19,11 @@ const TimeSheetEntry = ({ entryId, day }) => {
 
   const initStartTime = entry.length === 1 ? entry[0].startTime : '';
   const initEndTime = entry.length === 1 ? entry[0].endTime : '';
-  const initJobNumber = entry.length === 1 ? entry[0].jobNumber : '';
+  const initjobNumber = entry.length === 1 ? entry[0].jobNumber : '';
 
   const [startTime, setStartTime] = useState(initStartTime || '');
   const [endTime, setEndTime] = useState(initEndTime || '');
-  const [jobNumber, setJobNumber] = useState(initJobNumber || '');
+  const [jobNumber, setjobNumber] = useState(initjobNumber || '');
 
   useEffect(() => {
     dispatch(updateEntry(startTime, endTime, jobNumber, entryId, day, time));
@@ -68,13 +69,21 @@ const TimeSheetEntry = ({ entryId, day }) => {
         <Form.Group controlId={`job - ${entryId}`}>
           <Form.Label className="display-none_lg-screen">Job Number: </Form.Label>
           <Form.Control
-            type="number"
-            placeholder="eg - 21100"
+            as="select"
             value={jobNumber}
             onChange={(e) => {
-              setJobNumber(e.target.value);
+              setjobNumber(e.target.value);
             }}
-          />
+          >
+            <option value={jobNumber}>{jobNumber}</option>
+            <option disabled>------------------------</option>
+            {jobList &&
+              jobList.map((job) => (
+                <option value={job.jobNumber}>
+                  {job.jobNumber} - {job.address}
+                </option>
+              ))}
+          </Form.Control>
         </Form.Group>
       </td>
       <td className="right-align">
