@@ -43,14 +43,16 @@ const JobListScreen = () => {
         ) : (
           <Table hover responsive>
             <thead className={styles['table-head']}>
-              <th>Job Number</th>
-              <th>Company</th>
-              <th>Address</th>
-              <th>City</th>
-              <th>Client</th>
-              <th>m&sup2;</th>
-              <th>Invoiced</th>
-              <th>Edit</th>
+              <tr>
+                <th>Job Number</th>
+                <th>Company</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>Client</th>
+                <th>m&sup2;</th>
+                <th>Invoiced</th>
+                <th>Edit</th>
+              </tr>
             </thead>
             <tbody>
               {jobList.map((job) => (

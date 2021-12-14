@@ -26,6 +26,7 @@ const TimeSheetEntry = ({ entryId, day }) => {
   const [startTime, setStartTime] = useState(initStartTime || '');
   const [endTime, setEndTime] = useState(initEndTime || '');
   const [jobNumber, setjobNumber] = useState(initjobNumber || '');
+  const [jobAddress, setJobAddress] = useState(jobList.filter((job) => job.jobNumber === jobNumber).map((job) => job.address) || '');
 
   useEffect(() => {
     dispatch(updateEntry(startTime, endTime, jobNumber, entryId, day, time));
@@ -76,13 +77,16 @@ const TimeSheetEntry = ({ entryId, day }) => {
             value={jobNumber}
             onChange={(e) => {
               setjobNumber(e.target.value);
+              setJobAddress(jobList.filter((job) => job.jobNumber === parseInt(e.target.value)).map((job) => job.address));
             }}
           >
-            <option value={jobNumber}>{jobNumber}</option>
+            <option value={jobNumber}>
+              {jobNumber} - {jobAddress}
+            </option>
             <option disabled>------------------------</option>
             {jobList &&
               jobList.map((job) => (
-                <option value={job.jobNumber}>
+                <option value={job.jobNumber} key={job._id}>
                   {job.jobNumber} - {job.address}
                 </option>
               ))}
