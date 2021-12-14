@@ -7,11 +7,18 @@ import { ToastContainer } from 'react-toastify';
 
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import { getClients, createJob } from '../../actions/jobActions';
+import { getClients, createJob, getJobList } from '../../actions/jobActions';
 
 // import styles from './createJobScreen.module.css';
 
 const CreateJobScreen = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const dispatch = useDispatch();
+
+  const jobsList = useSelector((state) => state.jobsList);
+  const { jobList } = jobsList;
+
   const [jobNumber, setJobNumber] = useState('');
   const [client, setClient] = useState('');
   const [address, setAddress] = useState('');
@@ -19,16 +26,20 @@ const CreateJobScreen = () => {
   const [area, setArea] = useState('');
   const [color, setColor] = useState('#563d7c');
 
-  const { getAccessTokenSilently } = useAuth0();
-
-  const dispatch = useDispatch();
-
   useEffect(() => {
-    let token;
-    const getToken = async () => {
-      token = await getAccessTokenSilently();
-    };
-    getToken().then(() => dispatch(getClients(token)));
+    (async () => {
+      try {
+        const token = await getAccessTokenSilently();
+        dispatch(getClients(token));
+        dispatch(getJobList(token));
+        if (jobList.length > 0) {
+          setJobNumber(jobList[0].jobNumber + 1);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const clients = useSelector((state) => state.clients);
@@ -75,7 +86,9 @@ const CreateJobScreen = () => {
             <Form.Label>Company</Form.Label>
             <Form.Control as="select" value={client} onChange={(e) => setClient(e.target.value)}>
               {clientList.map((customer) => (
-                <option value={customer._id}>{customer.clientName}</option>
+                <option key={customer._id} value={customer._id}>
+                  {customer.clientName}
+                </option>
               ))}
             </Form.Control>
           </Form.Group>
@@ -91,7 +104,6 @@ const CreateJobScreen = () => {
             <Form.Label>Area</Form.Label>
             <Form.Control type="area" placeholder="" value={area} onChange={(e) => setArea(e.target.value)}></Form.Control>
           </Form.Group>
-          {/* TODO - add color to each job */}
           <Form.Label htmlFor="exampleColorInput">Color picker</Form.Label>
           <Form.Control type="color" id="exampleColorInput" defaultValue="#563d7c" onChange={(e) => setColor(e.target.value)} title="Choose your color" />
           <Button type="submit" variant="primary">

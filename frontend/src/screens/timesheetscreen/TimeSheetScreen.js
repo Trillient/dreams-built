@@ -22,6 +22,9 @@ const TimeSheetScreen = () => {
   const timeSheetEntries = useSelector((state) => state.timeSheet);
   const { loading, error, dayEntries } = timeSheetEntries;
 
+  const jobsList = useSelector((state) => state.jobsList);
+  const { jobList } = jobsList;
+
   const startWeekInit = DateTime.now().startOf('week');
   const endWeekInit = DateTime.now().endOf('week');
 
@@ -42,12 +45,15 @@ const TimeSheetScreen = () => {
     (async () => {
       try {
         const token = await getAccessTokenSilently();
-        dispatch(getJobList(token));
+        if (jobList.length < 1) {
+          dispatch(getJobList(token));
+        }
         dispatch(getTimeSheet(token, user.sub, weekStart));
       } catch (error) {
         console.error(error);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, getAccessTokenSilently, user, weekStart]);
 
   const submitHandler = async (event) => {

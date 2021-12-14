@@ -22,6 +22,7 @@ const JobListScreen = () => {
       token = await getAccessTokenSilently();
     };
     getToken().then(() => dispatch(getJobList(token)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const jobsList = useSelector((state) => state.jobsList);
@@ -53,7 +54,7 @@ const JobListScreen = () => {
             </thead>
             <tbody>
               {jobList.map((job) => (
-                <tr className={styles.row} key={job.Number}>
+                <tr className={styles.row} key={job._id}>
                   <td>
                     <strong>{job.jobNumber}</strong>
                   </td>
