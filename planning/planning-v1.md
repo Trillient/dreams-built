@@ -2,7 +2,7 @@
 
 ## Objective
 
-- To create a website for DreamsBuilt that allows customers to view general details on the business.
+- To create a website that allows customers to view general details on the business.
 - To allow customers to contact the company.
 - To provide an employee portal
 - To allow employees to submit weekly timesheets
