@@ -26,10 +26,13 @@ const TimeSheetEntry = ({ entryId, day }) => {
   const [startTime, setStartTime] = useState(initStartTime || '');
   const [endTime, setEndTime] = useState(initEndTime || '');
   const [jobNumber, setjobNumber] = useState(initjobNumber || '');
-  const [jobAddress, setJobAddress] = useState(jobList.filter((job) => job.jobNumber === jobNumber).map((job) => job.address) || '');
+
+  const initjobAddress = jobList ? jobList.filter((job) => job.jobNumber === jobNumber).map((job) => job.address) : '';
+  const [jobAddress, setJobAddress] = useState(initjobAddress || '');
 
   useEffect(() => {
     dispatch(updateEntry(startTime, endTime, jobNumber, entryId, day, time));
+    setJobAddress(jobList.filter((job) => job.jobNumber === parseInt(jobNumber)).map((job) => job.address));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTime, endTime, jobNumber]);
 

@@ -40,8 +40,8 @@ const TimeSheetDay = ({ day, date }) => {
         {inputList.length === 0 ? (
           []
         ) : (
-          <Table striped bordered hover responsive className={(styles['timesheet-grid-container'], styles['table-sm'])}>
-            <thead className="display-none_mobile">
+          <Table hover responsive className={(styles['timesheet-grid-container'], styles['table-sm'])}>
+            <thead className="display-none_mobile table-dark">
               <tr>
                 <th>Start Time</th>
                 <th>End Time</th>
@@ -63,6 +63,8 @@ const TimeSheetDay = ({ day, date }) => {
                   </td>
                 </tr>
               ))}
+            </tbody>
+            <tfoot>
               <tr className="display-none_mobile">
                 <th colSpan="3" className="right-align">
                   Total
@@ -70,7 +72,7 @@ const TimeSheetDay = ({ day, date }) => {
                 <td className="right-align">{dailyTotal.toFixed(2)}</td>
                 <td></td>
               </tr>
-            </tbody>
+            </tfoot>
           </Table>
         )}
 
