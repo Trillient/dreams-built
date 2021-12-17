@@ -1,0 +1,40 @@
+import { useAuth0 } from '@auth0/auth0-react';
+import Footer from './Footer';
+import Header from './Header';
+import Sidebar from './Sidebar';
+
+import { useState } from 'react';
+import SidebarHeader from './SidebarHeader';
+import styles from './layout.module.css';
+
+const Layout = ({ children, ...rest }) => {
+  const { isAuthenticated } = useAuth0();
+
+  const [sidebar, setSidebar] = useState(true);
+
+  if (isAuthenticated) {
+    return (
+      <div className={styles.transition}>
+        <div className={sidebar ? styles['side-menu-grid'] : styles['clean-menu-grid']} {...rest}>
+          <div className={styles.header}>
+            <SidebarHeader setSidebar={setSidebar} sidebar={sidebar} />
+          </div>
+          <div className={styles.sidebar} style={sidebar ? null : { display: 'none' }}>
+            <Sidebar setSidebar={setSidebar} />
+          </div>
+          <div className={styles.main}>{children}</div>
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <div className={styles.grid} {...rest}>
+        <Header />
+        <div className={styles.main}>{children}</div>
+        <Footer />
+      </div>
+    );
+  }
+};
+
+export default Layout;

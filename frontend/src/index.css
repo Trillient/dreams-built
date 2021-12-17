@@ -12,25 +12,13 @@ body {
   background-color: #dddcda;
 }
 
-.grid {
-  margin: 0;
-  display: grid;
-  min-height: 100vh;
-  grid-template-rows: min-content auto min-content;
-  grid-template-columns: 1fr;
-  grid-template-areas: 'header' 'main' 'footer';
+.navbar-toggler {
+  border: 0;
 }
 
-.header {
-  grid-area: header;
-}
-
-.main {
-  grid-area: main;
-}
-
-.footer {
-  grid-area: footer;
+.navbar-toggler:focus {
+  border: 0;
+  box-shadow: none;
 }
 
 .btn-main {
