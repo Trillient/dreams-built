@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { updateEntry } from '../actions/timeSheetActions';
 
-import styles from '../screens/timesheetscreen/timesheet.module.css';
+import styles from '../screens/timeSheetScreen/timesheet.module.css';
 
 const TimeSheetEntry = ({ entryId, day }) => {
   const dispatch = useDispatch();
@@ -32,7 +32,9 @@ const TimeSheetEntry = ({ entryId, day }) => {
 
   useEffect(() => {
     dispatch(updateEntry(startTime, endTime, jobNumber, entryId, day, time));
-    setJobAddress(jobList.filter((job) => job.jobNumber === parseInt(jobNumber)).map((job) => job.address));
+    if (jobList) {
+      setJobAddress(jobList.filter((job) => job.jobNumber === parseInt(jobNumber)).map((job) => job.address));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTime, endTime, jobNumber]);
 

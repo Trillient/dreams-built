@@ -1,12 +1,9 @@
 import { LinkContainer } from 'react-router-bootstrap';
 import { Navbar, Nav, Container } from 'react-bootstrap';
-import { useAuth0 } from '@auth0/auth0-react';
 
-import LogoutButton from './LogoutButton';
 import LoginButton from './LoginButton';
 
 const Header = () => {
-  const { isAuthenticated } = useAuth0();
   return (
     <header className="header">
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
@@ -20,7 +17,7 @@ const Header = () => {
               <LinkContainer to="/">
                 <Nav.Link>Home</Nav.Link>
               </LinkContainer>
-              <LinkContainer to="/timesheet">
+              {/* <LinkContainer to="/timesheet">
                 <Nav.Link>Sheet</Nav.Link>
               </LinkContainer>
               <LinkContainer to="/schedule">
@@ -31,8 +28,8 @@ const Header = () => {
               </LinkContainer>
               <LinkContainer to="/profile">
                 <Nav.Link>Profile</Nav.Link>
-              </LinkContainer>
-              {isAuthenticated ? <LogoutButton /> : <LoginButton />}
+              </LinkContainer> */}
+              <LoginButton />
             </Nav>
           </Navbar.Collapse>
         </Container>

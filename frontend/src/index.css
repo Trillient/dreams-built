@@ -8,6 +8,10 @@ select {
   cursor: pointer;
 }
 
+body {
+  background-color: #dddcda;
+}
+
 .grid {
   margin: 0;
   display: grid;
@@ -27,10 +31,6 @@ select {
 
 .footer {
   grid-area: footer;
-}
-
-.background {
-  background-color: #dddcda;
 }
 
 .btn-main {

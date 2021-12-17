@@ -7,7 +7,7 @@ import { FaTrash } from 'react-icons/fa';
 import { createEntry, deleteEntry } from '../actions/timeSheetActions';
 import TimeSheetEntry from './TimeSheetEntry';
 
-import styles from '../screens/timesheetscreen/timesheet.module.css';
+import styles from '../screens/timeSheetScreen/timesheet.module.css';
 
 const TimeSheetDay = ({ day, date }) => {
   const dispatch = useDispatch();
