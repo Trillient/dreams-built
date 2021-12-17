@@ -18,7 +18,7 @@
 .sidebar-nav {
   grid-area: side-navbar;
   background: #15171c;
-  width: 250px;
+  min-width: 250px;
   min-height: 100vh;
   height: 100%;
   display: flex;

@@ -8,9 +8,9 @@
 .side-menu-grid {
   display: grid;
   min-height: 100vh;
-  grid-template-columns: min-content 1fr;
-  grid-template-rows: 3rem auto;
-  grid-template-areas: 'sidebar header' 'sidebar main';
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  grid-template-areas: 'sidebar';
 }
 
 .clean-menu-grid {
@@ -39,4 +39,19 @@
 
 .footer {
   grid-area: footer;
+}
+
+@media only screen and (max-width: 50rem) {
+  .side-menu-grid .header,
+  .side-menu-grid .main {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 50rem) {
+  .side-menu-grid {
+    grid-template-columns: min-content 1fr;
+    grid-template-rows: 3rem auto;
+    grid-template-areas: 'sidebar header' 'sidebar main';
+  }
 }
