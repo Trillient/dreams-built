@@ -7,13 +7,13 @@ import styles from './sidebar.module.css';
 const SidebarHeader = ({ sidebar, setSidebar }) => {
   return (
     <div className={styles.nav}>
-      {!sidebar && (
-        <IconContext.Provider value={{ color: '#fff' }}>
+      <IconContext.Provider value={{ color: '#fff' }}>
+        {!sidebar && (
           <Link to="#" className={styles['nav-icon']}>
             <FaBars onClick={() => setSidebar(true)} />
           </Link>
-        </IconContext.Provider>
-      )}
+        )}
+      </IconContext.Provider>
     </div>
   );
 };

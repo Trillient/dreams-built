@@ -31,8 +31,8 @@ const JobListScreen = () => {
   return (
     <div>
       <h1>Jobs</h1>
-      <LinkContainer to={`/job/add`}>
-        <Button className="btn-sm">+</Button>
+      <LinkContainer to={`/jobs/create`}>
+        <Button>+</Button>
       </LinkContainer>
       <div>Search job || Sort By customer/newest/oldest/paid || Update table columns</div>
       <section className={styles.table}>

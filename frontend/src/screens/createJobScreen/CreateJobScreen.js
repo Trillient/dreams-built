@@ -67,8 +67,8 @@ const CreateJobScreen = () => {
   return (
     <>
       <ToastContainer theme="colored" />
-      <Link to="/jobslist" className="btn btn-light my-3">
-        Go Back
+      <Link to="/jobs" className="btn btn-light my-3">
+        {'<< Job List'}
       </Link>
 
       <h1>Create Job</h1>
