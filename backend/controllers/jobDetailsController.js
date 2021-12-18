@@ -19,7 +19,7 @@ const getJobs = asyncHandler(async (req, res) => {
  */
 
 const getJob = asyncHandler(async (req, res) => {
-  const job = await JobDetails.findById(req.params.id);
+  const job = await JobDetails.findById(req.params.id).populate('client');
 
   if (job) {
     res.json(job);
