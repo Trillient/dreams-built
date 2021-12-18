@@ -13,6 +13,19 @@ export const getJobsReducer = (state = { jobList: [] }, action) => {
   }
 };
 
+export const getJobReducer = (state = { job: {} }, action) => {
+  switch (action.type) {
+    case actions.JOB_FETCH_REQUEST:
+      return { loading: true };
+    case actions.JOB_FETCH_SUCCESS:
+      return { loading: false, job: action.payload };
+    case actions.JOB_FETCH_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
 export const jobCreateReducer = (state = {}, action) => {
   switch (action.type) {
     case actions.JOB_CREATE_REQUEST:

@@ -22,11 +22,27 @@ const App = () => {
         <Route path="/" exact component={isAuthenticated ? DashboardScreen : HomeScreen} />
         <Route path="/dashboard" exact component={DashboardScreen} />
         <Route path="/timesheet" exact component={TimeSheetScreen} />
-        <Route path="/profile" exact component={Profile} />
-        <Route path="/schedule" exact component={ScheduleScreen} />
-        <Route path="/job/details/:jobNumber" exact component={jobDetailsScreen} />
+
+        <Route path="/clients" />
+        <Route path="/clients/create" />
+        <Route path="/clients/edit/:id" />
+
         <Route path="/jobs" exact component={JobListScreen} />
         <Route path="/jobs/create" exact component={CreateJobScreen} />
+        <Route path="/job/details/:id" exact component={jobDetailsScreen} />
+        <Route path="/jobs/parts" />
+        <Route path="/jobs/parts/create" />
+        <Route path="/jobs/parts/edit/:id" />
+
+        <Route path="/employees" />
+        <Route path="/employees/edit/:id" />
+
+        <Route path="/schedule" exact component={ScheduleScreen} />
+
+        <Route path="/profile" exact component={Profile} />
+
+        <Route path="/reports" />
+        <Route path="/reports/timesheets" />
       </Layout>
     </Router>
   );

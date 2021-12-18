@@ -33,6 +33,34 @@ export const getJobList = (token) => async (dispatch) => {
   }
 };
 
+export const getJob = (token, jobId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOB_FETCH_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/details/${jobId}`, config);
+
+    dispatch({
+      type: actions.JOB_FETCH_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+
+    dispatch({
+      type: actions.JOB_FETCH_FAIL,
+      payload: message,
+    });
+  }
+};
+
 export const createJob =
   ({ job, token }) =>
   async (dispatch) => {

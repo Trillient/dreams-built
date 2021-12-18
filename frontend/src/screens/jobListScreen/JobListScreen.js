@@ -22,8 +22,7 @@ const JobListScreen = () => {
       token = await getAccessTokenSilently();
     };
     getToken().then(() => dispatch(getJobList(token)));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, getAccessTokenSilently]);
 
   const jobsList = useSelector((state) => state.jobsList);
   const { loading, error, jobList } = jobsList;
@@ -39,7 +38,7 @@ const JobListScreen = () => {
         {loading ? (
           <Loader />
         ) : error ? (
-          <Message error={error} />
+          <Message variant="danger">{error}</Message>
         ) : (
           <Table hover responsive>
             <thead className={styles['table-head']}>
@@ -69,7 +68,7 @@ const JobListScreen = () => {
                   <td>{job.squareMeters}</td>
                   <td>{job.isInvoiced}</td>
                   <td>
-                    <LinkContainer to={`/job/details/${job.jobNumber}`}>
+                    <LinkContainer to={`/job/details/${job._id}`}>
                       <Button className="btn-sm">
                         <FiEdit />
                       </Button>

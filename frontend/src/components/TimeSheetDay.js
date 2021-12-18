@@ -40,7 +40,7 @@ const TimeSheetDay = ({ day, date }) => {
         {inputList.length === 0 ? (
           []
         ) : (
-          <Table hover responsive className={(styles['timesheet-grid-container'], styles['table-sm'])}>
+          <Table hover bordered responsive className={(styles['timesheet-grid-container'], styles['table-sm'])}>
             <thead className="display-none_mobile table-dark">
               <tr>
                 <th>Start Time</th>
