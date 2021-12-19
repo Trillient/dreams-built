@@ -17,7 +17,7 @@ const Sidebar = ({ setSidebar }) => {
             <AiOutlineClose onClick={() => setSidebar(false)} />
           </Link>
           {SidebarData.map((item, index) => (
-            <SubMenu item={item} key={index} />
+            <SubMenu item={item} key={index} setSidebar={setSidebar} />
           ))}
         </IconContext.Provider>
       </div>

@@ -7,7 +7,7 @@ import { useState } from 'react';
 import SidebarHeader from './SidebarHeader';
 import styles from './layout.module.css';
 
-const Layout = ({ children, ...rest }) => {
+const Layout = ({ children }) => {
   const { isAuthenticated } = useAuth0();
 
   const [sidebar, setSidebar] = useState(true);
@@ -15,7 +15,7 @@ const Layout = ({ children, ...rest }) => {
   if (isAuthenticated) {
     return (
       <div className={styles.transition}>
-        <div className={sidebar ? styles['side-menu-grid'] : styles['clean-menu-grid']} {...rest}>
+        <div className={sidebar ? styles['side-menu-grid'] : styles['clean-menu-grid']}>
           <div className={styles.header}>
             <SidebarHeader setSidebar={setSidebar} sidebar={sidebar} />
           </div>
@@ -28,7 +28,7 @@ const Layout = ({ children, ...rest }) => {
     );
   } else {
     return (
-      <div className={styles.grid} {...rest}>
+      <div className={styles.grid}>
         <Header />
         <div className={styles.main}>{children}</div>
         <Footer />
