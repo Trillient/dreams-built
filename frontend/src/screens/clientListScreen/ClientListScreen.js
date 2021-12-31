@@ -8,7 +8,7 @@ import fontColorContrast from 'font-color-contrast';
 
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import { getClientList } from '../../actions/clientActions';
+import { getClients } from '../../actions/clientActions';
 
 const ClientListScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -20,11 +20,11 @@ const ClientListScreen = () => {
     const getToken = async () => {
       token = await getAccessTokenSilently();
     };
-    getToken().then(() => dispatch(getClientList(token)));
+    getToken().then(() => dispatch(getClients(token)));
   }, [dispatch, getAccessTokenSilently]);
 
-  const jobsList = useSelector((state) => state.jobsList);
-  const { loading, error, clientList } = jobsList;
+  const clients = useSelector((state) => state.clients);
+  const { loading, error, clientList } = clients;
 
   return (
     <>
@@ -42,15 +42,15 @@ const ClientListScreen = () => {
           <Table hover responsive>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>CLient</th>
-                <th>Edit</th>
+                <th style={{ width: '5%' }}>No.</th>
+                <th>Client</th>
+                <th style={{ width: '5%' }}>Edit</th>
               </tr>
             </thead>
             <tbody>
-              {clientList.map((client) => (
+              {clientList.map((client, index) => (
                 <tr key={client._id}>
-                  <td>{client._id}</td>
+                  <td>{index + 1}</td>
                   <td style={{ backgroundColor: client.color, color: fontColorContrast(client.color) }}>{client.clientName}</td>
                   <td>
                     <LinkContainer to={`/clients/edit/${client._id}`}>

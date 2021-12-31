@@ -7,7 +7,8 @@ import { ToastContainer } from 'react-toastify';
 
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import { getClients, createJob, getJobList } from '../../actions/jobActions';
+import { createJob, getJobList } from '../../actions/jobActions';
+import { getClients } from '../../actions/clientActions';
 
 // import styles from './createJobScreen.module.css';
 
