@@ -21,7 +21,6 @@ export const SidebarData = [
   },
   {
     title: 'Jobs',
-    path: '/jobs',
     icon: <MdOutlineWorkOutline />,
     iconClosed: <RiArrowDownSFill />,
     iconOpened: <RiArrowUpSFill />,
@@ -61,7 +60,7 @@ export const SidebarData = [
   },
   {
     title: 'Reports',
-    path: '/reports',
+
     icon: <CgFileDocument />,
     iconClosed: <RiArrowDownSFill />,
     iconOpened: <RiArrowUpSFill />,
