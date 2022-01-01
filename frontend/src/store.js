@@ -9,9 +9,9 @@ const reducer = combineReducers({
   timeSheet: entryArrayReducer,
   validatedTimesheet: validateReducer,
   jobCreation: jobCreateReducer,
-  clients: getClientsReducer,
   jobsList: getJobsReducer,
   job: getJobReducer,
+  clients: getClientsReducer,
 });
 
 const middleware = [thunk];
