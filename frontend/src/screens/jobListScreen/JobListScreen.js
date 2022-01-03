@@ -59,9 +59,13 @@ const JobListScreen = () => {
                   <td>
                     <strong>{job.jobNumber}</strong>
                   </td>
-                  <td className={styles.company} style={{ backgroundColor: job.client.color, color: fontColorContrast(job.client.color) }}>
-                    {job.client.clientName}
-                  </td>
+                  {job.client === null ? (
+                    <td>Client Deleted</td>
+                  ) : (
+                    <td className={styles.company} style={{ backgroundColor: job.client.color, color: fontColorContrast(job.client.color) }}>
+                      {job.client.clientName}
+                    </td>
+                  )}
                   <td>{job.address}</td>
                   <td>{job.city}</td>
                   <td>{job.endClient}</td>
