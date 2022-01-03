@@ -36,6 +36,7 @@ const CreateJobScreen = () => {
         if (jobList.length > 0) {
           setJobNumber(jobList[0].jobNumber + 1);
         }
+        setClient(clientList[0]._id);
       } catch (error) {
         console.error(error);
       }
