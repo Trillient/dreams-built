@@ -50,4 +50,40 @@ const createClient = asyncHandler(async (req, res) => {
   res.status(201).json(createdClient);
 });
 
-module.exports = { getClients, getClient, createClient };
+/**
+ * @Desc Update a Client
+ * @Route PUT /api/clients/:id
+ * @Access Private (only admin)
+ */
+
+const updateClient = asyncHandler(async (req, res) => {
+  const { clientName, contacts, color } = req.body;
+
+  const client = await Client.findById(req.params.id);
+
+  if (client) {
+    client.ClientName = clientName;
+    client.contacts = contacts;
+    client.color = color;
+
+    const updatedClient = await client.save();
+    res.json(updatedClient);
+  } else {
+    res.status(404);
+  }
+});
+
+/**
+ * @Desc Delete a Client
+ * @Route DELETE /api/clients/:id
+ * @Access Private (only admin)
+ */
+
+const deleteClient = asyncHandler(async (req, res) => {
+  const client = await Client.findById(req.params.id);
+
+  await client.remove();
+  res.json({ message: 'client removed!' });
+});
+
+module.exports = { getClients, getClient, createClient, updateClient, deleteClient };

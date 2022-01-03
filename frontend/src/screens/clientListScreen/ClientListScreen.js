@@ -9,6 +9,7 @@ import fontColorContrast from 'font-color-contrast';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 import { getClients } from '../../actions/clientActions';
+import { ToastContainer } from 'react-toastify';
 
 const ClientListScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -28,6 +29,7 @@ const ClientListScreen = () => {
 
   return (
     <>
+      <ToastContainer theme="colored" />
       <h1>Clients</h1>
       <LinkContainer to={`/clients/create`}>
         <Button>+</Button>

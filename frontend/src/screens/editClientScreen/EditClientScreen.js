@@ -1,12 +1,14 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
+import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
-import { getClient } from '../../actions/clientActions';
+import { Link } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import { deleteClient, getClient, updateClient } from '../../actions/clientActions';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const EditClientScreen = ({ match }) => {
+const EditClientScreen = ({ match, history }) => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
 
@@ -15,7 +17,7 @@ const EditClientScreen = ({ match }) => {
   const client = useSelector((state) => state.client);
   const { loading, error, clientDetails } = client;
 
-  const [clientIdentity, setClientIdentity] = useState('');
+  const [clientName, setClientName] = useState('');
   const [color, setColor] = useState('');
 
   useEffect(() => {
@@ -24,28 +26,59 @@ const EditClientScreen = ({ match }) => {
         try {
           const token = await getAccessTokenSilently();
           dispatch(getClient(token, clientId));
-          setClientIdentity(client.clientDetails.clientName);
+          setClientName(client.clientDetails.clientName);
           setColor(client.clientDetails.color);
         } catch (err) {
           toast.error(err);
         }
       })();
     } else {
-      setClientIdentity(client.clientDetails.clientName);
+      setClientName(client.clientDetails.clientName);
       setColor(client.clientDetails.color);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientDetails, dispatch, clientId]);
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    const token = await getAccessTokenSilently();
+    dispatch(updateClient({ token: token, clientId: clientId, client: { clientName: clientName, color: color } }));
+  };
+
+  const deleteHandler = async (e) => {
+    e.preventDefault();
+    const token = await getAccessTokenSilently();
+    dispatch(deleteClient(token, clientId));
+    history.push('/clients');
+  };
 
   return loading ? (
     <Loader />
   ) : error ? (
     <Message variant="danger">{error}</Message>
   ) : (
-    <div>
-      <p>{clientIdentity}</p>
-      {color}
-    </div>
+    <>
+      <ToastContainer theme="colored" />
+      <Link to="/clients" className="btn btn-light my-3">
+        {'<< Clients'}
+      </Link>
+      <h1>Create Client</h1>
+      <Button onClick={deleteHandler} variant="danger">
+        Delete
+      </Button>
+      <Form onSubmit={submitHandler}>
+        <Form.Group controlId="area">
+          <Form.Label>Client</Form.Label>
+          <Form.Control type="area" placeholder="" value={clientName} onChange={(e) => setClientName(e.target.value)}></Form.Control>
+        </Form.Group>
+        <Form.Label htmlFor="exampleColorInput">Color picker</Form.Label>
+        <Form.Control type="color" id="exampleColorInput" value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
+        <Button type="submit" variant="primary">
+          Save
+        </Button>
+      </Form>
+    </>
   );
 };
 
