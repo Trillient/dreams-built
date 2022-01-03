@@ -91,3 +91,34 @@ export const createJob =
       });
     }
   };
+
+export const updateJob =
+  ({ job, token, jobId }) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: actions.JOB_UPDATE_REQUEST,
+      });
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/job/details/${jobId}`, job, config);
+
+      toast.success('Saved!');
+      dispatch({
+        type: actions.JOB_UPDATE_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+
+      dispatch({
+        type: actions.JOB_UPDATE_FAIL,
+        payload: message,
+      });
+    }
+  };
