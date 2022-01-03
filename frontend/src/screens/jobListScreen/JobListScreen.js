@@ -10,6 +10,7 @@ import styles from './jobListScreen.module.css';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 import { getJobList } from '../../actions/jobActions';
+import { ToastContainer } from 'react-toastify';
 
 const JobListScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -28,7 +29,8 @@ const JobListScreen = () => {
   const { loading, error, jobList } = jobsList;
 
   return (
-    <div>
+    <>
+      <ToastContainer theme="colored" />
       <h1>Jobs</h1>
       <LinkContainer to={`/jobs/create`}>
         <Button>+</Button>
@@ -85,7 +87,7 @@ const JobListScreen = () => {
         )}
       </section>
       <div>Pagination</div>
-    </div>
+    </>
   );
 };
 

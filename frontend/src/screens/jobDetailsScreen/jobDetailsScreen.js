@@ -3,19 +3,20 @@ import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import { getClients } from '../../actions/clientActions';
-import { getJob, updateJob } from '../../actions/jobActions';
+import { deleteJob, getJob, resetJobRedirect, updateJob } from '../../actions/jobActions';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const JobDetailsScreen = ({ match }) => {
+const JobDetailsScreen = ({ match, history }) => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
 
   const jobId = match.params.id;
 
   const jobDetails = useSelector((state) => state.job);
-  const { loading, error, job } = jobDetails;
+  const { loading, error, job, redirect } = jobDetails;
   const clients = useSelector((state) => state.clients);
   const { clientList } = clients;
 
@@ -28,6 +29,10 @@ const JobDetailsScreen = ({ match }) => {
   const [area, setArea] = useState(0);
 
   useEffect(() => {
+    if (redirect) {
+      dispatch(resetJobRedirect());
+      history.push('/jobs');
+    }
     if (!job || job._id !== jobId) {
       (async () => {
         try {
@@ -49,7 +54,7 @@ const JobDetailsScreen = ({ match }) => {
       setColor(job.color);
       setArea(job.area);
     }
-  }, [dispatch, getAccessTokenSilently, job, jobId]);
+  }, [dispatch, getAccessTokenSilently, job, jobId, redirect, history]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -71,8 +76,14 @@ const JobDetailsScreen = ({ match }) => {
     );
   };
 
+  const handleDelete = async () => {
+    const token = await getAccessTokenSilently();
+    dispatch(deleteJob(token, jobId));
+  };
+
   return (
     <>
+      <ToastContainer theme="colored" />
       <Link to="/jobs" className="btn btn-light my-3">
         {'<< Job List'}
       </Link>
@@ -83,49 +94,54 @@ const JobDetailsScreen = ({ match }) => {
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
-        <Form onSubmit={submitHandler}>
-          <Form.Group controlId="jobNumber">
-            <Form.Label>Job Number</Form.Label>
-            <Form.Control type="jobNumber" placeholder="eg 22001" value={jobNumber} onChange={(e) => setJobNumber(e.target.value)}></Form.Control>
-          </Form.Group>
-          <Form.Group controlId="company">
-            <Form.Label>Company</Form.Label>
-            <Form.Control
-              as="select"
-              value={client}
-              onChange={(e) => {
-                setClient(e.target.value);
-                setClientName(clientList.filter((client) => client._id === e.target.value)[0].clientName);
-              }}
-            >
-              {client && <option value={client}>{clientName}</option>}
-              <option disabled>------------------------</option>
-              {clientList &&
-                clientList.map((customer) => (
-                  <option key={customer._id} value={customer._id}>
-                    {customer.clientName}
-                  </option>
-                ))}
-            </Form.Control>
-          </Form.Group>
-          <Form.Group controlId="address">
-            <Form.Label>Address</Form.Label>
-            <Form.Control type="address" placeholder="11 Sharp Place" value={address} onChange={(e) => setAddress(e.target.value)}></Form.Control>
-          </Form.Group>
-          <Form.Group controlId="city">
-            <Form.Label>City</Form.Label>
-            <Form.Control type="city" placeholder="Hamilton" value={city} onChange={(e) => setCity(e.target.value)}></Form.Control>
-          </Form.Group>
-          <Form.Group controlId="area">
-            <Form.Label>Area</Form.Label>
-            <Form.Control type="area" placeholder="" value={area} onChange={(e) => setArea(e.target.value)}></Form.Control>
-          </Form.Group>
-          <Form.Label htmlFor="exampleColorInput">Color picker</Form.Label>
-          <Form.Control type="color" id="exampleColorInput" value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
-          <Button type="submit" variant="primary">
-            Save
+        <>
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
           </Button>
-        </Form>
+          <Form onSubmit={submitHandler}>
+            <Form.Group controlId="jobNumber">
+              <Form.Label>Job Number</Form.Label>
+              <Form.Control type="jobNumber" placeholder="eg 22001" value={jobNumber} onChange={(e) => setJobNumber(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Group controlId="company">
+              <Form.Label>Company</Form.Label>
+              <Form.Control
+                as="select"
+                value={client}
+                onChange={(e) => {
+                  setClient(e.target.value);
+                  setClientName(clientList.filter((client) => client._id === e.target.value)[0].clientName);
+                }}
+              >
+                {client && <option value={client}>{clientName}</option>}
+                <option disabled>------------------------</option>
+                {clientList &&
+                  clientList.map((customer) => (
+                    <option key={customer._id} value={customer._id}>
+                      {customer.clientName}
+                    </option>
+                  ))}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="address">
+              <Form.Label>Address</Form.Label>
+              <Form.Control type="address" placeholder="11 Sharp Place" value={address} onChange={(e) => setAddress(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Group controlId="city">
+              <Form.Label>City</Form.Label>
+              <Form.Control type="city" placeholder="Hamilton" value={city} onChange={(e) => setCity(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Group controlId="area">
+              <Form.Label>Area</Form.Label>
+              <Form.Control type="area" placeholder="" value={area} onChange={(e) => setArea(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Label htmlFor="exampleColorInput">Color picker</Form.Label>
+            <Form.Control type="color" id="exampleColorInput" value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
+            <Button type="submit" variant="primary">
+              Save
+            </Button>
+          </Form>
+        </>
       )}
     </>
   );

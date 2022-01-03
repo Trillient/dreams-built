@@ -122,3 +122,37 @@ export const updateJob =
       });
     }
   };
+
+export const deleteJob = (token, jobId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOB_DELETE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.delete(`${process.env.REACT_APP_API_URL}/job/details/${jobId}`, config);
+    toast.success('Deleted!');
+    dispatch({
+      type: actions.JOB_DELETE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+    toast.error(message);
+    dispatch({
+      type: actions.JOB_DELETE_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const resetJobRedirect = () => async (dispatch) => {
+  dispatch({
+    type: actions.JOB_RESET_REDIRECT,
+  });
+};
