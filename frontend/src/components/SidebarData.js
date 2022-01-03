@@ -60,7 +60,6 @@ export const SidebarData = [
   },
   {
     title: 'Reports',
-
     icon: <CgFileDocument />,
     iconClosed: <RiArrowDownSFill />,
     iconOpened: <RiArrowUpSFill />,

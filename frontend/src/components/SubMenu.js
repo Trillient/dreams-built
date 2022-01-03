@@ -38,7 +38,7 @@ const SubMenu = ({ item, setSidebar }) => {
   } else {
     return (
       <>
-        <Link className={styles['sidebar-link']} to={item.path} onClick={() => checkScreen(item.subNav)}>
+        <Link className={styles['sidebar-link']} to={item.path ? item.path : '#'} onClick={() => checkScreen(item.subNav)}>
           <div>
             {item.icon}
             <span className={styles['sidebar-label']}>{item.title}</span>

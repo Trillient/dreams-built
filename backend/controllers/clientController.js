@@ -13,6 +13,17 @@ const getClients = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @Desc Get a Client
+ * @Route GET /api/clients/:id
+ * @Access Private (every user) //TODO - make private
+ */
+
+const getClient = asyncHandler(async (req, res) => {
+  const client = await Client.findById(req.params.id);
+  res.json(client);
+});
+
+/**
  * @Desc Create a new Client
  * @Route POST /api/clients
  * @Access Private (only admin) //TODO - make private
@@ -39,4 +50,4 @@ const createClient = asyncHandler(async (req, res) => {
   res.status(201).json(createdClient);
 });
 
-module.exports = { getClients, createClient };
+module.exports = { getClients, getClient, createClient };
