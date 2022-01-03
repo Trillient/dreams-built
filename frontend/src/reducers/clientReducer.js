@@ -32,13 +32,13 @@ export const clientReducer = (state = { client: [] }, action) => {
     case actions.CLIENT_UPDATE_REQUEST:
       return { loading: true };
     case actions.CLIENT_UPDATE_SUCCESS:
-      return { loading: false, client: action.payload };
+      return { loading: false, redirect: true, client: action.payload };
     case actions.CLIENT_UPDATE_FAIL:
       return { loading: false, error: action.payload };
     case actions.CLIENT_DELETE_REQUEST:
       return { loading: true };
     case actions.CLIENT_DELETE_SUCCESS:
-      return { loading: false, client: action.payload };
+      return { loading: false, redirect: true, client: action.payload };
     case actions.CLIENT_DELETE_FAIL:
       return { loading: false, error: action.payload };
     default:

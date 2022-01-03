@@ -62,7 +62,7 @@ const updateClient = asyncHandler(async (req, res) => {
   const client = await Client.findById(req.params.id);
 
   if (client) {
-    client.ClientName = clientName;
+    client.clientName = clientName;
     client.contacts = contacts;
     client.color = color;
 

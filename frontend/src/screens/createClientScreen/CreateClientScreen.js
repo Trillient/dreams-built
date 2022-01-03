@@ -43,7 +43,7 @@ const CreateClientScreen = ({ history }) => {
           <Form.Control type="area" value={clientName} onChange={(e) => setClientName(e.target.value)}></Form.Control>
         </Form.Group>
         <Form.Label htmlFor="exampleColorInput">Color picker</Form.Label>
-        <Form.Control type="color" id="exampleColorInput" defaultValue="#563d7c" onChange={(e) => setColor(e.target.value)} title="Choose your color" />
+        <Form.Control type="color" id="exampleColorInput" value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
         <Button type="submit" variant="primary">
           Save
         </Button>
