@@ -14,7 +14,7 @@ const CreateJobPartScreen = ({ history }) => {
   const jobParts = useSelector((state) => state.jobPart);
   const { redirect } = jobParts;
 
-  const [jobPart, setJobPart] = useState('');
+  const [jobPartTitle, setJobPartTitle] = useState('');
 
   useEffect(() => {
     if (redirect) {
@@ -26,7 +26,7 @@ const CreateJobPartScreen = ({ history }) => {
   const submitHandler = async (e) => {
     e.preventDefault();
     const token = await getAccessTokenSilently();
-    dispatch(createJobPart({ token: token, jobPart: jobPart }));
+    dispatch(createJobPart({ token: token, jobPartTitle: jobPartTitle }));
   };
   return (
     <>
@@ -38,7 +38,7 @@ const CreateJobPartScreen = ({ history }) => {
       <Form onSubmit={submitHandler}>
         <Form.Group controlId="jobPart">
           <Form.Label>Job Part</Form.Label>
-          <Form.Control type="jobPart" value={jobPart} onChange={(e) => setJobPart(e.target.value)}></Form.Control>
+          <Form.Control type="jobPart" value={jobPartTitle} onChange={(e) => setJobPartTitle(e.target.value)}></Form.Control>
         </Form.Group>
         <Button type="submit" variant="primary">
           Save

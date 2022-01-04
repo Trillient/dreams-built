@@ -23,6 +23,8 @@ const createJobPart = asyncHandler(async (req, res) => {
 
   const checkJobPartExists = await JobPart.findOne({ jobPartTitle: jobPartTitle });
 
+  const allJobParts = await JobPart.find();
+
   if (checkJobPartExists) {
     res.status(400);
     throw new Error('Job Part already exists!');
@@ -31,7 +33,7 @@ const createJobPart = asyncHandler(async (req, res) => {
   const createdJobPart = await JobPart.create({
     jobPartTitle: jobPartTitle,
     jobDescription: jobDescription,
-    jobOrder: jobOrder,
+    jobOrder: allJobParts.length,
   });
 
   res.status(201).json(createdJobPart);
