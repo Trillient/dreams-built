@@ -156,3 +156,33 @@ export const resetJobRedirect = () => async (dispatch) => {
     type: actions.JOB_RESET_REDIRECT,
   });
 };
+
+export const getJobPartsList = (token) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPARTLIST_FETCH_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/parts`, config);
+
+    const sortedData = data.sort((a, b) => a.jobOrder - b.jobOrder);
+
+    dispatch({
+      type: actions.JOBPARTLIST_FETCH_SUCCESS,
+      payload: sortedData,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+
+    dispatch({
+      type: actions.JOBPARTLIST_FETCH_FAIL,
+      payload: message,
+    });
+  }
+};

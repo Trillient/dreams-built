@@ -2,7 +2,7 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { entryArrayReducer, validateReducer } from './reducers/timeSheetReducer';
-import { getJobsReducer, jobReducer } from './reducers/jobReducer';
+import { getJobPartsReducer, getJobsReducer, jobReducer } from './reducers/jobReducer';
 import { clientReducer, getClientsReducer } from './reducers/clientReducer';
 
 const reducer = combineReducers({
@@ -10,6 +10,7 @@ const reducer = combineReducers({
   validatedTimesheet: validateReducer,
   jobsList: getJobsReducer,
   job: jobReducer,
+  jobParts: getJobPartsReducer,
   clients: getClientsReducer,
   client: clientReducer,
 });
