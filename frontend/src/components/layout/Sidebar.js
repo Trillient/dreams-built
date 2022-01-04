@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { AiOutlineClose } from 'react-icons/ai';
 
-import { SidebarData } from '../SidebarData';
+import { SidebarData } from '../../data/SidebarData';
 import SubMenu from '../SubMenu';
 
 import styles from './sidebar.module.css';

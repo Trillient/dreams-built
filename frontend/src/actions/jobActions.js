@@ -223,3 +223,90 @@ export const resetJobPartRedirect = () => async (dispatch) => {
     type: actions.JOB_RESET_REDIRECT,
   });
 };
+
+export const getJobPart = (token, jobPartId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPART_FETCH_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/parts/${jobPartId}`, config);
+
+    dispatch({
+      type: actions.JOBPART_FETCH_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+
+    dispatch({
+      type: actions.JOBPART_FETCH_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const updateJobPart =
+  ({ jobPart, token, jobPartId }) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: actions.JOBPART_UPDATE_REQUEST,
+      });
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/job/parts/${jobPartId}`, jobPart, config);
+
+      toast.success('Saved!');
+      dispatch({
+        type: actions.JOBPART_UPDATE_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+
+      dispatch({
+        type: actions.JOBPART_UPDATE_FAIL,
+        payload: message,
+      });
+    }
+  };
+
+export const deleteJobPart = (token, jobPartId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPART_DELETE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.delete(`${process.env.REACT_APP_API_URL}/job/parts/${jobPartId}`, config);
+    toast.success('Deleted!');
+    dispatch({
+      type: actions.JOBPART_DELETE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+    toast.error(message);
+    dispatch({
+      type: actions.JOBPART_DELETE_FAIL,
+      payload: message,
+    });
+  }
+};
