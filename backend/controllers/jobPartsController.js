@@ -19,7 +19,7 @@ const getJobParts = asyncHandler(async (req, res) => {
  */
 
 const createJobPart = asyncHandler(async (req, res) => {
-  const { jobPartTitle, jobDescription, jobOrder } = req.body;
+  const { jobPartTitle, jobDescription } = req.body;
 
   const checkJobPartExists = await JobPart.findOne({ jobPartTitle: jobPartTitle });
 

@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { createJobPart, resetJobPartRedirect } from '../../actions/jobActions';
+import Loader from '../../components/Loader';
+import Message from '../../components/Message';
 
 const CreateJobPartScreen = ({ history }) => {
   const { getAccessTokenSilently } = useAuth0();
@@ -12,7 +14,7 @@ const CreateJobPartScreen = ({ history }) => {
   const dispatch = useDispatch();
 
   const jobParts = useSelector((state) => state.jobPart);
-  const { redirect } = jobParts;
+  const { loading, error, redirect } = jobParts;
 
   const [jobPartTitle, setJobPartTitle] = useState('');
 
@@ -26,24 +28,31 @@ const CreateJobPartScreen = ({ history }) => {
   const submitHandler = async (e) => {
     e.preventDefault();
     const token = await getAccessTokenSilently();
-    dispatch(createJobPart({ token: token, jobPartTitle: jobPartTitle }));
+    dispatch(createJobPart({ token: token, jobPart: { jobPartTitle: jobPartTitle } }));
   };
   return (
     <>
-      <ToastContainer theme="colored" />
-      <Link to="/jobparts" className="btn btn-light my-3">
-        {'<< Job Parts'}
-      </Link>
-      <h1>Create Job Part</h1>
-      <Form onSubmit={submitHandler}>
-        <Form.Group controlId="jobPart">
-          <Form.Label>Job Part</Form.Label>
-          <Form.Control type="jobPart" value={jobPartTitle} onChange={(e) => setJobPartTitle(e.target.value)}></Form.Control>
-        </Form.Group>
-        <Button type="submit" variant="primary">
-          Save
-        </Button>
-      </Form>
+      {error && <Message variant="danger">{error}</Message>}
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <ToastContainer theme="colored" />
+          <Link to="/jobparts" className="btn btn-light my-3">
+            {'<< Job Parts'}
+          </Link>
+          <h1>Create Job Part</h1>
+          <Form onSubmit={submitHandler}>
+            <Form.Group controlId="jobPart">
+              <Form.Label>Job Part</Form.Label>
+              <Form.Control type="jobPart" value={jobPartTitle} onChange={(e) => setJobPartTitle(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Button type="submit" variant="primary">
+              Save
+            </Button>
+          </Form>
+        </>
+      )}
     </>
   );
 };
