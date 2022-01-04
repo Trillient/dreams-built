@@ -58,3 +58,36 @@ export const getJobPartsReducer = (state = { jobParts: [] }, action) => {
       return state;
   }
 };
+
+export const jobPartReducer = (state = { jobPart: {} }, action) => {
+  switch (action.type) {
+    case actions.JOBPART_FETCH_REQUEST:
+      return { loading: true };
+    case actions.JOBPART_FETCH_SUCCESS:
+      return { loading: false, jobPart: action.payload };
+    case actions.JOBPART_FETCH_FAIL:
+      return { loading: false, error: action.payload };
+    case actions.JOBPART_CREATE_REQUEST:
+      return { loading: true };
+    case actions.JOBPART_CREATE_SUCCESS:
+      return { loading: false, success: true, jobPart: action.payload };
+    case actions.JOBPART_CREATE_FAIL:
+      return { loading: false, error: action.payload };
+    case actions.JOBPART_UPDATE_REQUEST:
+      return { loading: true };
+    case actions.JOBPART_UPDATE_SUCCESS:
+      return { loading: false, success: true, jobPart: action.payload, redirect: true };
+    case actions.JOBPART_UPDATE_FAIL:
+      return { loading: false, error: action.payload };
+    case actions.JOBPART_DELETE_REQUEST:
+      return { loading: true };
+    case actions.JOBPART_DELETE_SUCCESS:
+      return { loading: false, success: true, jobPart: action.payload, redirect: true };
+    case actions.JOBPART_DELETE_FAIL:
+      return { loading: false, error: action.payload };
+    case actions.JOBPART_RESET_REDIRECT:
+      return { redirect: false };
+    default:
+      return state;
+  }
+};

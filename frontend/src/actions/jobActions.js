@@ -186,3 +186,40 @@ export const getJobPartsList = (token) => async (dispatch) => {
     });
   }
 };
+
+export const createJobPart =
+  ({ token, jobPart }) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: actions.JOBPART_CREATE_REQUEST,
+      });
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/job/parts`, jobPart, config);
+
+      toast.success('Saved!');
+      dispatch({
+        type: actions.JOBPART_CREATE_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+
+      dispatch({
+        type: actions.JOBPART_CREATE_FAIL,
+        payload: message,
+      });
+    }
+  };
+
+export const resetJobPartRedirect = () => async (dispatch) => {
+  dispatch({
+    type: actions.JOB_RESET_REDIRECT,
+  });
+};
