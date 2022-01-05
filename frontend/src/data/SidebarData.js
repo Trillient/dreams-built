@@ -3,7 +3,59 @@ import { RiArrowDownSFill, RiArrowUpSFill } from 'react-icons/ri';
 import { MdOutlineEditCalendar, MdOutlineWorkOutline, MdBusiness, MdOutlinePeopleAlt, MdLogout } from 'react-icons/md';
 import { CgProfile, CgFileDocument } from 'react-icons/cg';
 
-export const SidebarData = [
+export const UnAuthenticatedSidebarData = [
+  {
+    title: 'Dashboard',
+    path: '/dashboard',
+    icon: <AiFillHome />,
+  },
+  {
+    title: 'Profile',
+    path: '/profile',
+    icon: <CgProfile />,
+  },
+  {
+    title: 'Logout',
+    icon: <MdLogout />,
+  },
+];
+
+export const EmployeeSidebarData = [
+  {
+    title: 'Dashboard',
+    path: '/dashboard',
+    icon: <AiFillHome />,
+  },
+  {
+    title: 'Timesheet',
+    path: '/timesheet',
+    icon: <MdOutlineEditCalendar />,
+  },
+  {
+    title: 'Jobs',
+    icon: <MdOutlineWorkOutline />,
+    iconClosed: <RiArrowDownSFill />,
+    iconOpened: <RiArrowUpSFill />,
+    path: '/jobs',
+  },
+  {
+    title: 'Schedule',
+    path: '/schedule',
+    icon: <AiOutlineCalendar />,
+  },
+  {
+    title: 'Profile',
+    path: '/profile',
+    icon: <CgProfile />,
+  },
+
+  {
+    title: 'Logout',
+    icon: <MdLogout />,
+  },
+];
+
+export const AdminSidebarData = [
   {
     title: 'Dashboard',
     path: '/dashboard',
