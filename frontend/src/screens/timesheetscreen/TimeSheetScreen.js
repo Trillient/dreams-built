@@ -62,7 +62,7 @@ const TimeSheetScreen = () => {
     dispatch(handleSubmit(dayEntries, weekStart, endDate, token, user.sub));
   };
 
-  return (
+  return user['http://www.dreamsbuilt.co.nz/roles'].includes('Employee') ? (
     <>
       <ToastContainer theme="colored" />
       {loading ? (
@@ -108,6 +108,8 @@ const TimeSheetScreen = () => {
         </div>
       )}
     </>
+  ) : (
+    <Message variant="danger">Not Authorized</Message>
   );
 };
 
