@@ -109,7 +109,7 @@ const TimeSheetScreen = () => {
       )}
     </>
   ) : (
-    <Message variant="danger">Not Authorized</Message>
+    <Message variant="danger">You are not Authorized to view this page, please contact your administrator.</Message>
   );
 };
 
