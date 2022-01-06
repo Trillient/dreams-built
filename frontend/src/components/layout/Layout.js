@@ -6,13 +6,16 @@ import Sidebar from './Sidebar';
 import { useState } from 'react';
 import SidebarHeader from './SidebarHeader';
 import styles from './layout.module.css';
+import Loader from '../Loader';
 
 const Layout = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth0();
 
   const [sidebar, setSidebar] = useState(true);
 
-  return isLoading ? null : isAuthenticated ? (
+  return isLoading ? (
+    <Loader />
+  ) : isAuthenticated ? (
     <div className={styles.transition}>
       <div className={sidebar ? styles['side-menu-grid'] : styles['clean-menu-grid']}>
         <div className={styles.header}>
