@@ -19,6 +19,7 @@ import EditClientScreen from './screens/editClientScreen/EditClientScreen';
 import JobPartScreen from './screens/jobPartScreen/JobPartScreen';
 import CreateJobPartScreen from './screens/createJobPartScreen/CreateJobPartScreen';
 import EditJobPartScreen from './screens/editJobPartScreen/EditJobPartScreen';
+import EmployeesScreen from './screens/employeesScreen/EmployeesScreen';
 
 const App = () => {
   const { isAuthenticated } = useAuth0();
@@ -37,7 +38,7 @@ const App = () => {
         <Route path="/jobparts" exact component={JobPartScreen} />
         <Route path="/jobparts/create" exact component={CreateJobPartScreen} />
         <Route path="/jobparts/edit/:id" exact component={EditJobPartScreen} />
-        <Route path="/employees" />
+        <Route path="/employees" exact component={EmployeesScreen} />
         <Route path="/employees/edit/:id" />
         <Route path="/schedule" exact component={ScheduleScreen} />
         <Route path="/profile" exact component={Profile} />

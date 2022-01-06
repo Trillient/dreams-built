@@ -10,7 +10,7 @@ const DashboardScreen = () => {
   ) : error ? (
     <Message variant="danger">{error}</Message>
   ) : user['http://www.dreamsbuilt.co.nz/roles'].includes('Admin') ? (
-    <Message variant="success">You're are an admin</Message>
+    <Message variant="success">You're an admin</Message>
   ) : user['http://www.dreamsbuilt.co.nz/roles'].includes('Employee') ? (
     <Message variant="success">You're in the employee portal</Message>
   ) : (

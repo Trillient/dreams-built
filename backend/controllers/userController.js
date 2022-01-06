@@ -1,5 +1,8 @@
 const asyncHandler = require('express-async-handler');
+const axios = require('axios').default;
+const request = require('request');
 const User = require('../models/userModel');
+const { domain, auth0ClientId, auth0ClientSecret, audience } = require('../config/env');
 
 /**
  * @Desc Get a list of all users
@@ -8,8 +11,24 @@ const User = require('../models/userModel');
  */
 
 const getUsers = asyncHandler(async (req, res) => {
-  const userList = await User.find();
-  res.json(userList);
+  const userListMongo = await User.find();
+  const body = { client_id: auth0ClientId, client_secret: auth0ClientSecret, audience: `https://${domain}/api/v2/`, grant_type: 'client_credentials' };
+
+  const userList = userListMongo.map((user) => user.toObject());
+  const options = {
+    headers: { 'content-type': 'application/json' },
+  };
+
+  const token = await axios.post(`https://${domain}/oauth/token`, body, options);
+
+  const config = {
+    headers: { Authorization: `Bearer ${token.data.access_token}` },
+  };
+  const { data } = await axios.get(`https://${domain}/api/v2/users`, config);
+
+  const mergedData = data.map((authUser) => ({ ...authUser, ...userList.find((dbUser) => dbUser.userId === authUser.user_id) }));
+
+  res.json(mergedData);
 });
 
 /**
