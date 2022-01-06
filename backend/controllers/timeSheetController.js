@@ -67,7 +67,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
  */
 
 const getAllUsers = asyncHandler(async (req, res) => {
-  const result = await TimeSheetEntry.find({ weekStart: req.query.weekstart }).populate('user', 'firstName lastName hourlyRate');
+  const result = await TimeSheetEntry.find({ weekStart: req.query.weekstart, isArchive: false }).populate('user', 'firstName lastName hourlyRate');
 
   res.json(result);
 });
