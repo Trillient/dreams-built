@@ -2,14 +2,17 @@ const mongoose = require('mongoose');
 const request = require('supertest');
 const app = require('../../app');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const { default: createJWKSMock } = require('mock-jwks');
 
 const database = require('../../config/database');
+const { domain, audience } = require('../../config/env');
 const User = require('../../models/userModel');
 const TimeSheetEntry = require('../../models/TimeSheetEntryModel');
 
 beforeAll(async () => {
   const mongoServer = await MongoMemoryServer.create();
   await database.connect(mongoServer.getUri());
+  jwks.start();
 });
 
 afterEach(async () => {
@@ -18,10 +21,16 @@ afterEach(async () => {
 
 afterAll(async () => {
   await mongoose.disconnect();
+  jwks.stop();
 });
 
-const token = process.env.AUTH0_TEST_TOKEN;
-const clientId = process.env.AUTH0_CLIENT_ID;
+const jwks = createJWKSMock(`https://${domain}/`);
+const clientId = 'test|123456';
+const token = jwks.token({
+  aud: audience,
+  iss: `https://${domain}/`,
+  sub: clientId,
+});
 
 const createNewUser = (userId, firstName, lastName, email = 'abc@gmail.com', phoneNumber = 2111111, isAdmin = false, birthDate = '10-10-2020', hourlyRate = 10, startDate = '10-01-2020') => {
   return {

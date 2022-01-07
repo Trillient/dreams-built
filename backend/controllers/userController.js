@@ -6,7 +6,7 @@ const { domain, auth0ClientId, auth0ClientSecret, audience } = require('../confi
 
 /**
  * @Desc Get a list of all users
- * @Route GET /api/user
+ * @Route GET /api/users
  * @Access Private (admin user) //TODO add admin constraints
  */
 

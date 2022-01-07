@@ -2,25 +2,33 @@ const mongoose = require('mongoose');
 const request = require('supertest');
 const app = require('../../app');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const { default: createJWKSMock } = require('mock-jwks');
 
 const database = require('../../config/database');
+const { domain, audience } = require('../../config/env');
 const JobDetails = require('../../models/jobModel');
 const Client = require('../../models/clientModel');
 const JobPart = require('../../models/jobPartModel');
-const { findOne } = require('../../models/jobModel');
 const JobDueDate = require('../../models/jobPartDueDateModel');
 
 beforeAll(async () => {
   const mongoServer = await MongoMemoryServer.create();
   await database.connect(mongoServer.getUri());
   await Client.create({ clientName: 'warehouse' });
+  jwks.start();
 });
 
 afterAll(async () => {
   await mongoose.disconnect();
+  jwks.stop();
 });
 
-const token = process.env.AUTH0_TEST_TOKEN;
+const jwks = createJWKSMock(`https://${domain}/`);
+const token = jwks.token({
+  aud: audience,
+  iss: `https://${domain}/`,
+  sub: 'test|123456',
+});
 
 const createNewJob = (jobId, client, due = []) => {
   return {
@@ -43,7 +51,6 @@ describe('Given we have an "/api/job/details" endpoint', () => {
       const row = new JobDetails(newJob);
       await row.save();
     }
-
     const checkBody = (res) => {
       expect(res.body.length).toBe(2);
     };
