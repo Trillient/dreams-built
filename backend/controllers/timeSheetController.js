@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const TimeSheetEntry = require('../models/TimeSheetEntryModel');
+const TimeSheetEntry = require('../models/timeSheetEntryModel');
 const User = require('../models/userModel');
 
 /**
