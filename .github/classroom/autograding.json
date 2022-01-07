@@ -2,8 +2,8 @@
   "tests": [
     {
       "name": "Tests",
-      "setup": "npm install --prefix backend",
-      "run": "npm test --prefix backend",
+      "setup": "npm install",
+      "run": "npm test",
       "input": "",
       "output": "",
       "comparison": "included",
