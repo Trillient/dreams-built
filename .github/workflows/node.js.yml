@@ -6,12 +6,11 @@ jobs:
   build:
     name: Autograding
     runs-on: ubuntu-latest
-
+    env:
+      AUTH0_AUDIENCE: https://testAudience.co.nz
+      AUTH0_DOMAIN: testdomain.us.auth0.com
+      AUTH0_CLIENT_ID: TestClient
+      AUTH0_CLIENT_SECRET: abvcxvsfdf_523523523
     steps:
       - uses: actions/checkout@v2
       - uses: education/autograding@v1
-      - env:
-          AUTH0_AUDIENCE: https://testAudience.co.nz
-          AUTH0_DOMAIN: testdomain.us.auth0.com
-          AUTH0_CLIENT_ID: TestClient
-          AUTH0_CLIENT_SECRET: abvcxvsfdf_523523523
