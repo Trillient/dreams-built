@@ -60,7 +60,7 @@ const EmployeesScreen = () => {
                   <td>{employee.last_login}</td>
 
                   <td>
-                    <LinkContainer to={`/employees/${employee._id}`}>
+                    <LinkContainer to={`/employees/edit/${employee._id}`}>
                       <Button className="btn-sm">
                         <FiEdit />
                       </Button>
