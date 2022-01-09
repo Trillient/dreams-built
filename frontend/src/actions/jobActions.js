@@ -220,7 +220,7 @@ export const createJobPart =
 
 export const resetJobPartRedirect = () => async (dispatch) => {
   dispatch({
-    type: actions.JOB_RESET_REDIRECT,
+    type: actions.JOBPART_RESET_REDIRECT,
   });
 };
 
