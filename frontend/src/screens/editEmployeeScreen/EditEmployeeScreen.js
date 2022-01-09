@@ -21,7 +21,7 @@ const EditEmployeeScreen = ({ match, history }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [hourlyRate, setHourlyRate] = useState('');
-  const [birthDate, setBirthDate] = useState('');
+  const [birthDate, setBirthDate] = useState(null);
 
   useEffect(() => {
     if (redirect) {
@@ -36,7 +36,7 @@ const EditEmployeeScreen = ({ match, history }) => {
             setFirstName(user.firstName);
             setLastName(user.lastName);
             setHourlyRate(user.hourlyRate);
-            setBirthDate(user.birthDate);
+            setBirthDate(new Date(user.birthDate).toISOString().split('T')[0]);
           } catch (err) {
             toast.error(err);
           }
@@ -45,7 +45,7 @@ const EditEmployeeScreen = ({ match, history }) => {
         setFirstName(user.firstName);
         setLastName(user.lastName);
         setHourlyRate(user.hourlyRate);
-        setBirthDate(user.birthDate);
+        setBirthDate(new Date(user.birthDate).toISOString().split('T')[0]);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -90,12 +90,12 @@ const EditEmployeeScreen = ({ match, history }) => {
 
         <Form.Group controlId="area">
           <Form.Label>Hourly Rate</Form.Label>
-          <Form.Control type="Number" value={hourlyRate} min="0" onChange={(e) => setHourlyRate(e.target.value)}></Form.Control>
+          <Form.Control type="Number" value={hourlyRate} min="0" onChange={(e) => setHourlyRate(e.target.value)} />
         </Form.Group>
 
         <Form.Group controlId="area">
           <Form.Label>Birthdate:</Form.Label>
-          <Form.Control type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)}></Form.Control>
+          <Form.Control type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} />
         </Form.Group>
 
         <Button type="submit" variant="primary">

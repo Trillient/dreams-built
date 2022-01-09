@@ -73,7 +73,7 @@ export const updateUser =
         },
       };
 
-      const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/employees/edit/${userId}`, user, config);
+      const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/users/${userId}`, user, config);
       toast.success('Saved!');
       dispatch({
         type: actions.USER_UPDATE_SUCCESS,

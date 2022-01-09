@@ -14,6 +14,9 @@ const EmployeesScreen = () => {
 
   const dispatch = useDispatch();
 
+  const employees = useSelector((state) => state.employees);
+  const { loading, error, employeeList } = employees;
+
   useEffect(() => {
     let token;
     const getToken = async () => {
@@ -21,9 +24,6 @@ const EmployeesScreen = () => {
     };
     getToken().then(() => dispatch(getEmployees(token)));
   }, [dispatch, getAccessTokenSilently]);
-
-  const employees = useSelector((state) => state.employees);
-  const { loading, error, employeeList } = employees;
 
   return (
     <>
