@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
-import './bootstrap.min2.css';
+import './bootstrap.min.css';
 
 import Layout from './components/layout/Layout';
 

@@ -3,14 +3,12 @@ const TimeSheetEntry = require('../models/timeSheetEntryModel');
 const User = require('../models/userModel');
 
 /**
- * @Desc Create a user timesheet entry
- * @Route POST /api/timesheet/user/:id
+ * @Desc Get a user's timesheet entries
+ * @Route GET /api/timesheet/user/:id
  * @Access Private
  */
 
 const getUserEntries = asyncHandler(async (req, res) => {
-  const user = await User.findOne({ userId: req.params.id });
-
   const weekStart = req.query.weekstart;
 
   const entries = await TimeSheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: false });
