@@ -49,7 +49,7 @@ const JobPartScreen = () => {
             </thead>
             <tbody>
               {jobParts.map((jobPart) => (
-                <tr>
+                <tr key={jobPart._id}>
                   <td>{jobPart.jobOrder}</td>
                   <td>{jobPart.jobPartTitle}</td>
                   <td>

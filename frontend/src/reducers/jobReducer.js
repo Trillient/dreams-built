@@ -91,3 +91,35 @@ export const jobPartReducer = (state = { jobPart: {} }, action) => {
       return state;
   }
 };
+
+export const getJobDueDatesReducer = (state = { jobDueDates: [] }, action) => {
+  switch (action.type) {
+    case actions.JOBPART_DUEDATELIST_FETCH_REQUEST:
+      return { loading: true };
+    case actions.JOBPART_DUEDATELIST_FETCH_SUCCESS:
+      return { loading: false, jobDueDates: action.payload };
+    case actions.JOBPART_DUEDATELIST_FETCH_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const dueDatesReducer = (state = { jobDueDate: [] }, action) => {
+  switch (action.type) {
+    case actions.JOBPART_DUEDATE_UPDATE_REQUEST:
+      return { loading: true };
+    case actions.JOBPART_DUEDATE_UPDATE_SUCCESS:
+      return { loading: false, jobDueDate: action.payload };
+    case actions.JOBPART_DUEDATE_UPDATE_FAIL:
+      return { loading: false, error: action.payload };
+    case actions.JOBPART_DUEDATE_CREATE_REQUEST:
+      return { loading: true };
+    case actions.JOBPART_DUEDATE_CREATE_SUCCESS:
+      return { loading: false, jobDueDate: action.payload };
+    case actions.JOBPART_DUEDATE_CREATE_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};

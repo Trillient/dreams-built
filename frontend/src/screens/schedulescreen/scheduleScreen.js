@@ -23,7 +23,7 @@ const ScheduleScreen = () => {
 
   const startWeekInit = DateTime.now().startOf('week');
 
-  const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
+  const [weekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
 
   let weekArray = [];
   for (let i = 0; i < 7; i++) {
@@ -39,7 +39,7 @@ const ScheduleScreen = () => {
         toast.error(err);
       }
     })();
-  }, []);
+  }, [dispatch, getAccessTokenSilently]);
 
   return loading ? (
     <Loader />

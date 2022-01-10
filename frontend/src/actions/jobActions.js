@@ -310,3 +310,89 @@ export const deleteJobPart = (token, jobPartId) => async (dispatch) => {
     });
   }
 };
+
+export const getJobDueDates = (token, jobId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPART_DUEDATELIST_FETCH_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/duedates/parts/${jobId}`, config);
+
+    dispatch({
+      type: actions.JOBPART_DUEDATELIST_FETCH_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+    toast.error(message);
+    dispatch({
+      type: actions.JOBPART_DUEDATELIST_FETCH_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const createJobPartDueDate = (token, jobId, jobPart, dueDate) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPART_DUEDATE_CREATE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/job/duedates/parts/${jobId}?partid=${jobPart}`, dueDate, config);
+
+    toast.success('Created!');
+    dispatch({
+      type: actions.JOBPART_DUEDATE_CREATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+    toast.error(message);
+    dispatch({
+      type: actions.JOBPART_DUEDATE_CREATE_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const updateJobPartDueDate = (token, dueId, dueDate) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPART_DUEDATE_UPDATE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/job/duedates/job/part/${dueId}`, dueDate, config);
+
+    toast.success('Saved!');
+    dispatch({
+      type: actions.JOBPART_DUEDATE_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+    toast.error(message);
+    dispatch({
+      type: actions.JOBPART_DUEDATE_UPDATE_FAIL,
+      payload: message,
+    });
+  }
+};

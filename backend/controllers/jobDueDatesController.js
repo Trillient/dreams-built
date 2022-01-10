@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const JobDueDate = require('../models/jobPartDueDateModel');
+const JobPart = require('../models/jobPartModel');
 
 /**
  * @Desc Get a list of all due dates for every job
@@ -8,7 +9,7 @@ const JobDueDate = require('../models/jobPartDueDateModel');
  */
 
 const getAllJobDueDates = asyncHandler(async (req, res) => {
-  const jobDueDates = await JobDueDate.find({}).populate('job jobDescription', 'jobNumber client address jobPartTitle jobOrder');
+  const jobDueDates = await JobDueDate.find({}).populate('job jobPartTitle', 'jobNumber client address jobPartTitle jobOrder');
 
   res.json(jobDueDates);
 });
@@ -21,7 +22,7 @@ const getAllJobDueDates = asyncHandler(async (req, res) => {
 
 const getJobPartDueDates = asyncHandler(async (req, res) => {
   const jobId = req.params.jobid;
-  const jobDueDates = await JobDueDate.find({ job: jobId });
+  const jobDueDates = await JobDueDate.find({ job: jobId }).populate('jobPartTitle', 'jobPartTitle');
   res.json(jobDueDates);
 });
 
@@ -42,22 +43,22 @@ const deleteJobPartDueDates = asyncHandler(async (req, res) => {
  * @Route /api/job/duedates/parts/:jobid
  * @Access Private (admin)
  */
-// TODO - change loop to send back duplicates instead of error, throw error if duplicated equal length of array
+
 const createJobPartDueDate = asyncHandler(async (req, res) => {
-  const jobParts = req.body;
   const jobId = req.params.jobid;
 
-  for (job of jobParts) {
-    const exists = await JobDueDate.findOne({ job: jobId, jobDescription: job.jobPart });
-    if (exists) {
-      res.status(400);
-      throw new Error('Due date already exists');
-    } else {
-      await JobDueDate.create({ job: jobId, jobDescription: job.jobPart, dueDate: job.dueDate });
-    }
-  }
+  const partId = req.query.partid;
+  await JobPart.findById(partId);
 
-  res.status(201).json({ message: 'Due date saved!' });
+  const exists = await JobDueDate.findOne({ job: jobId, jobPartTitle: partId });
+
+  if (exists) {
+    res.status(400);
+    throw new Error('Due date already exists');
+  }
+  const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId });
+
+  res.status(201).json(created);
 });
 
 /**

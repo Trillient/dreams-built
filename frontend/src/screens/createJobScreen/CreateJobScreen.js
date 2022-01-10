@@ -20,6 +20,9 @@ const CreateJobScreen = () => {
   const jobsList = useSelector((state) => state.jobsList);
   const { jobList } = jobsList;
 
+  const clients = useSelector((state) => state.clients);
+  const { loading, error, clientList } = clients;
+
   const [jobNumber, setJobNumber] = useState('');
   const [client, setClient] = useState('');
   const [address, setAddress] = useState('');
@@ -28,24 +31,21 @@ const CreateJobScreen = () => {
   const [color, setColor] = useState('#563d7c');
 
   useEffect(() => {
-    (async () => {
-      try {
-        const token = await getAccessTokenSilently();
-        dispatch(getClients(token));
-        dispatch(getJobList(token));
-        if (jobList.length > 0) {
-          setJobNumber(jobList[0].jobNumber + 1);
+    if (!jobList || jobList.length < 1) {
+      (async () => {
+        try {
+          const token = await getAccessTokenSilently();
+          dispatch(getJobList(token));
+          dispatch(getClients(token));
+        } catch (error) {
+          console.error(error);
         }
-        setClient(clientList[0]._id);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
+      })();
+    } else {
+      setJobNumber(jobList[0].jobNumber + 1);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const clients = useSelector((state) => state.clients);
-  const { loading, error, clientList } = clients;
+  }, [jobList]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -87,6 +87,7 @@ const CreateJobScreen = () => {
           <Form.Group controlId="company">
             <Form.Label>Company</Form.Label>
             <Form.Control as="select" value={client} onChange={(e) => setClient(e.target.value)}>
+              <option></option>
               {clientList.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.clientName}

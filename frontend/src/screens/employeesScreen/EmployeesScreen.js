@@ -47,8 +47,8 @@ const EmployeesScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {employeeList.map((employee) => (
-                <tr key={employee._id}>
+              {employeeList.map((employee, index) => (
+                <tr key={index}>
                   <td>
                     <img src={employee.picture} height="40" width="40" style={{ borderRadius: '50%' }} alt="" />
                   </td>
