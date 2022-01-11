@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { ToastContainer } from 'react-toastify';
-import { createJobPartDueDate, updateJobPartDueDate } from '../actions/jobActions';
+import { toast, ToastContainer } from 'react-toastify';
+import { createJobPartDueDate, deleteJobPartDueDate, updateJobPartDueDate } from '../actions/jobActions';
 
 const JobPartDueDates = ({ jobPart, jobId }) => {
   const { getAccessTokenSilently } = useAuth0();
@@ -36,6 +36,15 @@ const JobPartDueDates = ({ jobPart, jobId }) => {
     }
   };
 
+  const handleDelete = async () => {
+    const token = await getAccessTokenSilently();
+    if (dueDateStore) {
+      dispatch(deleteJobPartDueDate(token, dueDateStore._id));
+      setDueDate('');
+    } else {
+      toast.info('Due date does not exist');
+    }
+  };
   return (
     <>
       <ToastContainer theme="colored" />
@@ -47,7 +56,9 @@ const JobPartDueDates = ({ jobPart, jobId }) => {
         <Button type="submit" variant="primary">
           Save
         </Button>
-        <Button variant="danger">Delete</Button>
+        <Button variant="danger" onClick={handleDelete}>
+          Delete
+        </Button>
       </Form>
     </>
   );

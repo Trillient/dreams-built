@@ -42,16 +42,7 @@ const JobDetailsScreen = ({ match, history }) => {
       dispatch(resetJobRedirect());
       history.push('/jobs');
     }
-    if (dueDateUpdated) {
-      (async () => {
-        try {
-          const token = await getAccessTokenSilently();
-          dispatch(getJobDueDates(token, jobId));
-        } catch (err) {
-          console.log(err);
-        }
-      })();
-    }
+
     if (!job || job._id !== jobId) {
       (async () => {
         try {
@@ -74,6 +65,17 @@ const JobDetailsScreen = ({ match, history }) => {
       setCity(job.city);
       setColor(job.color);
       setArea(job.area || '');
+    }
+
+    if (dueDateUpdated) {
+      (async () => {
+        try {
+          const token = await getAccessTokenSilently();
+          dispatch(getJobDueDates(token, jobId));
+        } catch (err) {
+          console.log(err);
+        }
+      })();
     }
   }, [dispatch, getAccessTokenSilently, job, jobId, redirect, history, dueDateUpdated]);
 

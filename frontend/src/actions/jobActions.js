@@ -396,3 +396,32 @@ export const updateJobPartDueDate = (token, dueId, dueDate) => async (dispatch) 
     });
   }
 };
+
+export const deleteJobPartDueDate = (token, dueId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPART_DUEDATE_UPDATE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.delete(`${process.env.REACT_APP_API_URL}/job/duedates/job/part/${dueId}`, config);
+
+    toast.success('Deleted!');
+    dispatch({
+      type: actions.JOBPART_DUEDATE_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+    toast.error(message);
+    dispatch({
+      type: actions.JOBPART_DUEDATE_UPDATE_FAIL,
+      payload: message,
+    });
+  }
+};
