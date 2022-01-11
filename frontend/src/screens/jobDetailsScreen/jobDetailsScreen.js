@@ -24,8 +24,8 @@ const JobDetailsScreen = ({ match, history }) => {
   const jobPartsList = useSelector((state) => state.jobParts);
   const { jobParts } = jobPartsList;
 
-  // const dueDates = useSelector((state) => state.jobDueDates);
-  // const { jobDueDates } = dueDates;
+  const dueDates = useSelector((state) => state.jobDueDates);
+  const { dueDateUpdated } = dueDates;
 
   const [display, setDisplay] = useState(false);
 
@@ -41,6 +41,16 @@ const JobDetailsScreen = ({ match, history }) => {
     if (redirect) {
       dispatch(resetJobRedirect());
       history.push('/jobs');
+    }
+    if (dueDateUpdated) {
+      (async () => {
+        try {
+          const token = await getAccessTokenSilently();
+          dispatch(getJobDueDates(token, jobId));
+        } catch (err) {
+          console.log(err);
+        }
+      })();
     }
     if (!job || job._id !== jobId) {
       (async () => {
@@ -65,7 +75,7 @@ const JobDetailsScreen = ({ match, history }) => {
       setColor(job.color);
       setArea(job.area || '');
     }
-  }, [dispatch, getAccessTokenSilently, job, jobId, redirect, history]);
+  }, [dispatch, getAccessTokenSilently, job, jobId, redirect, history, dueDateUpdated]);
 
   const submitHandler = async (e) => {
     e.preventDefault();

@@ -11,23 +11,26 @@ const JobPartDueDates = ({ jobPart, jobId }) => {
   const dispatch = useDispatch();
 
   const dueDates = useSelector((state) => state.jobDueDates);
-  const { jobDueDates } = dueDates;
-
-  const jobDueDate = jobDueDates.find((dueDate) => dueDate.job === jobId && dueDate.jobPartTitle._id === jobPart._id);
+  const { loading, jobDueDates } = dueDates;
 
   const [dueDate, setDueDate] = useState('');
+  const [dueDateStore, setDueDateStore] = useState('');
 
   useEffect(() => {
-    if (jobDueDate) {
-      setDueDate(jobDueDate.dueDate);
+    if (!loading && jobDueDates) {
+      const data = jobDueDates.find((dueDate) => dueDate.jobPartTitle._id === jobPart._id && dueDate.job === jobId);
+      setDueDateStore(data);
     }
-  }, [jobDueDate]);
+    if (dueDateStore) {
+      setDueDate(dueDateStore.dueDate);
+    }
+  }, [loading, jobDueDates, dueDateStore, jobPart._id, jobId]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     const token = await getAccessTokenSilently();
-    if (jobDueDate) {
-      dispatch(updateJobPartDueDate(token, jobDueDate, dueDate));
+    if (dueDateStore) {
+      dispatch(updateJobPartDueDate(token, dueDateStore._id, dueDate));
     } else {
       dispatch(createJobPartDueDate(token, jobId, jobPart._id, dueDate));
     }

@@ -45,6 +45,7 @@ const deleteJobPartDueDates = asyncHandler(async (req, res) => {
  */
 
 const createJobPartDueDate = asyncHandler(async (req, res) => {
+  const { dueDate } = req.body;
   const jobId = req.params.jobid;
 
   const partId = req.query.partid;
@@ -56,7 +57,7 @@ const createJobPartDueDate = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Due date already exists');
   }
-  const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId });
+  const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate });
 
   res.status(201).json(created);
 });

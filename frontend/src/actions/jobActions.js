@@ -351,7 +351,7 @@ export const createJobPartDueDate = (token, jobId, jobPart, dueDate) => async (d
       },
     };
 
-    const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/job/duedates/parts/${jobId}?partid=${jobPart}`, dueDate, config);
+    const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/job/duedates/parts/${jobId}?partid=${jobPart}`, { dueDate: dueDate }, config);
 
     toast.success('Created!');
     dispatch({
@@ -380,7 +380,7 @@ export const updateJobPartDueDate = (token, dueId, dueDate) => async (dispatch) 
       },
     };
 
-    const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/job/duedates/job/part/${dueId}`, dueDate, config);
+    const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/job/duedates/job/part/${dueId}`, { dueDate: dueDate }, config);
 
     toast.success('Saved!');
     dispatch({
