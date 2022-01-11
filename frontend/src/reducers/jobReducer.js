@@ -122,3 +122,16 @@ export const jobDueDatesReducer = (state = { jobDueDates: [], dueDateUpdated: fa
       return state;
   }
 };
+
+export const getDueDatesReducer = (state = { dueDates: [] }, action) => {
+  switch (action.type) {
+    case actions.DUEDATELIST_FETCH_REQUEST:
+      return { dueDateLoading: true };
+    case actions.DUEDATELIST_FETCH_SUCCESS:
+      return { dueDateLoading: false, dueDates: action.payload };
+    case actions.DUEDATELIST_FETCH_FAIL:
+      return { dueDateLoading: false, dueDateError: action.payload };
+    default:
+      return state;
+  }
+};

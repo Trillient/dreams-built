@@ -7,7 +7,7 @@ import styles from './scheduleScreen.module.css';
 import CustomMenu from '../../components/CustomMenu';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getJobPartsList } from '../../actions/jobActions';
+import { getDueDates, getJobPartsList } from '../../actions/jobActions';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Message from '../../components/Message';
@@ -18,16 +18,27 @@ const ScheduleScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
 
+  // TODO Create a reducer that gets the duedates between a given date then pass the state to the calendar
+
   const jobPartsList = useSelector((state) => state.jobParts);
   const { loading, error, jobParts } = jobPartsList;
 
-  const startWeekInit = DateTime.now().startOf('week');
+  const dueDateList = useSelector((state) => state.dueDateList);
+  const { dueDateLoading, dueDateError, dueDates } = dueDateList;
 
-  const [weekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
+  const startWeekInit = DateTime.now().startOf('week');
+  const endWeekInit = DateTime.now().endOf('week');
+
+  const [weekStart] = useState(startWeekInit.toFormat('yyyy/MM/dd'));
+  const [weekEnd] = useState(endWeekInit.toFormat('yyyy/MM/dd'));
 
   let weekArray = [];
   for (let i = 0; i < 7; i++) {
-    weekArray.push({ day: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('EEEE'), date: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('d MMM') });
+    weekArray.push({
+      day: DateTime.fromFormat(weekStart, 'yyyy/MM/dd').plus({ days: i }).toFormat('EEEE'),
+      date: DateTime.fromFormat(weekStart, 'yyyy/MM/dd').plus({ days: i }).toFormat('yyyy-MM-dd'),
+      shortDate: DateTime.fromFormat(weekStart, 'yyyy/MM/dd').plus({ days: i }).toFormat('d MMM'),
+    });
   }
 
   useEffect(() => {
@@ -35,16 +46,19 @@ const ScheduleScreen = () => {
       try {
         const token = await getAccessTokenSilently();
         dispatch(getJobPartsList(token));
+        dispatch(getDueDates(token, weekStart, weekEnd));
       } catch (err) {
         toast.error(err);
       }
     })();
-  }, [dispatch, getAccessTokenSilently]);
+  }, [dispatch, getAccessTokenSilently, weekEnd, weekStart]);
 
-  return loading ? (
+  return loading || dueDateLoading ? (
     <Loader />
   ) : error ? (
     <Message variant="danger">{error}</Message>
+  ) : dueDateError ? (
+    <Message variant="danger">{dueDateError}</Message>
   ) : (
     <div className={styles.calendar}>
       <div className={styles.header}>
@@ -59,14 +73,14 @@ const ScheduleScreen = () => {
             {weekArray.map((day) => (
               <th key={day.date} className={styles['static-table']}>
                 {day.day} <br />
-                {day.date}
+                {day.shortDate}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {jobParts.map((jobPart) => (
-            <Calendar key={jobPart._id} jobPart={jobPart.jobPartTitle} week={weekArray} jobData={jobParts} />
+            <Calendar key={jobPart._id} jobPart={jobPart} week={weekArray} dueDates={dueDates} loading={loading} dueDateLoading={dueDateLoading} />
           ))}
         </tbody>
       </Table>

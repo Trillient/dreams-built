@@ -425,3 +425,30 @@ export const deleteJobPartDueDate = (token, dueId) => async (dispatch) => {
     });
   }
 };
+
+export const getDueDates = (token, weekStart, weekEnd) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.DUEDATELIST_FETCH_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/duedates/parts?weekStart=${weekStart}&weekEnd=${weekEnd}`, config);
+    dispatch({
+      type: actions.DUEDATELIST_FETCH_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+    toast.error(message);
+    dispatch({
+      type: actions.DUEDATELIST_FETCH_FAIL,
+      payload: message,
+    });
+  }
+};

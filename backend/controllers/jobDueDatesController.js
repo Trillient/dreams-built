@@ -9,7 +9,7 @@ const JobPart = require('../models/jobPartModel');
  */
 
 const getAllJobDueDates = asyncHandler(async (req, res) => {
-  const jobDueDates = await JobDueDate.find({}).populate('job jobPartTitle', 'jobNumber client address jobPartTitle jobOrder');
+  const jobDueDates = await JobDueDate.find({ dueDateRange: { $gte: req.query.weekStart, $lt: req.query.weekEnd } }).populate('job jobPartTitle', 'jobNumber client address jobPartTitle jobOrder color');
 
   res.json(jobDueDates);
 });
@@ -57,7 +57,7 @@ const createJobPartDueDate = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Due date already exists');
   }
-  const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate });
+  const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate, dueDateRange: dueDate });
 
   res.status(201).json(created);
 });
@@ -74,6 +74,7 @@ const updateJobPartDueDate = asyncHandler(async (req, res) => {
 
   if (jobPartDueDateItem) {
     jobPartDueDateItem.dueDate = dueDate;
+    jobPartDueDateItem.dueDateRange = dueDate;
     if (contractor) {
       jobPartDueDateItem.contractor = contractor;
     }

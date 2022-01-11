@@ -12,6 +12,7 @@ const jobDueDateSchema = mongoose.Schema({
     ref: 'JobPart',
   },
   dueDate: String,
+  dueDateRange: Date,
   contractor: String,
 });
 
