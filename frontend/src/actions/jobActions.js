@@ -438,7 +438,7 @@ export const getDueDates = (token, weekStart, weekEnd) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/duedates/parts?weekStart=${weekStart}&weekEnd=${weekEnd}`, config);
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/duedates/parts?rangeStart=${weekStart}&rangeEnd=${weekEnd}`, config);
     dispatch({
       type: actions.DUEDATELIST_FETCH_SUCCESS,
       payload: data,
