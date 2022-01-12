@@ -18,8 +18,6 @@ const ScheduleScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
 
-  // TODO Create a reducer that gets the duedates between a given date then pass the state to the calendar
-
   const jobPartsList = useSelector((state) => state.jobParts);
   const { loading, error, jobParts } = jobPartsList;
 
@@ -27,7 +25,7 @@ const ScheduleScreen = () => {
   const { dueDateLoading, dueDateError, dueDates } = dueDateList;
 
   const startWeekInit = DateTime.now().startOf('week');
-  const endWeekInit = DateTime.now().endOf('week');
+  const endWeekInit = DateTime.now().endOf('week').plus({ days: 1 });
 
   const [weekStart] = useState(startWeekInit.toFormat('yyyy/MM/dd'));
   const [weekEnd] = useState(endWeekInit.toFormat('yyyy/MM/dd'));
