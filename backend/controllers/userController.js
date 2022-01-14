@@ -33,27 +33,17 @@ const getUsers = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Create a user
- * @Route POST /api/user
+ * @Route POST /api/users
  * @Access Public
  */
 
 const createUser = asyncHandler(async (req, res) => {
-  const { userId, firstName, lastName, email, phoneNumber, isAdmin, birthDate, hourlyRate, startDate } = req.body;
-
-  const userExists = await User.findOne({ email });
-
-  if (userExists) {
-    res.status(400);
-    throw new Error('User already exists');
-  }
+  const { userId, firstName, lastName, birthDate, hourlyRate, startDate } = req.body;
 
   const user = await User.create({
     userId,
     firstName,
     lastName,
-    email,
-    phoneNumber,
-    isAdmin,
     birthDate,
     hourlyRate,
     startDate,
@@ -65,9 +55,6 @@ const createUser = asyncHandler(async (req, res) => {
       userId: user.userId,
       firstName: user.firstName,
       lastName: user.lastName,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      isAdmin: user.isAdmin,
       birthDate: user.birthDate,
       hourlyRate: user.hourlyRate,
       startDate: user.startDate,

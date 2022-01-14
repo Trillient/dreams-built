@@ -24,22 +24,21 @@ export const getEmployeeTimeSheets = (token, weekStart) => async (dispatch) => {
       Sunday: 7,
     };
 
-    data
-      .sort((a, b) => {
-        const firstTime = a.startTime.split(':');
-        const secondTime = b.startTime.split(':');
-        return +firstTime[0] * 60 + +firstTime[1] - (+secondTime[0] * 60 + +secondTime[1]);
-      })
-      .sort((a, b) => sorter[a.day] - sorter[b.day])
-      .sort((a, b) => a.user.firstName.normalize().localeCompare(b.user.firstName.normalize()));
-
     const sortedByJob = Array.from(
       data.sort((a, b) => a.jobNumber - b.jobNumber).reduce((m, { jobNumber, ...o }) => m.set(jobNumber, [...(m.get(jobNumber) || []), o]), new Map()),
       ([jobNumber, value]) => ({ jobNumber, value })
     );
 
     const sortedByUser = Array.from(
-      data.reduce((m, { userId, ...o }) => m.set(userId, [...(m.get(userId) || []), o]), new Map()),
+      data
+        .sort((a, b) => a.user.firstName.normalize().localeCompare(b.user.firstName.normalize()))
+        .sort((a, b) => {
+          const firstTime = a.startTime.split(':');
+          const secondTime = b.startTime.split(':');
+          return +firstTime[0] * 60 + +firstTime[1] - (+secondTime[0] * 60 + +secondTime[1]);
+        })
+        .sort((a, b) => sorter[a.day] - sorter[b.day])
+        .reduce((m, { userId, ...o }) => m.set(userId, [...(m.get(userId) || []), o]), new Map()),
       ([userId, value]) => ({ userId, value })
     );
 

@@ -6,9 +6,11 @@ import { Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { getEmployeeTimeSheets } from '../../actions/reportActions';
+import EmployeeRow from '../../components/EmployeeRow';
 
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
+import styles from './timesheetReports.module.css';
 
 const TimeSheetReportScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -49,7 +51,7 @@ const TimeSheetReportScreen = () => {
     <>
       {timesheets.sortedByEmployee &&
         timesheets.sortedByJob.map((job) => (
-          <div key={job.jobNumber}>
+          <div key={job.jobNumber} className={styles.card}>
             <h2>{job.jobNumber}</h2>
             <Table>
               <thead>
@@ -82,7 +84,7 @@ const TimeSheetReportScreen = () => {
         ))}
       {timesheets.sortedByEmployee &&
         timesheets.sortedByEmployee.map((user) => (
-          <>
+          <div key={user.userId} className={styles.card}>
             <h2>
               {user.value[0].user.firstName} {user.value[0].user.lastName}
             </h2>
@@ -93,16 +95,12 @@ const TimeSheetReportScreen = () => {
                   <th>Start Time</th>
                   <th>End Time</th>
                   <th>Total Time</th>
+                  <th>Edit</th>
                 </tr>
               </thead>
               <tbody>
                 {user.value.map((entry) => (
-                  <tr key={entry._id}>
-                    <td>{entry.day}</td>
-                    <td>{entry.startTime}</td>
-                    <td>{entry.endTime}</td>
-                    <td>{entry.jobTime}</td>
-                  </tr>
+                  <EmployeeRow entry={entry} key={entry._id} />
                 ))}
               </tbody>
               <tfoot>
@@ -114,7 +112,7 @@ const TimeSheetReportScreen = () => {
                 </tr>
               </tfoot>
             </Table>
-          </>
+          </div>
         ))}
     </>
   );
