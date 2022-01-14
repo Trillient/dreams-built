@@ -21,6 +21,7 @@ import CreateJobPartScreen from './screens/createJobPartScreen/CreateJobPartScre
 import EditJobPartScreen from './screens/editJobPartScreen/EditJobPartScreen';
 import EmployeesScreen from './screens/employeesScreen/EmployeesScreen';
 import EditEmployeeScreen from './screens/editEmployeeScreen/EditEmployeeScreen';
+import TimeSheetReportScreen from './screens/timesheetReportScreen/TimeSheetReportScreen';
 
 const App = () => {
   const { isAuthenticated } = useAuth0();
@@ -43,7 +44,7 @@ const App = () => {
         <Route path="/employees/edit/:id" exact component={EditEmployeeScreen} />
         <Route path="/schedule" exact component={ScheduleScreen} />
         <Route path="/profile" exact component={Profile} />
-        <Route path="/reports/timesheets" />
+        <Route path="/reports/timesheets" exact component={TimeSheetReportScreen} />
       </Layout>
     </Router>
   );

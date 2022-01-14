@@ -5,6 +5,7 @@ import { entryArrayReducer, validateReducer } from './reducers/timeSheetReducer'
 import { jobDueDatesReducer, getJobPartsReducer, getJobsReducer, jobPartReducer, jobReducer, getDueDatesReducer } from './reducers/jobReducer';
 import { clientReducer, getClientsReducer } from './reducers/clientReducer';
 import { getEmployeesReducer, userReducer } from './reducers/employeeReduer';
+import { reportReducer } from './reducers/reportsReducer';
 
 const reducer = combineReducers({
   timeSheet: entryArrayReducer,
@@ -19,6 +20,7 @@ const reducer = combineReducers({
   employee: userReducer,
   jobDueDates: jobDueDatesReducer,
   dueDateList: getDueDatesReducer,
+  reports: reportReducer,
 });
 
 const middleware = [thunk];
