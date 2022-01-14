@@ -24,7 +24,7 @@ const CreateJobPartScreen = () => {
       dispatch(resetJobPartRedirect());
       navigate('/jobparts');
     }
-  }, [dispatch, history, redirect]);
+  }, [dispatch, redirect]);
 
   const submitHandler = async (e) => {
     e.preventDefault();

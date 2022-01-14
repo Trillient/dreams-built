@@ -51,7 +51,7 @@ const EditEmployeeScreen = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, dispatch, userId, history, redirect]);
+  }, [user, dispatch, userId, redirect]);
 
   const submitHandler = async (e) => {
     e.preventDefault();

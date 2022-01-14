@@ -24,7 +24,7 @@ const CreateClientScreen = () => {
       dispatch(resetClientRedirect());
       navigate('/clients');
     }
-  }, [dispatch, history, redirect]);
+  }, [dispatch, redirect]);
 
   const submitHandler = async (e) => {
     e.preventDefault();

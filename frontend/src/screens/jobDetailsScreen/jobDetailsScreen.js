@@ -79,7 +79,7 @@ const JobDetailsScreen = () => {
         }
       })();
     }
-  }, [dispatch, getAccessTokenSilently, job, jobId, redirect, history, dueDateUpdated]);
+  }, [dispatch, getAccessTokenSilently, job, jobId, redirect, dueDateUpdated]);
 
   const submitHandler = async (e) => {
     e.preventDefault();

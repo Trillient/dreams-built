@@ -45,7 +45,7 @@ const EditClientScreen = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clientDetails, dispatch, clientId, history, redirect]);
+  }, [clientDetails, dispatch, clientId, redirect]);
 
   const submitHandler = async (e) => {
     e.preventDefault();

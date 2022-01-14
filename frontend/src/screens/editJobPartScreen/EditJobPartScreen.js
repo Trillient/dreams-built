@@ -40,7 +40,7 @@ const EditJobPartScreen = () => {
         setJobPartTitle(jobPart.jobPartTitle);
       }
     }
-  }, [jobPart, dispatch, jobPartId, history, redirect, getAccessTokenSilently]);
+  }, [jobPart, dispatch, jobPartId, redirect, getAccessTokenSilently]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
