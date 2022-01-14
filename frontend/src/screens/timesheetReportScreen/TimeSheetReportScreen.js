@@ -2,7 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { DateTime } from 'luxon';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { Table } from 'react-bootstrap';
+import { Form, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { getEmployeeTimeSheets } from '../../actions/reportActions';
@@ -21,16 +21,8 @@ const TimeSheetReportScreen = () => {
 
   const startWeekInit = DateTime.now().startOf('week');
 
-  const [weekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
-
-  let weekArray = [];
-  for (let i = 0; i < 7; i++) {
-    weekArray.push({
-      day: DateTime.fromFormat(weekStart, 'yyyy/MM/dd').plus({ days: i }).toFormat('EEEE'),
-      date: DateTime.fromFormat(weekStart, 'yyyy/MM/dd').plus({ days: i }).toFormat('dd/MM/yyyy'),
-      shortDate: DateTime.fromFormat(weekStart, 'yyyy/MM/dd').plus({ days: i }).toFormat('d MMM'),
-    });
-  }
+  const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
+  console.log(weekStart);
 
   useEffect(() => {
     (async () => {
@@ -49,14 +41,28 @@ const TimeSheetReportScreen = () => {
     <Message variant="danger">{error}</Message>
   ) : (
     <>
+      <Form>
+        <Form.Group controlId="date">
+          <Form.Label>Pay Week</Form.Label>
+          <Form.Control type="date" value={weekStart} onChange={(e) => setWeekStart(DateTime.fromFormat(e.target.value, 'yyyy-MM-dd').startOf('week').toFormat('dd/MM/yyyy'))}></Form.Control>
+        </Form.Group>
+      </Form>
       {timesheets.sortedByEmployee &&
         timesheets.sortedByJob.map((job) => (
           <div key={job.jobNumber} className={styles.card}>
             <h2>{job.jobNumber}</h2>
+            <p>
+              <strong>
+                <em>
+                  {job.value[0].weekStart} - {job.value[0].weekEnd}
+                </em>
+              </strong>
+            </p>
             <Table>
               <thead>
                 <tr>
                   <th>Employee</th>
+                  <th>Rate ($/hr)</th>
                   <th>Cost</th>
                   <th>Times</th>
                 </tr>
@@ -67,6 +73,7 @@ const TimeSheetReportScreen = () => {
                     <td>
                       {entry.user.firstName} {entry.user.lastName}
                     </td>
+                    <td>$ {entry.user.hourlyRate}</td>
                     <td>$ {entry.user.hourlyRate * entry.jobTime}</td>
                     <td>{entry.jobTime}</td>
                   </tr>
@@ -75,6 +82,7 @@ const TimeSheetReportScreen = () => {
               <tfoot>
                 <tr>
                   <th>Total</th>
+                  <td></td>
                   <td>$ {job.value.map((entry) => entry.jobTime * entry.user.hourlyRate).reduce((previous, current) => previous + current, 0)}</td>
                   <td>{job.value.map((entry) => entry.jobTime).reduce((previous, current) => previous + current, 0)}</td>
                 </tr>
@@ -88,6 +96,13 @@ const TimeSheetReportScreen = () => {
             <h2>
               {user.value[0].user.firstName} {user.value[0].user.lastName}
             </h2>
+            <p>
+              <strong>
+                <em>
+                  {user.value[0].weekStart} - {user.value[0].weekEnd}
+                </em>
+              </strong>
+            </p>
             <Table>
               <thead>
                 <tr>
