@@ -2,7 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { getClients } from '../../actions/clientActions';
 import { deleteJob, getJob, getJobDueDates, getJobPartsList, resetJobRedirect, updateJob } from '../../actions/jobActions';
@@ -10,11 +10,13 @@ import JobPartDueDates from '../../components/JobPartDueDates';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const JobDetailsScreen = ({ match, history }) => {
+const JobDetailsScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
 
-  const jobId = match.params.id;
+  const jobId = params.id;
 
   const jobDetails = useSelector((state) => state.job);
   const { loading, error, job, redirect } = jobDetails;
@@ -40,7 +42,7 @@ const JobDetailsScreen = ({ match, history }) => {
   useEffect(() => {
     if (redirect) {
       dispatch(resetJobRedirect());
-      history.push('/jobs');
+      navigate('/jobs');
     }
 
     if (!job || job._id !== jobId) {

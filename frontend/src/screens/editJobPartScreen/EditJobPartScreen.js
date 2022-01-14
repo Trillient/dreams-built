@@ -2,17 +2,19 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { deleteJobPart, getJobPart, resetJobPartRedirect, updateJobPart } from '../../actions/jobActions';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const EditJobPartScreen = ({ match, history }) => {
+const EditJobPartScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
 
-  const jobPartId = match.params.id;
+  const jobPartId = params.id;
 
   const jobPartDetails = useSelector((state) => state.jobPart);
   const { loading, error, jobPart, redirect } = jobPartDetails;
@@ -22,7 +24,7 @@ const EditJobPartScreen = ({ match, history }) => {
   useEffect(() => {
     if (redirect) {
       dispatch(resetJobPartRedirect());
-      history.push('/jobparts');
+      navigate('/jobparts');
     } else {
       if (!jobPart || jobPart._id !== jobPartId) {
         (async () => {

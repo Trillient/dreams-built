@@ -2,17 +2,19 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { deleteClient, getClient, resetClientRedirect, updateClient } from '../../actions/clientActions';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const EditClientScreen = ({ match, history }) => {
+const EditClientScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
 
-  const clientId = match.params.id;
+  const navigate = useNavigate();
+  const params = useParams();
+  const clientId = params.id;
 
   const client = useSelector((state) => state.client);
   const { loading, error, clientDetails, redirect } = client;
@@ -23,7 +25,7 @@ const EditClientScreen = ({ match, history }) => {
   useEffect(() => {
     if (redirect) {
       dispatch(resetClientRedirect());
-      history.push('/clients');
+      navigate('/clients');
     } else {
       if (!clientDetails || clientDetails._id !== clientId) {
         (async () => {

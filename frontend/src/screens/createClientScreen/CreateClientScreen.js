@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { ToastContainer } from 'react-toastify';
 
 import { createClient, resetClientRedirect } from '../../actions/clientActions';
 
-const CreateClientScreen = ({ history }) => {
+const CreateClientScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const client = useSelector((state) => state.client);
   const { redirect } = client;
@@ -21,7 +22,7 @@ const CreateClientScreen = ({ history }) => {
   useEffect(() => {
     if (redirect) {
       dispatch(resetClientRedirect());
-      history.push('/clients');
+      navigate('/clients');
     }
   }, [dispatch, history, redirect]);
 

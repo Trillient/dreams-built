@@ -22,7 +22,6 @@ const TimeSheetReportScreen = () => {
   const startWeekInit = DateTime.now().startOf('week');
 
   const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
-  console.log(weekStart);
 
   useEffect(() => {
     (async () => {

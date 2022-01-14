@@ -2,16 +2,17 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { createJobPart, resetJobPartRedirect } from '../../actions/jobActions';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const CreateJobPartScreen = ({ history }) => {
+const CreateJobPartScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const jobParts = useSelector((state) => state.jobPart);
   const { loading, error, redirect } = jobParts;
@@ -21,7 +22,7 @@ const CreateJobPartScreen = ({ history }) => {
   useEffect(() => {
     if (redirect) {
       dispatch(resetJobPartRedirect());
-      history.push('/jobparts');
+      navigate('/jobparts');
     }
   }, [dispatch, history, redirect]);
 

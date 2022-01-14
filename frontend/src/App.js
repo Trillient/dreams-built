@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
 import './bootstrap.min.css';
@@ -10,7 +10,7 @@ import DashboardScreen from './screens/dashboardScreen/DashboardScreen';
 import TimeSheetScreen from './screens/timeSheetScreen/TimeSheetScreen';
 import ScheduleScreen from './screens/scheduleScreen/scheduleScreen';
 import JobListScreen from './screens/jobListScreen/JobListScreen';
-import jobDetailsScreen from './screens/jobDetailsScreen/jobDetailsScreen';
+import JobDetailsScreen from './screens/jobDetailsScreen/JobDetailsScreen';
 import Profile from './screens/profileScreen/ProfileScreen';
 import CreateJobScreen from './screens/createJobScreen/CreateJobScreen';
 import ClientListScreen from './screens/clientListScreen/ClientListScreen';
@@ -28,23 +28,30 @@ const App = () => {
   return (
     <Router>
       <Layout>
-        <Route path="/" exact component={isAuthenticated ? DashboardScreen : HomeScreen} />
-        <Route path="/dashboard" exact component={DashboardScreen} />
-        <Route path="/timesheet" exact component={TimeSheetScreen} />
-        <Route path="/clients" exact component={ClientListScreen} />
-        <Route path="/clients/create" exact component={CreateClientScreen} />
-        <Route path="/clients/edit/:id" exact component={EditClientScreen} />
-        <Route path="/jobs" exact component={JobListScreen} />
-        <Route path="/jobs/create" exact component={CreateJobScreen} />
-        <Route path="/job/details/:id" exact component={jobDetailsScreen} />
-        <Route path="/jobparts" exact component={JobPartScreen} />
-        <Route path="/jobparts/create" exact component={CreateJobPartScreen} />
-        <Route path="/jobparts/edit/:id" exact component={EditJobPartScreen} />
-        <Route path="/employees" exact component={EmployeesScreen} />
-        <Route path="/employees/edit/:id" exact component={EditEmployeeScreen} />
-        <Route path="/schedule" exact component={ScheduleScreen} />
-        <Route path="/profile" exact component={Profile} />
-        <Route path="/reports/timesheets" exact component={TimeSheetReportScreen} />
+        <Routes>
+          <Route path="/" element={isAuthenticated ? <DashboardScreen /> : <HomeScreen />} />
+          <Route path="dashboard" element={<DashboardScreen />} />
+          <Route path="timesheet" element={<TimeSheetScreen />} />
+          <Route path="clients" element={<ClientListScreen />} />
+          <Route path="clients/edit/:id" element={<EditClientScreen />} />
+          <Route path="clients/create" element={<CreateClientScreen />} />
+          <Route path="jobs" element={<JobListScreen />} />
+
+          <Route path="job/details/:id" element={<JobDetailsScreen />} />
+          <Route path="jobs/create" element={<CreateJobScreen />} />
+
+          <Route path="jobparts" element={<JobPartScreen />} />
+
+          <Route path="jobparts/edit/:id" element={<EditJobPartScreen />} />
+          <Route path="jobparts/create" element={<CreateJobPartScreen />} />
+
+          <Route path="employees" element={<EmployeesScreen />} />
+          <Route path="employees/edit/:id" element={<EditEmployeeScreen />} />
+
+          <Route path="schedule" element={<ScheduleScreen />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="reports/timesheets" element={<TimeSheetReportScreen />} />
+        </Routes>
       </Layout>
     </Router>
   );
