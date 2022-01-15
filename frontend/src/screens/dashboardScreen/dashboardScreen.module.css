@@ -1,0 +1,11 @@
+.grid {
+  margin: 2rem 0;
+  display: grid;
+  gap: 2rem;
+}
+
+@media only screen and (min-width: 50rem) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

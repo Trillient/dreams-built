@@ -1,0 +1,50 @@
+.card {
+  background: #111827;
+}
+
+.title {
+  color: #8c99e3;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.icon {
+  font-size: 1.5rem;
+}
+
+.icon-text {
+  margin-left: 0.5rem;
+}
+
+.body {
+  color: lightgray;
+  padding: 0 1rem 1rem;
+}
+
+.body-title {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+}
+
+.footer {
+  display: flex;
+  justify-content: right;
+  color: white;
+
+  padding: 0rem 1rem 1rem;
+}
+
+.button {
+  background-color: unset;
+  color: #8c99e3;
+  border-color: #5562ae;
+}
+
+.button:hover {
+  background-color: unset;
+  color: #8c99e3;
+  border-color: #8c99e3;
+  transition: 250ms ease-in-out;
+}
