@@ -31,7 +31,7 @@ export const getEmployeeTimeSheets = (token, weekStart) => async (dispatch) => {
 
     const sortedByUser = Array.from(
       data
-        .sort((a, b) => a.user.firstName.normalize().localeCompare(b.user.firstName.normalize()))
+        .sort((a, b) => (a.user.firstName && b.user.firstName ? a.user.firstName.normalize().localeCompare(b.user.firstName.normalize()) : false))
         .sort((a, b) => {
           const firstTime = a.startTime.split(':');
           const secondTime = b.startTime.split(':');

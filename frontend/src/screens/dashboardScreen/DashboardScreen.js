@@ -1,5 +1,4 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { HiOutlineInformationCircle } from 'react-icons/hi';
 import InfoBlock from '../../components/InfoBlock';
 import Loader from '../../components/Loader';

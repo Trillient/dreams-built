@@ -1,15 +1,17 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { DateTime } from 'luxon';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { Form, Table } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { getEmployeeTimeSheets } from '../../actions/reportActions';
-import EmployeeRow from '../../components/EmployeeRow';
 
+import { getEmployeeTimeSheets } from '../../actions/reportActions';
+
+import EmployeeReportCard from '../../components/EmployeeReportCard';
+import JobReportCard from '../../components/JobReportCard';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
+
 import styles from './timesheetReports.module.css';
 
 const TimeSheetReportScreen = () => {
@@ -49,83 +51,13 @@ const TimeSheetReportScreen = () => {
       {timesheets.sortedByEmployee &&
         timesheets.sortedByJob.map((job) => (
           <div key={job.jobNumber} className={styles.card}>
-            <h2>{job.jobNumber}</h2>
-            <p>
-              <strong>
-                <em>
-                  {job.value[0].weekStart} - {job.value[0].weekEnd}
-                </em>
-              </strong>
-            </p>
-            <Table>
-              <thead>
-                <tr>
-                  <th>Employee</th>
-                  <th>Rate ($/hr)</th>
-                  <th>Cost</th>
-                  <th>Times</th>
-                </tr>
-              </thead>
-              <tbody>
-                {job.value.map((entry) => (
-                  <tr key={entry._id}>
-                    <td>
-                      {entry.user.firstName} {entry.user.lastName}
-                    </td>
-                    <td>$ {entry.user.hourlyRate}</td>
-                    <td>$ {entry.user.hourlyRate * entry.jobTime}</td>
-                    <td>{entry.jobTime}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th>Total</th>
-                  <td></td>
-                  <td>$ {job.value.map((entry) => entry.jobTime * entry.user.hourlyRate).reduce((previous, current) => previous + current, 0)}</td>
-                  <td>{job.value.map((entry) => entry.jobTime).reduce((previous, current) => previous + current, 0)}</td>
-                </tr>
-              </tfoot>
-            </Table>
+            <JobReportCard job={job} />
           </div>
         ))}
       {timesheets.sortedByEmployee &&
-        timesheets.sortedByEmployee.map((user) => (
-          <div key={user.userId} className={styles.card}>
-            <h2>
-              {user.value[0].user.firstName} {user.value[0].user.lastName}
-            </h2>
-            <p>
-              <strong>
-                <em>
-                  {user.value[0].weekStart} - {user.value[0].weekEnd}
-                </em>
-              </strong>
-            </p>
-            <Table>
-              <thead>
-                <tr>
-                  <th>Day</th>
-                  <th>Start Time</th>
-                  <th>End Time</th>
-                  <th>Total Time</th>
-                  <th>Edit</th>
-                </tr>
-              </thead>
-              <tbody>
-                {user.value.map((entry) => (
-                  <EmployeeRow entry={entry} key={entry._id} />
-                ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th>Total</th>
-                  <td></td>
-                  <td></td>
-                  <td>{user.value.map((entry) => entry.jobTime).reduce((previous, current) => previous + current, 0)}</td>
-                </tr>
-              </tfoot>
-            </Table>
+        timesheets.sortedByEmployee.map((employee) => (
+          <div key={employee.userId} className={styles.card}>
+            <EmployeeReportCard employee={employee} />
           </div>
         ))}
     </>

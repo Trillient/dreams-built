@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler');
 const axios = require('axios').default;
-const request = require('request');
 const User = require('../models/userModel');
 const { domain, auth0ClientId, auth0ClientSecret, audience } = require('../config/env');
 
