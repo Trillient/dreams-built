@@ -18,5 +18,6 @@ const checkJwt = jwt({
 });
 
 const readClients = jwtAuthz(['read:clients'], { failWithError: true });
+const writeClients = jwtAuthz(['write:clients'], { failWithError: true });
 
-module.exports = { checkJwt, readClients };
+module.exports = { checkJwt, readClients, writeClients };

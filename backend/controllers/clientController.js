@@ -13,24 +13,13 @@ const getClients = asyncHandler(async (req, res) => {
 });
 
 /**
- * @Desc Get a Client
- * @Route GET /api/clients/:id
- * @Access Private (every user) //TODO - make private
- */
-
-const getClient = asyncHandler(async (req, res) => {
-  const client = await Client.findById(req.params.id);
-  res.json(client);
-});
-
-/**
  * @Desc Create a new Client
  * @Route POST /api/clients
  * @Access Private (only admin) //TODO - make private
  */
 
 const createClient = asyncHandler(async (req, res) => {
-  const { clientName, contacts, color } = req.body;
+  const { clientName, color, contact } = req.body;
 
   const checkClientExists = await Client.findOne({ clientName: clientName });
 
@@ -39,15 +28,24 @@ const createClient = asyncHandler(async (req, res) => {
     throw new Error('Client already exists!');
   }
 
-  const client = new Client({
+  const createdClient = await Client.create({
     clientName: clientName,
-    contacts: contacts,
     color: color,
+    contact: contact,
   });
 
-  const createdClient = await client.save();
+  res.status(201).json({ message: 'Client created', client: createdClient });
+});
 
-  res.status(201).json(createdClient);
+/**
+ * @Desc Get a Client
+ * @Route GET /api/clients/:id
+ * @Access Private (every user) //TODO - make private
+ */
+
+const getClient = asyncHandler(async (req, res) => {
+  const client = await Client.findById(req.params.id);
+  res.json(client);
 });
 
 /**

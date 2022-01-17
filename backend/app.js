@@ -21,12 +21,11 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
-app.use(checkJwt);
 
 app.use('/api/users', userRoutes);
-app.use('/api/timesheet', timesheetRoutes);
-app.use('/api/job', jobDetailRoutes);
-app.use('/api/clients', clientRoutes);
+app.use('/api/timesheet', checkJwt, timesheetRoutes);
+app.use('/api/job', checkJwt, jobDetailRoutes);
+app.use('/api/clients', checkJwt, clientRoutes);
 
 app.use(idNotFound);
 app.use(notFound);
