@@ -1,10 +1,3 @@
-const authorizationError = (err, req, res, next) => {
-  if (err.name === 'UnauthorizedError') {
-    res.status(403);
-  }
-  next(err);
-};
-
 const idNotFound = (err, req, res, next) => {
   if (err.message.indexOf('Cast to ObjectId failed') !== -1) {
     res.status(404);
@@ -21,6 +14,10 @@ const notFound = (req, res, next) => {
 };
 
 const errorHandler = (err, req, res, next) => {
+  if (err.status || err.statusCode) {
+    res.status(err.status || err.statusCode);
+    res.json(err);
+  }
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   res.status(statusCode);
   res.json({
@@ -29,4 +26,4 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
-module.exports = { authorizationError, idNotFound, notFound, errorHandler };
+module.exports = { idNotFound, notFound, errorHandler };

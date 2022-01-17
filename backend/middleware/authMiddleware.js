@@ -1,5 +1,6 @@
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
+const jwtAuthz = require('express-jwt-authz');
 
 const { domain, audience } = require('../config/env');
 
@@ -16,4 +17,6 @@ const checkJwt = jwt({
   algorithms: ['RS256'],
 });
 
-module.exports = { checkJwt };
+const readClients = jwtAuthz(['read:clients'], { failWithError: true });
+
+module.exports = { checkJwt, readClients };

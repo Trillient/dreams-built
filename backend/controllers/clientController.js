@@ -4,7 +4,7 @@ const Client = require('../models/clientModel');
 /**
  * @Desc Get a list of all Clients
  * @Route GET /api/clients
- * @Access Private (every user) //TODO - make private
+ * @Access Private ("read:clients" scope)
  */
 
 const getClients = asyncHandler(async (req, res) => {
