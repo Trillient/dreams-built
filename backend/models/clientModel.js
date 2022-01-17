@@ -4,7 +4,7 @@ const clientSchema = mongoose.Schema(
   {
     clientName: { type: String, required: true, unique: true },
     color: String,
-    contacts: [{ email: String, name: String }],
+    contact: { email: { type: String }, name: { type: String } },
   },
   { timestamps: true }
 );
