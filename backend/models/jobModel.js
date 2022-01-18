@@ -2,17 +2,17 @@ const mongoose = require('mongoose');
 
 const jobSchema = mongoose.Schema(
   {
-    jobNumber: { type: Number, required: true, unique: true, min: 22000 },
+    jobNumber: { type: Number, required: true, unique: true },
     client: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'Client',
     },
-    address: String,
-    city: String,
-    area: Number,
-    endClient: String,
-    color: String,
+    address: { type: String },
+    city: { type: String },
+    area: { type: Number },
+    endClient: { type: String },
+    color: { type: String },
     isInvoiced: { type: Boolean, default: false },
   },
   { timestamps: true }
