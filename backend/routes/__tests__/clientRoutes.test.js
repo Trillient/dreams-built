@@ -601,7 +601,6 @@ describe('Given we have an "/api/users" endpoint', () => {
 
   it('When a DELETE request is made to an incorrect url, then a 404 response is returned', async () => {
     const checkBody = async (res) => {
-      console.log(res.body);
       expect(res.body.message).toBe('Client not found');
     };
 
