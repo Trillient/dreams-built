@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 
 const clientSchema = [
   body('clientName').exists({ checkFalsy: true }).isString().withMessage('Client must be a string'),
@@ -8,4 +8,6 @@ const clientSchema = [
   body('contact.name').optional({ checkFalsy: true }).isString().withMessage('Contact name must be valid'),
 ];
 
-module.exports = { clientSchema };
+const clientParams = [param('id').exists({ checkFalsy: true }).isMongoId().withMessage('Invalid client')];
+
+module.exports = { clientSchema, clientParams };

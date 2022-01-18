@@ -12,7 +12,7 @@ const jobSchema = mongoose.Schema(
     city: { type: String },
     area: { type: Number },
     endClient: { type: String },
-    color: { type: String },
+    color: { type: String, required: true },
     isInvoiced: { type: Boolean, default: false },
   },
   { timestamps: true }

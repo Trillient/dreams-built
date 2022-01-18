@@ -391,11 +391,11 @@ describe('Given we have an "/api/users" endpoint', () => {
 
   it('When a GET request is made with an incorrect ":id" parameter, then a 404 response with an error message is returned', async () => {
     const checkBody = (res) => {
-      expect(res.body.message).toBe('Resource not found');
+      expect(res.body.message).toBe('Client not found');
     };
 
     await request(app)
-      .get(`/api/clients/afakeclientid`)
+      .get(`/api/clients/507f191e810c19729de860ea`)
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
@@ -506,11 +506,11 @@ describe('Given we have an "/api/users" endpoint', () => {
 
   it('When a PUT request is made to an incorrect path, then a 404 response is returned', async () => {
     const checkBody = (res) => {
-      expect(res.body.message).toBe('Resource not found');
+      expect(res.body.message).toBe('Client not found');
     };
 
     await request(app)
-      .put(`/api/clients/abcdefghijklmnogs`)
+      .put(`/api/clients/507f191e810c19729de860ea`)
       .send({ clientName: 'Spark' })
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
@@ -600,17 +600,13 @@ describe('Given we have an "/api/users" endpoint', () => {
   });
 
   it('When a DELETE request is made to an incorrect url, then a 404 response is returned', async () => {
-    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
-    await Client.create(clientInput);
-
-    const dbClient = await Client.findOne({ clientName: 'Spark' });
-
     const checkBody = async (res) => {
-      expect(res.body.message).toBe('Resource not found');
+      console.log(res.body);
+      expect(res.body.message).toBe('Client not found');
     };
 
     await request(app)
-      .delete(`/api/clients/${dbClient._id}fa`)
+      .delete(`/api/clients/507f191e810c19729de860ea`)
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)

@@ -45,7 +45,12 @@ const createClient = asyncHandler(async (req, res) => {
 
 const getClient = asyncHandler(async (req, res) => {
   const client = await Client.findById(req.params.id);
-  res.json(client);
+  if (client) {
+    res.json(client);
+  } else {
+    res.status(404);
+    throw new Error('Client not found');
+  }
 });
 
 /**
@@ -59,12 +64,17 @@ const updateClient = asyncHandler(async (req, res) => {
 
   const client = await Client.findById(req.params.id);
 
-  client.clientName = clientName;
-  client.color = color;
-  client.contact = contact;
+  if (client) {
+    client.clientName = clientName;
+    client.color = color;
+    client.contact = contact;
 
-  const updatedClient = await client.save();
-  res.json(updatedClient);
+    const updatedClient = await client.save();
+    res.json(updatedClient);
+  } else {
+    res.status(404);
+    throw new Error('Client not found');
+  }
 });
 
 /**
@@ -74,8 +84,14 @@ const updateClient = asyncHandler(async (req, res) => {
  */
 
 const deleteClient = asyncHandler(async (req, res) => {
-  await Client.findByIdAndRemove(req.params.id);
-  res.json({ message: 'client removed!' });
+  const client = await Client.findById(req.params.id);
+  if (client) {
+    client.remove();
+    res.json({ message: 'client removed!' });
+  } else {
+    res.status(404);
+    throw new Error('Client not found');
+  }
 });
 
 module.exports = { getClients, getClient, createClient, updateClient, deleteClient };
