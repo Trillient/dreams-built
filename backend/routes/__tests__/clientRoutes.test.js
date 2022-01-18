@@ -29,7 +29,7 @@ const token = jwks.token({
   aud: audience,
   iss: `https://${domain}/`,
   sub: clientId,
-  permissions: ['read:clients', 'write:clients'],
+  permissions: ['read:clients', 'create:clients'],
 });
 
 const createNewClient = (clientName, color = '#21bd03', contact = {}) => {
@@ -128,7 +128,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: audience,
       iss: `https://${domain}/`,
       sub: clientId,
-      permissions: 'write:clients',
+      permissions: 'create:clients',
     });
 
     await request(app)
@@ -175,7 +175,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: 'audience',
       iss: `https://${domain}/`,
       sub: clientId,
-      permissions: 'write:clients',
+      permissions: 'create:clients',
     });
 
     await request(app)
@@ -377,7 +377,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: audience,
       iss: `https://${domain}/`,
       sub: clientId,
-      permissions: 'write:clients',
+      permissions: 'create:clients',
     });
 
     await request(app)
@@ -417,7 +417,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: audience,
       iss: `https://${domain}/`,
       sub: clientId,
-      permissions: 'write:clients',
+      permissions: 'create:clients',
     });
 
     await request(app)
@@ -471,7 +471,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: audience,
       iss: `https://domain/`,
       sub: clientId,
-      permissions: 'write:clients',
+      permissions: 'create:clients',
     });
 
     await request(app)
@@ -535,7 +535,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: audience,
       iss: `https://${domain}/`,
       sub: clientId,
-      permissions: 'write:clients',
+      permissions: 'create:clients',
     });
 
     await request(app)
@@ -587,7 +587,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: audience,
       iss: `https://domain/`,
       sub: clientId,
-      permissions: 'write:clients',
+      permissions: 'create:clients',
     });
 
     await request(app)

@@ -20,6 +20,6 @@ const checkJwt = jwt({
 const options = { customScopeKey: 'permissions', failWithError: true };
 
 const readClients = jwtAuthz(['read:clients'], options);
-const writeClients = jwtAuthz(['write:clients'], options);
+const createClients = jwtAuthz(['create:clients'], options);
 
-module.exports = { checkJwt, readClients, writeClients };
+module.exports = { checkJwt, readClients, createClients };
