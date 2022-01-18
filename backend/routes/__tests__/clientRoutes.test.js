@@ -25,6 +25,12 @@ afterAll(async () => {
 
 const jwks = createJWKSMock(`https://${domain}/`);
 const clientId = 'test|123456';
+const token = jwks.token({
+  aud: audience,
+  iss: `https://${domain}/`,
+  sub: clientId,
+  permissions: ['read:clients', 'write:clients'],
+});
 
 const createNewClient = (clientName, color = '#21bd03', contact = {}) => {
   return {
@@ -35,7 +41,7 @@ const createNewClient = (clientName, color = '#21bd03', contact = {}) => {
 };
 
 describe('Given we have an "/api/users" endpoint', () => {
-  it('When a valid, authenticated and appropriately authorized GET request is made then a 200 response with a list of clients should be returned', async () => {
+  it('When a GET request is made and is valid, authenticated and appropriately authorized, then a 200 response with a list of clients should be returned', async () => {
     for (let i = 0; i < 20; i++) {
       await Client.create(createNewClient(`client${i}`));
     }
@@ -44,13 +50,6 @@ describe('Given we have an "/api/users" endpoint', () => {
       expect(res.body.error).toBeUndefined();
       expect(res.body.length).toBe(20);
     };
-
-    const token = jwks.token({
-      aud: audience,
-      iss: `https://${domain}/`,
-      sub: clientId,
-      permissions: 'read:clients',
-    });
 
     await request(app)
       .get('/api/clients/')
@@ -70,7 +69,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       expect(res.body.error).toBe('Forbidden');
     };
 
-    const token = jwks.token({
+    const invalidToken = jwks.token({
       aud: audience,
       iss: `https://${domain}/`,
       sub: clientId,
@@ -78,7 +77,7 @@ describe('Given we have an "/api/users" endpoint', () => {
 
     await request(app)
       .get('/api/clients/')
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
@@ -94,7 +93,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       expect(res.body.code).toBe('invalid_token');
     };
 
-    const token = jwks.token({
+    const invalidToken = jwks.token({
       aud: audience,
       iss: `https://domain/`,
       sub: clientId,
@@ -102,14 +101,14 @@ describe('Given we have an "/api/users" endpoint', () => {
 
     await request(app)
       .get('/api/clients/')
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(401);
   });
 
-  it('When a valid, authenticated and appropriately authorized POST request is made then a 201 response returned', async () => {
+  it('When a POST request is valid, authenticated and appropriately authorized, then a 201 response is returned', async () => {
     const client = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'abc' });
 
     const checkBody = (res) => {
@@ -117,13 +116,6 @@ describe('Given we have an "/api/users" endpoint', () => {
       expect(res.body.message).toBe('Client created');
       expect(res.body.client).toEqual(expect.objectContaining(client));
     };
-
-    const token = jwks.token({
-      aud: audience,
-      iss: `https://${domain}/`,
-      sub: clientId,
-      permissions: 'write:clients',
-    });
 
     await request(app)
       .post('/api/clients/')
@@ -142,7 +134,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       expect(res.body.error).toBe('Forbidden');
     };
 
-    const token = jwks.token({
+    const invalidToken = jwks.token({
       aud: audience,
       iss: `https://${domain}/`,
       sub: clientId,
@@ -151,7 +143,7 @@ describe('Given we have an "/api/users" endpoint', () => {
     await request(app)
       .post('/api/clients/')
       .send(client)
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
@@ -165,7 +157,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       expect(res.body.code).toBe('invalid_token');
     };
 
-    const token = jwks.token({
+    const invalidToken = jwks.token({
       aud: 'audience',
       iss: `https://${domain}/`,
       sub: clientId,
@@ -175,7 +167,7 @@ describe('Given we have an "/api/users" endpoint', () => {
     await request(app)
       .post('/api/clients/')
       .send(client)
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
@@ -192,12 +184,106 @@ describe('Given we have an "/api/users" endpoint', () => {
       expect(res.body.statusCode).toBe(400);
     };
 
-    const token = jwks.token({
-      aud: audience,
-      iss: `https://${domain}/`,
-      sub: clientId,
-      permissions: 'write:clients',
-    });
+    await request(app)
+      .post('/api/clients/')
+      .send(client)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a POST request is made and the clientName is not entered in the correct format, then a 400 response with an error is returned', async () => {
+    const client = createNewClient({ test: 'Spark' }, '#21502c', { email: 'abc@abc.com', name: 'abc' });
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Client must be a string');
+    };
+
+    await request(app)
+      .post('/api/clients/')
+      .send(client)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a POST request is made and the "color" is not entered in the correct format, then a 400 response with an error is returned', async () => {
+    const client = createNewClient('Spark', 'a21502c', { email: 'abc@abc.com', name: 'abc' });
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('color must be entered as a Hex value');
+    };
+
+    await request(app)
+      .post('/api/clients/')
+      .send(client)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a POST request is made and the "contact" property is not entered in the correct format, then a 400 response with an error is returned', async () => {
+    const client = createNewClient('Spark', '#21502c', 'abc@abc.com');
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Contact must be an object');
+    };
+
+    await request(app)
+      .post('/api/clients/')
+      .send(client)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is made and the "color" is not entered in the correct format, then a 400 response with an error is returned', async () => {
+    const client = createNewClient('Spark', 'a21502c', { email: 'abc@abc.com', name: 'abc' });
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('color must be entered as a Hex value');
+    };
+
+    await request(app)
+      .post('/api/clients/')
+      .send(client)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a POST request is made and the "contact.email" property is not entered in the correct format, then a 400 response with an error is returned', async () => {
+    const client = createNewClient('Spark', '#21502c', { email: 'abc.com', name: 'abc' });
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Must enter a valid email');
+    };
+
+    await request(app)
+      .post('/api/clients/')
+      .send(client)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a POST request is made and the "contact.name" property is not entered in the correct format, then a 400 response with an error is returned', async () => {
+    const client = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: true });
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Contact name must be valid');
+    };
 
     await request(app)
       .post('/api/clients/')
