@@ -51,16 +51,23 @@ describe('Given we have an "/api/users" endpoint', () => {
       expect(res.body.length).toBe(20);
     };
 
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'read:clients',
+    });
+
     await request(app)
       .get('/api/clients/')
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
   });
 
-  it('When a GET request is made with an insufficient scope then a 401 response with an error is returned', async () => {
+  it('When a GET request is made with an insufficient permissions then a 401 response with an error is returned', async () => {
     for (let i = 0; i < 2; i++) {
       await Client.create(createNewClient(`client${i}`));
     }
@@ -117,17 +124,24 @@ describe('Given we have an "/api/users" endpoint', () => {
       expect(res.body.client).toEqual(expect.objectContaining(client));
     };
 
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'write:clients',
+    });
+
     await request(app)
       .post('/api/clients/')
       .send(client)
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(201);
   });
 
-  it('When a POST request is made with an insufficient scope then a 403 response with an error is returned', async () => {
+  it('When a POST request is made with an insufficient permissions then a 403 response with an error is returned', async () => {
     const client = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'abc' });
 
     const checkBody = (res) => {
@@ -293,5 +307,314 @@ describe('Given we have an "/api/users" endpoint', () => {
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(400);
+  });
+});
+
+describe('Given we have an "/api/users" endpoint', () => {
+  it('When a GET request is made and is valid, authenticated and appropriately authorized, then a 200 response with a client information is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = (res) => {
+      expect(res.body).toEqual(expect.objectContaining(clientInput));
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'read:clients',
+    });
+
+    await request(app)
+      .get(`/api/clients/${dbClient._id}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+
+  it('When a GET request is made and has an invalid token, then a 401 response with an error message is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: 'audience',
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'read:clients',
+    });
+
+    await request(app)
+      .get(`/api/clients/${dbClient._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+
+  it('When a GET request is made and does not have the required permissions, then a 401 response with an error message is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'write:clients',
+    });
+
+    await request(app)
+      .get(`/api/clients/${dbClient._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+
+  it('When a GET request is made with an incorrect ":id" parameter, then a 404 response with an error message is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Resource not found');
+    };
+
+    await request(app)
+      .get(`/api/clients/afakeclientid`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+
+  it('When a PUT request is valid, authenticated and has the required authorization, then a 200 response with the updated client is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = (res) => {
+      expect(res.body.clientName).toBe('orcon');
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'write:clients',
+    });
+
+    await request(app)
+      .put(`/api/clients/${dbClient._id}`)
+      .send({ clientName: 'orcon' })
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+
+  it('When a PUT request is valid, and authenticated without the required authorization, then a 403 forbidden response is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'read:clients',
+    });
+
+    await request(app)
+      .put(`/api/clients/${dbClient._id}`)
+      .send({ clientName: 'orcon' })
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+
+  it('When a PUT request is valid with an invalid token, then a 401 response is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://domain/`,
+      sub: clientId,
+      permissions: 'write:clients',
+    });
+
+    await request(app)
+      .put(`/api/clients/${dbClient._id}`)
+      .send({ clientName: 'orcon' })
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+
+  it('When a PUT request is made with an invalid "color", then a 400 response is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('color must be entered as a Hex value');
+    };
+
+    await request(app)
+      .put(`/api/clients/${dbClient._id}`)
+      .send({ clientName: 'Spark', color: 'orcon' })
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a PUT request is made to an incorrect path, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Resource not found');
+    };
+
+    await request(app)
+      .put(`/api/clients/abcdefghijklmnogs`)
+      .send({ clientName: 'Spark' })
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+
+  it('When a DELETE request is valid, authenticated and has the required authorization, then a 200 response is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = async (res) => {
+      const data = await Client.find();
+      expect(res.body.message).toBe('client removed!');
+      expect(data.length).toBe(0);
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'write:clients',
+    });
+
+    await request(app)
+      .delete(`/api/clients/${dbClient._id}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+
+  it('When a DELETE request is valid, authenticated and does not have the required authorization, then a 403 response is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = async (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'read:clients',
+    });
+
+    await request(app)
+      .delete(`/api/clients/${dbClient._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+
+  it('When a DELETE request has an invalid token, then a 401 response is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = async (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://domain/`,
+      sub: clientId,
+      permissions: 'write:clients',
+    });
+
+    await request(app)
+      .delete(`/api/clients/${dbClient._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+
+  it('When a DELETE request is made to an incorrect url, then a 404 response is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+
+    const checkBody = async (res) => {
+      expect(res.body.message).toBe('Resource not found');
+    };
+
+    await request(app)
+      .delete(`/api/clients/${dbClient._id}fa`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
   });
 });

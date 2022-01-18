@@ -4,7 +4,7 @@ const Client = require('../models/clientModel');
 /**
  * @Desc Get a list of all Clients
  * @Route GET /api/clients
- * @Access Private ("read:clients" scope)
+ * @Access Private ("read:clients" permission, Employee + Admin)
  */
 
 const getClients = asyncHandler(async (req, res) => {
@@ -15,7 +15,7 @@ const getClients = asyncHandler(async (req, res) => {
 /**
  * @Desc Create a new Client
  * @Route POST /api/clients
- * @Access Private (only admin) //TODO - make private
+ * @Access Private ("write:clients" permission, Admin)
  */
 
 const createClient = asyncHandler(async (req, res) => {
@@ -40,7 +40,7 @@ const createClient = asyncHandler(async (req, res) => {
 /**
  * @Desc Get a Client
  * @Route GET /api/clients/:id
- * @Access Private (every user) //TODO - make private
+ * @Access Private ("read:clients" permission, Employee + Admin)
  */
 
 const getClient = asyncHandler(async (req, res) => {
@@ -51,36 +51,30 @@ const getClient = asyncHandler(async (req, res) => {
 /**
  * @Desc Update a Client
  * @Route PUT /api/clients/:id
- * @Access Private (only admin)
+ * @Access Private ("write:clients" permission, Admin)
  */
 
 const updateClient = asyncHandler(async (req, res) => {
-  const { clientName, contacts, color } = req.body;
+  const { clientName, contact, color } = req.body;
 
   const client = await Client.findById(req.params.id);
 
-  if (client) {
-    client.clientName = clientName;
-    client.contacts = contacts;
-    client.color = color;
+  client.clientName = clientName;
+  client.color = color;
+  client.contact = contact;
 
-    const updatedClient = await client.save();
-    res.json(updatedClient);
-  } else {
-    res.status(404);
-  }
+  const updatedClient = await client.save();
+  res.json(updatedClient);
 });
 
 /**
  * @Desc Delete a Client
  * @Route DELETE /api/clients/:id
- * @Access Private (only admin)
+ * @Access Private ("write:clients" permission, Admin)
  */
 
 const deleteClient = asyncHandler(async (req, res) => {
-  const client = await Client.findById(req.params.id);
-
-  await client.remove();
+  await Client.findByIdAndRemove(req.params.id);
   res.json({ message: 'client removed!' });
 });
 

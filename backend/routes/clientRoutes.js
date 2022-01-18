@@ -7,6 +7,6 @@ const { clientSchema } = require('../middleware/validators/clientValidation');
 const validation = require('../middleware/validatorMiddleware');
 
 router.route('/').get(readClients, getClients).post(writeClients, clientSchema, validation, createClient);
-router.route('/:id').get(getClient).put(updateClient).delete(deleteClient);
+router.route('/:id').get(readClients, getClient).put(writeClients, clientSchema, validation, updateClient).delete(writeClients, deleteClient);
 
 module.exports = router;
