@@ -49,7 +49,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: audience,
       iss: `https://${domain}/`,
       sub: clientId,
-      scope: 'read:clients',
+      permissions: 'read:clients',
     });
 
     await request(app)
@@ -122,7 +122,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: audience,
       iss: `https://${domain}/`,
       sub: clientId,
-      scope: 'write:clients',
+      permissions: 'write:clients',
     });
 
     await request(app)
@@ -169,7 +169,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: 'audience',
       iss: `https://${domain}/`,
       sub: clientId,
-      scope: 'write:clients',
+      permissions: 'write:clients',
     });
 
     await request(app)
@@ -196,7 +196,7 @@ describe('Given we have an "/api/users" endpoint', () => {
       aud: audience,
       iss: `https://${domain}/`,
       sub: clientId,
-      scope: 'write:clients',
+      permissions: 'write:clients',
     });
 
     await request(app)

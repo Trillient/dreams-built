@@ -17,7 +17,9 @@ const checkJwt = jwt({
   algorithms: ['RS256'],
 });
 
-const readClients = jwtAuthz(['read:clients'], { failWithError: true });
-const writeClients = jwtAuthz(['write:clients'], { failWithError: true });
+const options = { customScopeKey: 'permissions', failWithError: true };
+
+const readClients = jwtAuthz(['read:clients'], options);
+const writeClients = jwtAuthz(['write:clients'], options);
 
 module.exports = { checkJwt, readClients, writeClients };

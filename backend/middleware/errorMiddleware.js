@@ -14,13 +14,12 @@ const notFound = (req, res, next) => {
 };
 
 const errorHandler = (err, req, res, next) => {
-  if (err.status || err.statusCode) {
-    res.status(err.status || err.statusCode);
-    res.json(err);
-  }
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  const statusCode = err.status || err.statusCode ? err.status || err.statusCode : res.statusCode === 200 ? 500 : res.statusCode;
   res.status(statusCode);
   res.json({
+    error: err.error,
+    code: err.code,
+    name: err.name,
     statusCode: statusCode,
     message: err.message,
   });
