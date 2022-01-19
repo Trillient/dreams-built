@@ -19,7 +19,12 @@ const checkJwt = jwt({
 
 const options = { customScopeKey: 'permissions', failWithError: true };
 
-const readClients = jwtAuthz(['read:clients'], options);
-const createClients = jwtAuthz(['create:clients'], options);
+const readClientsAuth = jwtAuthz(['read:clients'], options);
+const createClientsAuth = jwtAuthz(['create:clients'], options);
 
-module.exports = { checkJwt, readClients, createClients };
+const readJobDetailsAuth = jwtAuthz(['read:jobs'], options);
+const createJobDetailsAuth = jwtAuthz(['create:jobs'], options);
+const updateJobDetailsAuth = jwtAuthz(['update:jobs'], options);
+const deleteJobDetailsAuth = jwtAuthz(['delete:jobs'], options);
+
+module.exports = { checkJwt, readClientsAuth, createClientsAuth, readJobDetailsAuth, createJobDetailsAuth, updateJobDetailsAuth, deleteJobDetailsAuth };

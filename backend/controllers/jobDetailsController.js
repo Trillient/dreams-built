@@ -13,23 +13,6 @@ const getJobs = asyncHandler(async (req, res) => {
 });
 
 /**
- * @Desc Get a single Job
- * @Route GET /api/job/details/:id
- * @Access Private (admin) //TODO - make private
- */
-
-const getJob = asyncHandler(async (req, res) => {
-  const job = await JobDetails.findById(req.params.id).populate('client');
-
-  if (job) {
-    res.json(job);
-  } else {
-    res.status(404);
-    throw new Error('Job not found');
-  }
-});
-
-/**
  * @Desc Create a new Job
  * @Route POST /api/job/details
  * @Access Private (admin) //TODO - make private
@@ -60,6 +43,23 @@ const createJob = asyncHandler(async (req, res) => {
   const createdJob = await job.save();
 
   res.status(201).json(createdJob);
+});
+
+/**
+ * @Desc Get a single Job
+ * @Route GET /api/job/details/:id
+ * @Access Private (admin) //TODO - make private
+ */
+
+const getJob = asyncHandler(async (req, res) => {
+  const job = await JobDetails.findById(req.params.id).populate('client');
+
+  if (job) {
+    res.json(job);
+  } else {
+    res.status(404);
+    throw new Error('Job not found');
+  }
 });
 
 /**
