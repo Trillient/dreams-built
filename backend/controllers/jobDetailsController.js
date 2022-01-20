@@ -72,15 +72,28 @@ const getJob = asyncHandler(async (req, res) => {
 /**
  * @Desc Update a single Job
  * @Route PUT /api/job/details/:id
- * @Access Private (admin) //TODO - make private
+ * @Access Private ('update:jobs', admin)
  */
 
 const updateJob = asyncHandler(async (req, res) => {
-  const { client, address, city, area, isInvoiced, endClient, color, dueDates } = req.body;
+  const { jobNumber, client, address, city, area, endClient, color, isInvoiced } = req.body;
 
   const job = await JobDetails.findById(req.params.id);
 
+  if (!job) {
+    res.status(404);
+    throw new Error('Job not found');
+  }
+
   if (job) {
+    const checkJobNumberDuplicate = await JobDetails.findOne({ jobNumber: jobNumber });
+
+    if (checkJobNumberDuplicate && job !== checkJobNumberDuplicate) {
+      res.status(400);
+      throw new Error('JobNumber already exists');
+    }
+
+    job.jobNumber = jobNumber;
     job.client = client;
     job.address = address;
     job.city = city;
@@ -88,13 +101,9 @@ const updateJob = asyncHandler(async (req, res) => {
     job.isInvoiced = isInvoiced;
     job.endClient = endClient;
     job.color = color;
-    job.dueDates = dueDates;
 
     const updatedJob = await job.save();
     res.json(updatedJob);
-  } else {
-    res.status(404);
-    throw new Error('Job not found');
   }
 });
 
