@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const jobPartSchema = mongoose.Schema(
   {
     jobPartTitle: { type: String, required: true },
-    jobOrder: Number,
-    jobDescription: String,
+    jobOrder: { type: Number },
+    jobDescription: { type: String },
   },
   { timestamps: true }
 );

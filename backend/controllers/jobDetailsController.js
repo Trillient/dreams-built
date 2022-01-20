@@ -95,7 +95,7 @@ const updateJob = asyncHandler(async (req, res) => {
       throw new Error('JobNumber already exists');
     }
 
-    job.jobNumber = jobNumber;
+    job.jobNumber = +jobNumber;
     job.client = client;
     job.address = address;
     job.city = city;
