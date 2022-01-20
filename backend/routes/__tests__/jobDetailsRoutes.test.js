@@ -14,8 +14,16 @@ const JobDueDate = require('../../models/jobPartDueDateModel');
 beforeAll(async () => {
   const mongoServer = await MongoMemoryServer.create();
   await database.connect(mongoServer.getUri());
-  await Client.create({ clientName: 'warehouse' });
   jwks.start();
+});
+
+beforeEach(async () => {
+  await Client.create({ clientName: 'warehouse' });
+});
+
+afterEach(async () => {
+  await Client.deleteMany();
+  await JobDetails.deleteMany();
 });
 
 afterAll(async () => {
@@ -28,31 +36,97 @@ const token = jwks.token({
   aud: audience,
   iss: `https://${domain}/`,
   sub: 'test|123456',
+  permissions: ['read:jobs', 'create:jobs', 'update:jobs', 'delete:jobs'],
 });
 
-const createNewJob = (jobId, client, due = []) => {
+const createNewJob = (jobId, client, address = '12 abc lane', city = 'hamilton', area = 10, endClient = 'barney', color = '#bc12bc', isInvoiced = false) => {
   return {
     jobNumber: jobId,
     client: client,
-    address: 'address',
-    city: 'hamilton',
-    endClient: 'magre',
-    area: 220.3,
-    isInvoiced: false,
-    dueDates: due,
+    address: address,
+    city: city,
+    area: area,
+    endClient: endClient,
+    color: color,
+    isInvoiced: isInvoiced,
   };
 };
 
+/**
+ * @endpoint - /api/job/details
+ * @paths - GET, POST
+ */
+
 describe('Given we have an "/api/job/details" endpoint', () => {
-  it('When a valid GET request is made then a 200 response with a list of jobs should be returned', async () => {
-    const getClientName = await Client.findOne({ clientName: 'warehouse' });
-    for (let jobId = 22001; jobId < 22003; jobId++) {
-      const newJob = createNewJob(jobId, getClientName._id);
-      const row = new JobDetails(newJob);
-      await row.save();
+  it('When a GET request is valid, authenticated and appropriately authrorized, then a 200 response with a list of jobs should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    for (let jobId = 22000; jobId < 22020; jobId++) {
+      const newJob = createNewJob(jobId, getClient._id);
+      await JobDetails.create(newJob);
     }
+
     const checkBody = (res) => {
-      expect(res.body.length).toBe(2);
+      expect(res.body.length).toBe(20);
+      expect(res.body[0].client.clientName).toBe('warehouse');
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'read:jobs',
+    });
+
+    await request(app)
+      .get('/api/job/details')
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a GET request is made without a valid token, then the user should recieve an error 401 response', async () => {
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://domain/`,
+      sub: 'test|123456',
+      permissions: 'read:jobs',
+    });
+
+    await request(app)
+      .get('/api/job/details/')
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a GET request is made without the required permissions, then the user should recieve an error 403 response', async () => {
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .get('/api/job/details/')
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a GET request is made and there are no saved jobs, then the user should recieve a 200 response with an empty array', async () => {
+    const checkBody = (res) => {
+      expect(res.body).toEqual([]);
     };
 
     await request(app)
@@ -63,35 +137,58 @@ describe('Given we have an "/api/job/details" endpoint', () => {
       .expect(checkBody)
       .expect(200);
   });
+  it('When a POST request is made and is valid, authenticated and appropriately authorized, then a 201 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob(22004, getClient._id);
 
-  it('When a GET request is made without a valid token, then the user should recieve an error 403 response', async () => {
     const checkBody = (res) => {
-      expect(res.body.message).toBe('invalid token');
+      expect(res.body.message).toBe('Job Created');
+      expect(res.body.createdJob).toEqual(expect.objectContaining({ jobNumber: 22004 }));
     };
 
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'create:jobs',
+    });
+
     await request(app)
-      .get('/api/job/details/')
-      .set(`Authorization`, `Bearer n${token}`)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
-      .expect(403);
+      .expect(201);
   });
+  it('When a POST request is made with only required fields, then a 201 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = {
+      jobNumber: 1,
+      client: getClient._id,
+      color: '#bc12bc',
+    };
 
-  it('When a valid POST request is made then a 201 respose should be returned', async () => {
-    const getClientName = await Client.findOne({ clientName: 'warehouse' });
-    const newJob = createNewJob(22004, getClientName._id);
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job Created');
+      expect(res.body.createdJob).toEqual(expect.objectContaining({ jobNumber: 1, color: '#bc12bc', isInvoiced: false }));
+    };
+
     await request(app)
       .post('/api/job/details')
       .send(newJob)
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
       .expect(201);
   });
+  it('When a POST request is made with a job number that already exists then a 400 response with an error message should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob(22004, getClient._id);
 
-  it('When a POST request is made with a job number that already exists then a 400 respose with an error message should be returned', async () => {
-    const newJob = createNewJob(22004);
+    await JobDetails.create(newJob);
 
     const checkBody = (res) => {
       expect(res.body.message).toBe('Job Number already exists!');
@@ -107,7 +204,219 @@ describe('Given we have an "/api/job/details" endpoint', () => {
       .expect(checkBody)
       .expect(400);
   });
+  it('When a POST request is not appropriately authorized, then a 403 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob(22004, getClient._id);
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a POST request has no authorization token, then a 401 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob(22004, getClient._id);
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('No authorization token was found');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a POST request is made with an invalid "jobNumber", then a 400 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob('g22004', getClient._id);
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Job number must be a valid number');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is made with a "client" that does not exist, then a 400 response should be returned', async () => {
+    const newJob = createNewJob(2, '507f191e810c19729de860ea');
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Client does not exist');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is made with an incorrect "client" value, then a 400 response should be returned', async () => {
+    const newJob = createNewJob(2, 25520);
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid client field');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is made with a missing "client" value, then a 400 response should be returned', async () => {
+    const newJob = createNewJob(2);
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Missing Client');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is made with an invalid "address" field, then a 400 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob(22004, getClient._id, 21000);
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Address must be valid');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a POST request is maded with an invalid "city" field, then a 400 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob(22004, getClient._id, '12 Abe ave', 111);
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('City must be valid');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is maded with an invalid "area" field, then a 400 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob(22004, getClient._id, '12 Abe ave', 'johnsenville', '12abv');
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Area must be a number');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is maded with an invalid "endClient" field, then a 400 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob(22004, getClient._id, '12 Abe ave', 'johnsenville', 120, { client: 'name' });
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('End Client must be valid');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is maded with an invalid "color" field, then a 400 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob(22004, getClient._id, '12 Abe ave', 'johnsenville', 120, 'yahoo', 'favev');
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Color must be entered as a Hex value');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is maded with an invalid "isInvoiced" field, then a 400 response should be returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    const newJob = createNewJob(22004, getClient._id, '12 Abe ave', 'johnsenville', 120, 'yahoo', '#ba2f', 1);
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invoiced must be a boolean value');
+    };
+
+    await request(app)
+      .post('/api/job/details')
+      .send(newJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
 });
+
+/**
+ * @endpoint - /api/job/details/:id
+ * @paths - GET, PUT, DELETE
+ */
 
 describe('Given we have an "/api/job/details/:id" endpoint', () => {
   it("When a valid GET request is made then the job's details are returned with a 200 response", async () => {
@@ -170,6 +479,11 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
   });
 });
 
+/**
+ * @endpoint - /api/job/parts
+ * @paths - GET, POST
+ */
+
 describe('Given we have an "/api/job/parts" endpoint', () => {
   it('when a user makes a valid GET request then it should return a list of job parts', async () => {
     await JobPart.create({ jobPartTitle: 'Schedule' });
@@ -206,6 +520,11 @@ describe('Given we have an "/api/job/parts" endpoint', () => {
       .expect(201);
   });
 });
+
+/**
+ * @endpoint - /api/job/parts/:id
+ * @paths - GET, PUT, DELETE
+ */
 
 describe('Given we have an "/api/job/parts/:id" endpoint', () => {
   it('When a user makes a valid GET request then it should respond with a 200 code and the job part', async () => {
@@ -284,6 +603,11 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
   });
 });
 
+/**
+ * @endpoint - /api/job/duedates/parts
+ * @paths - GET
+ */
+
 describe('Given we have a "/api/job/duedates" endpoint', () => {
   beforeEach(async () => {
     await Client.create({ clientName: 'Coca-cola' });
@@ -320,6 +644,11 @@ describe('Given we have a "/api/job/duedates" endpoint', () => {
       .expect(200);
   });
 });
+
+/**
+ * @endpoint - /api/job/duedates/parts/:jobid
+ * @paths - GET, POST, DELETE
+ */
 
 describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
   beforeAll(async () => {
@@ -386,6 +715,11 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
       .expect(200);
   });
 });
+
+/**
+ * @endpoint - /api/job/duedates/job/part/:id
+ * @paths - PUT, DELETE
+ */
 
 describe('Given we have a "/api/job/duedates/job/:jobid/part/:partid" endpoint', () => {
   beforeAll(async () => {

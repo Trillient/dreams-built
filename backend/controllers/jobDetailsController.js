@@ -1,48 +1,55 @@
 const asyncHandler = require('express-async-handler');
+const Client = require('../models/clientModel');
 const JobDetails = require('../models/jobModel');
 
 /**
  * @Desc Get a list of all Jobs
  * @Route GET /api/job/details
- * @Access Private (employee, admin) //TODO - make private
+ * @Access Private ("read:jobs", employee, admin)
  */
 
 const getJobs = asyncHandler(async (req, res) => {
-  const jobList = await JobDetails.find({}).populate('client', 'id clientName color');
+  const jobList = await JobDetails.find().populate('client', 'clientName color');
   res.json(jobList);
 });
 
 /**
  * @Desc Create a new Job
  * @Route POST /api/job/details
- * @Access Private (admin) //TODO - make private
+ * @Access Private ("create:jobs", admin)
  */
 
 const createJob = asyncHandler(async (req, res) => {
-  const { jobNumber, client, address, city, area, isInvoiced, endClient, color, dueDates } = req.body;
+  const { jobNumber, client, address, city, area, isInvoiced, endClient, color } = req.body;
 
-  const checkJobExists = await JobDetails.findOne({ jobNumber: jobNumber });
+  const jobExists = await JobDetails.findOne({ jobNumber: jobNumber });
 
-  if (checkJobExists) {
+  if (jobExists) {
     res.status(400);
     throw new Error('Job Number already exists!');
   }
 
-  const job = new JobDetails({
-    jobNumber: jobNumber,
+  const clientExists = await Client.findById(client);
+
+  if (!clientExists) {
+    res.status(400);
+    throw new Error('Client does not exist');
+  }
+
+  const parsedArea = area ? parseFloat(area) : 0;
+
+  const createdJob = await JobDetails.create({
+    jobNumber: +jobNumber,
     client: client,
     address: address,
     city: city,
-    area: area,
+    area: parsedArea,
     isInvoiced: isInvoiced,
     endClient: endClient,
     color: color,
-    dueDates: dueDates,
   });
 
-  const createdJob = await job.save();
-
-  res.status(201).json(createdJob);
+  res.status(201).json({ message: 'Job Created', createdJob: createdJob });
 });
 
 /**
