@@ -78,17 +78,19 @@ const getJob = asyncHandler(async (req, res) => {
 const updateJob = asyncHandler(async (req, res) => {
   const { jobNumber, client, address, city, area, endClient, color, isInvoiced } = req.body;
 
-  const job = await JobDetails.findById(req.params.id);
+  const clientExists = await Client.findById(client);
 
-  if (!job) {
-    res.status(404);
-    throw new Error('Job not found');
+  if (!clientExists) {
+    res.status(400);
+    throw new Error('Client does not exist');
   }
+
+  const job = await JobDetails.findById(req.params.id);
 
   if (job) {
     const checkJobNumberDuplicate = await JobDetails.findOne({ jobNumber: jobNumber });
 
-    if (checkJobNumberDuplicate && job !== checkJobNumberDuplicate) {
+    if (checkJobNumberDuplicate && String(job._id) !== String(checkJobNumberDuplicate._id)) {
       res.status(400);
       throw new Error('JobNumber already exists');
     }
@@ -104,13 +106,16 @@ const updateJob = asyncHandler(async (req, res) => {
 
     const updatedJob = await job.save();
     res.json(updatedJob);
+  } else {
+    res.status(404);
+    throw new Error('Job not found');
   }
 });
 
 /**
  * @Desc Delete a single Job
  * @Route DELETE /api/job/details/:id
- * @Access Private (admin) //TODO - make private
+ * @Access Private ('delete:jobs', admin)
  */
 
 const deleteJob = asyncHandler(async (req, res) => {

@@ -536,7 +536,6 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     };
 
     const checkBody = (res) => {
-      console.log(res.body);
       expect(res.body.jobNumber).toBe(22002);
       expect(res.body.city).toBe('Auckland');
       expect(res.body.city).not.toBe(job.city);
@@ -748,34 +747,401 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
       .expect(checkBody)
       .expect(400);
   });
-  it.todo('When a PUT request has no "client" property, then a 400 response is returned');
-  it.todo('When a PUT request has a "client" property id that does not exist, then a 404 response is returned');
-  it.todo('When a PUT request has a "client" property that is not a mongoId, then a 400 response is returned');
-  it.todo('When a PUT request has a "address" property that is not a string, then a 400 response is returned');
-  it.todo('When a PUT request has a "city" property that is not a string, then a 400 response is returned');
-  it.todo('When a PUT request has a "area" property that is not a number, then a 400 response is returned');
-  it.todo('When a PUT request has an "endClient" property that is not a string, then a 400 response is returned');
-  it.todo('When a PUT request has an "isInvoiced" property that is not a Boolean value, then a 400 response is returned');
-  it.todo('When a PUT request has a "color" property that is not a string, then a 400 response is returned');
-  it.todo('When a PUT request has a "color" property that is a string but not a Hex value, then a 400 response is returned');
-  it.todo('When a PUT request has no "color" property, then a 400 response is returned');
+  it('When a PUT request has no "client" property, then a 400 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
 
-  it('When a valid DELETE request is made then the jobs details are deleted and returned with a 200 response', async () => {
-    const job = await JobDetails.findOne({ jobNumber: 22001 });
-    const jobParams = await job._id;
+    updatedJob = {
+      jobNumber: 1,
+      city: 'Auckland',
+      color: '#bc32ab',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Missing Client');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has a "client" property id that does not exist, then a 404 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    updatedJob = {
+      jobNumber: 1,
+      client: '507f191e810c19729de860ea',
+      city: 'Auckland',
+      color: '#bc32ab',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Client does not exist');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has a "client" property that is not a mongoId, then a 400 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    updatedJob = {
+      jobNumber: 2,
+      client: 'abcdefghijklmnop',
+      city: 'Auckland',
+      color: '#bc32ab',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid client field');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has a "address" property that is not a string, then a 400 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    updatedJob = {
+      jobNumber: 2,
+      client: getClient._id,
+      address: 1,
+      city: 'Auckland',
+      color: '#bc32ab',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Address must be valid');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has a "city" property that is not a string, then a 400 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    updatedJob = {
+      jobNumber: 2,
+      client: getClient._id,
+      city: false,
+      color: '#bc32ab',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('City must be valid');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has a "area" property that is not a number, then a 400 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    updatedJob = {
+      jobNumber: 2,
+      client: getClient._id,
+      area: '201g',
+      color: '#bc32ab',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Area must be a number');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has an "endClient" property that is not a string, then a 400 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    updatedJob = {
+      jobNumber: 2,
+      client: getClient._id,
+      endClient: null,
+      color: '#bc32ab',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('End Client must be valid');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has an "isInvoiced" property that is not a Boolean value, then a 400 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    updatedJob = {
+      jobNumber: 2,
+      client: getClient._id,
+      isInvoiced: 'trues',
+      color: '#bc32ab',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invoiced must be a boolean value');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has a "color" property that is not a string, then a 400 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    updatedJob = {
+      jobNumber: 2,
+      client: getClient._id,
+      color: true,
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Color must be entered as a Hex value');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has a "color" property that is a string but not a Hex value, then a 400 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    updatedJob = {
+      jobNumber: 2,
+      client: getClient._id,
+      color: 'bc32abfs',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Color must be entered as a Hex value');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has no "color" property, then a 400 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    updatedJob = {
+      jobNumber: 2,
+      client: getClient._id,
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Color must be entered as a Hex value');
+    };
+
+    await request(app)
+      .put(`/api/job/details/${jobParams}`)
+      .send(updatedJob)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a DELETE request is valid, authenticated and authorized, then the jobs details are deleted and returned with a 200 response', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
 
     const checkBody = (res) => {
       expect(res.body.message).toBe('Job removed');
     };
 
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: ['delete:jobs'],
+    });
+
     await request(app)
       .delete(`/api/job/details/${jobParams}`)
-      .send(jobParams)
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
+  });
+  it('When a DELETE request is made without the required authorization, then a 403 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .delete(`/api/job/details/${jobParams}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a DELETE request is made without a valid token, then a 401 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(2, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 2 });
+    const jobParams = job._id;
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: 'audience',
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'delete:jobs',
+    });
+
+    await request(app)
+      .delete(`/api/job/details/${jobParams}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a DELETE request is made with no ":id" parameter, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Not Found - /api/job/details/');
+    };
+
+    await request(app)
+      .delete(`/api/job/details/`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  it('When a DELETE request is made with an incorrectly formatted ":id" parameter, then a 400 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid id parameter');
+    };
+
+    await request(app)
+      .delete(`/api/job/details/badjobid`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a DELETE request is made with an ":id" parameter that does not exist, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job not found');
+    };
+
+    await request(app)
+      .delete(`/api/job/details/507f191e810c19729de860ea`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
   });
 });
 
