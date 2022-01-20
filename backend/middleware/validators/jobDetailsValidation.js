@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { param, body } = require('express-validator');
 
 const jobDetailsSchema = [
   body('jobNumber').exists({ checkFalsy: true }).trim().isNumeric().withMessage('Job number must be a valid number').isInt({ min: 0, max: 99999 }).withMessage('Number must be between 0 and 99999'),
@@ -11,4 +11,6 @@ const jobDetailsSchema = [
   body('isInvoiced').optional({ checkFalsy: true }).not().isInt().withMessage('Invoiced must be a boolean value').isBoolean().withMessage('Invoiced must be a boolean value'),
 ];
 
-module.exports = { jobDetailsSchema };
+const jobIdParams = [param('id').exists({ checkFalsy: true }).isMongoId().withMessage('Invalid job parameter')];
+
+module.exports = { jobDetailsSchema, jobIdParams };

@@ -55,7 +55,7 @@ const createJob = asyncHandler(async (req, res) => {
 /**
  * @Desc Get a single Job
  * @Route GET /api/job/details/:id
- * @Access Private (admin) //TODO - make private
+ * @Access Private ("read:jobs", admin)
  */
 
 const getJob = asyncHandler(async (req, res) => {
@@ -65,7 +65,7 @@ const getJob = asyncHandler(async (req, res) => {
     res.json(job);
   } else {
     res.status(404);
-    throw new Error('Job not found');
+    throw new Error('Job does not exist');
   }
 });
 

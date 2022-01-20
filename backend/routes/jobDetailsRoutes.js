@@ -5,11 +5,11 @@ const { getJobs, getJob, createJob, updateJob, deleteJob } = require('../control
 const { getJobParts, createJobPart, getJobPart, updateJobPart, deleteJobPart } = require('../controllers/jobPartsController');
 const { getAllJobDueDates, getJobPartDueDates, deleteJobPartDueDates, createJobPartDueDate, updateJobPartDueDate, deleteJobPartDueDate } = require('../controllers/jobDueDatesController');
 const { readJobDetailsAuth, createJobDetailsAuth, updateJobDetailsAuth, deleteJobDetailsAuth } = require('../middleware/authMiddleware');
-const { jobDetailsSchema } = require('../middleware/validators/jobDetailsValidation');
+const { jobDetailsSchema, jobIdParams } = require('../middleware/validators/jobDetailsValidation');
 const validation = require('../middleware/validatorMiddleware');
 
 router.route('/details').get(readJobDetailsAuth, getJobs).post(createJobDetailsAuth, jobDetailsSchema, validation, createJob);
-router.route('/details/:id').get(readJobDetailsAuth, getJob).put(updateJobDetailsAuth, jobDetailsSchema, validation, updateJob).delete(deleteJobDetailsAuth, deleteJob);
+router.route('/details/:id').get(readJobDetailsAuth, jobIdParams, validation, getJob).put(updateJobDetailsAuth, jobIdParams, jobDetailsSchema, validation, updateJob).delete(deleteJobDetailsAuth, jobIdParams, validation, deleteJob);
 
 router.route('/parts').get(getJobParts).post(createJobPart);
 router.route('/parts/:id').get(getJobPart).put(updateJobPart).delete(deleteJobPart);

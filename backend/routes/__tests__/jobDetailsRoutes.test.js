@@ -419,21 +419,107 @@ describe('Given we have an "/api/job/details" endpoint', () => {
  */
 
 describe('Given we have an "/api/job/details/:id" endpoint', () => {
-  it("When a valid GET request is made then the job's details are returned with a 200 response", async () => {
+  it("When a GET request is valid, and appropriately authorized then the job's details are returned with a 200 response", async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(22001, getClient._id));
     const job = await JobDetails.findOne({ jobNumber: 22001 });
     const jobParams = await job._id;
 
     const checkBody = (res) => {
       expect(res.body.jobNumber).toBe(22001);
+      expect(res.body.client.clientName).toBe(getClient.clientName);
     };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'read:jobs',
+    });
 
     await request(app)
       .get(`/api/job/details/${jobParams}`)
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
+  });
+  it('When a GET request is not appropriately authorized then a 403 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(22001, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 22001 });
+    const jobParams = await job._id;
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .get(`/api/job/details/${jobParams}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+
+  it('When a GET request has an invalid token, then a 401 response is returned', async () => {
+    const getClient = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(22001, getClient._id));
+    const job = await JobDetails.findOne({ jobNumber: 22001 });
+    const jobParams = await job._id;
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://domain/`,
+      sub: 'test|123456',
+      permissions: 'read:jobs',
+    });
+
+    await request(app)
+      .get(`/api/job/details/${jobParams}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a GET request is made with an "id" param that does not exist, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job does not exist');
+    };
+
+    await request(app)
+      .get(`/api/job/details/507f1f77bcf86cd799439011`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  fit('When a GET request is made with an incorrect "id" param, then a 400 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid job parameter');
+    };
+
+    await request(app)
+      .get(`/api/job/details/randomId`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
   });
 
   it('When a valid PUT request is made then the jobs details are updated and returned with a 200 response', async () => {
