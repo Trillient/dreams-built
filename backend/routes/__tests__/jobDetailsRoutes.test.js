@@ -1151,7 +1151,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
  */
 
 describe('Given we have an "/api/job/parts" endpoint', () => {
-  fit('when a GET request is valid, authenticated and authrorized, then it should return a list of job parts', async () => {
+  it('when a GET request is valid, authenticated and authrorized, then it should return a list of job parts', async () => {
     for (let i = 0; i < 20; i++) {
       await JobPart.create({ jobPartTitle: `Schedule${i}` });
     }
@@ -1159,15 +1159,25 @@ describe('Given we have an "/api/job/parts" endpoint', () => {
       expect(res.body.length).toBe(20);
     };
 
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'read:job_parts',
+    });
+
     await request(app)
       .get('/api/job/parts/')
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
   });
-  it('when a user makes a valid POST request then the job part should be saved and returned', async () => {
+  it.todo('When a GET request has an invalid token, then a 401 response is returned');
+  it.todo('When a GET request does not have the required authorization, then a 403 response is returned');
+  it.todo('When a GET request has an invalid token, then a 401 response is returned');
+  it('when a POST request is valid and authorized, then the job part should be created and returned', async () => {
     const jobPart = {
       jobPartTitle: 'Box-up',
       jobDescription: 'Sturcturally sercure the floor footing',
@@ -1177,15 +1187,28 @@ describe('Given we have an "/api/job/parts" endpoint', () => {
       expect(res.body).toEqual(expect.objectContaining(jobPart));
     };
 
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'create:job_parts',
+    });
+
     await request(app)
       .post('/api/job/parts/')
       .send(jobPart)
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(201);
   });
+  it.todo('When a POST request has an invalid token, then a 401 response is returned');
+  it.todo('When a POST request has insufficient permissions, then a 403 response is returned');
+  it.todo('When a POST request is made and the "jobPartTitle" is not entered in the correct format, then a 400 response is returned');
+  it.todo('When a POST request is made and the "jobPartTitle" is entered incorrectly, then a 400 response is returned');
+  it.todo('When a POST request is made and the "jobOrder" is not entered as a number, then return a 400 response');
+  it.todo('When a POST request is made and the "jobDescription" is entered incorrectly, then a 400 response should be returned');
 });
 
 /**

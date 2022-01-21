@@ -4,11 +4,11 @@ const JobPart = require('../models/jobPartModel');
 /**
  * @Desc Get a list of all job parts
  * @Route GET /api/job/parts
- * @Access Private (employee, admin)
+ * @Access Private ("read:job_parts", employee, admin)
  */
 
 const getJobParts = asyncHandler(async (req, res) => {
-  const jobParts = await JobPart.find({});
+  const jobParts = await JobPart.find();
   res.json(jobParts);
 });
 
