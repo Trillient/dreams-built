@@ -27,4 +27,21 @@ const createJobDetailsAuth = jwtAuthz(['create:jobs'], options);
 const updateJobDetailsAuth = jwtAuthz(['update:jobs'], options);
 const deleteJobDetailsAuth = jwtAuthz(['delete:jobs'], options);
 
-module.exports = { checkJwt, readClientsAuth, createClientsAuth, readJobDetailsAuth, createJobDetailsAuth, updateJobDetailsAuth, deleteJobDetailsAuth };
+const readJobPartsAuth = jwtAuthz(['read:job_parts'], options);
+const createJobPartsAuth = jwtAuthz(['create:job_parts'], options);
+const updateJobPartsAuth = jwtAuthz(['update:job_parts'], options);
+const deleteJobPartsAuth = jwtAuthz(['delete:job_parts'], options);
+
+module.exports = {
+  checkJwt,
+  readClientsAuth,
+  createClientsAuth,
+  readJobDetailsAuth,
+  createJobDetailsAuth,
+  updateJobDetailsAuth,
+  deleteJobDetailsAuth,
+  readJobPartsAuth,
+  updateJobPartsAuth,
+  createJobPartsAuth,
+  deleteJobPartsAuth,
+};

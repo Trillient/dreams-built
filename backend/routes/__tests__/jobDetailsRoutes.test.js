@@ -1151,11 +1151,12 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
  */
 
 describe('Given we have an "/api/job/parts" endpoint', () => {
-  it('when a user makes a valid GET request then it should return a list of job parts', async () => {
-    await JobPart.create({ jobPartTitle: 'Schedule' });
-
+  fit('when a GET request is valid, authenticated and authrorized, then it should return a list of job parts', async () => {
+    for (let i = 0; i < 20; i++) {
+      await JobPart.create({ jobPartTitle: `Schedule${i}` });
+    }
     const checkBody = (res) => {
-      expect(res.body.length).toBe(1);
+      expect(res.body.length).toBe(20);
     };
 
     await request(app)
