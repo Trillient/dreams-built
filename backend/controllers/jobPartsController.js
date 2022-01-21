@@ -15,11 +15,11 @@ const getJobParts = asyncHandler(async (req, res) => {
 /**
  * @Desc Create a new job part
  * @Route POST /api/job/parts
- * @Access Private (admin)
+ * @Access Private ("create:job_parts", admin)
  */
 
 const createJobPart = asyncHandler(async (req, res) => {
-  const { jobPartTitle, jobDescription } = req.body;
+  const { jobPartTitle, jobOrder, jobDescription } = req.body;
 
   const checkJobPartExists = await JobPart.findOne({ jobPartTitle: jobPartTitle });
 
@@ -30,10 +30,12 @@ const createJobPart = asyncHandler(async (req, res) => {
     throw new Error('Job Part already exists!');
   }
 
+  const parseJobOrder = jobOrder ? +jobOrder : allJobParts.length;
+
   const createdJobPart = await JobPart.create({
     jobPartTitle: jobPartTitle,
     jobDescription: jobDescription,
-    jobOrder: allJobParts.length,
+    jobOrder: parseJobOrder,
   });
 
   res.status(201).json(createdJobPart);

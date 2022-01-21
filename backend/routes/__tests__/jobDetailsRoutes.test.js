@@ -36,7 +36,7 @@ const token = jwks.token({
   aud: audience,
   iss: `https://${domain}/`,
   sub: 'test|123456',
-  permissions: ['read:jobs', 'create:jobs', 'update:jobs', 'delete:jobs'],
+  permissions: ['read:jobs', 'create:jobs', 'update:jobs', 'delete:jobs', 'read:job_parts', 'create:job_parts', 'update:job_parts', 'delete:job_parts'],
 });
 
 const createNewJob = (jobId, client, address = '12 abc lane', city = 'hamilton', area = 10, endClient = 'barney', color = '#bc12bc', isInvoiced = false) => {
@@ -1153,7 +1153,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
 describe('Given we have an "/api/job/parts" endpoint', () => {
   it('when a GET request is valid, authenticated and authrorized, then it should return a list of job parts', async () => {
     for (let i = 0; i < 20; i++) {
-      await JobPart.create({ jobPartTitle: `Schedule${i}` });
+      await JobPart.create({ jobPartTitle: `Schedule${i}`, jobOrder: i });
     }
     const checkBody = (res) => {
       expect(res.body.length).toBe(20);
@@ -1174,13 +1174,50 @@ describe('Given we have an "/api/job/parts" endpoint', () => {
       .expect(checkBody)
       .expect(200);
   });
-  it.todo('When a GET request has an invalid token, then a 401 response is returned');
-  it.todo('When a GET request does not have the required authorization, then a 403 response is returned');
-  it.todo('When a GET request has an invalid token, then a 401 response is returned');
+  it('When a GET request has an invalid token, then a 401 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: 'audience',
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'read:job_parts',
+    });
+
+    await request(app)
+      .get('/api/job/parts/')
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a GET request does not have the required authorization, then a 403 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'create:jobs',
+    });
+
+    await request(app)
+      .get('/api/job/parts/')
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
   it('when a POST request is valid and authorized, then the job part should be created and returned', async () => {
     const jobPart = {
       jobPartTitle: 'Box-up',
-      jobDescription: 'Sturcturally sercure the floor footing',
+      jobDescription: 'Sturcturally secure the floor footing',
     };
 
     const checkBody = (res) => {
@@ -1203,12 +1240,137 @@ describe('Given we have an "/api/job/parts" endpoint', () => {
       .expect(checkBody)
       .expect(201);
   });
-  it.todo('When a POST request has an invalid token, then a 401 response is returned');
-  it.todo('When a POST request has insufficient permissions, then a 403 response is returned');
-  it.todo('When a POST request is made and the "jobPartTitle" is not entered in the correct format, then a 400 response is returned');
-  it.todo('When a POST request is made and the "jobPartTitle" is entered incorrectly, then a 400 response is returned');
-  it.todo('When a POST request is made and the "jobOrder" is not entered as a number, then return a 400 response');
-  it.todo('When a POST request is made and the "jobDescription" is entered incorrectly, then a 400 response should be returned');
+  it('When a POST request has an invalid token, then a 401 response is returned', async () => {
+    const jobPart = {
+      jobPartTitle: 'Box-up',
+      jobDescription: 'Sturcturally secure the floor footing',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://domain/`,
+      sub: 'test|123456',
+      permissions: 'create:job_parts',
+    });
+
+    await request(app)
+      .post('/api/job/parts/')
+      .send(jobPart)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a POST request has insufficient permissions, then a 403 response is returned', async () => {
+    const jobPart = {
+      jobPartTitle: 'Box-up',
+      jobDescription: 'Sturcturally secure the floor footing',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'read:job_parts',
+    });
+
+    await request(app)
+      .post('/api/job/parts/')
+      .send(jobPart)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a POST request is made and the "jobPartTitle" is not entered in the correct format, then a 400 response is returned', async () => {
+    const jobPart = {
+      jobPartTitle: { job: 'Box-up' },
+      jobDescription: 'Sturcturally secure the floor footing',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Job Part must be a valid');
+    };
+
+    await request(app)
+      .post('/api/job/parts/')
+      .send(jobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is made and the "jobPartTitle" already exists, then a 400 response is returned', async () => {
+    const jobPart = {
+      jobPartTitle: 'Box-up',
+      jobDescription: 'Sturcturally secure the floor footing',
+    };
+
+    await JobPart.create({ ...jobPart, jobOrder: 5 });
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job Part already exists!');
+    };
+
+    await request(app)
+      .post('/api/job/parts/')
+      .send(jobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is made and the "jobOrder" is not entered as a number, then return a 400 response', async () => {
+    const jobPart = {
+      jobPartTitle: 'Box-up',
+      jobOrder: 'foo',
+      jobDescription: 'Sturcturally secure the floor footing',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Job part order must be a number');
+    };
+
+    await request(app)
+      .post('/api/job/parts/')
+      .send(jobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request is made and the "jobDescription" is entered incorrectly, then a 400 response should be returned', async () => {
+    const jobPart = {
+      jobPartTitle: 'Box-up',
+      jobDescription: { jobs: 'foo' },
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Job Desciption must be valid');
+    };
+
+    await request(app)
+      .post('/api/job/parts/')
+      .send(jobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
 });
 
 /**
