@@ -44,7 +44,7 @@ const createJobPart = asyncHandler(async (req, res) => {
 /**
  * @Desc Get a job part
  * @Route GET /api/job/parts/:id
- * @Access Private (admin)
+ * @Access Private ("get:job_parts", admin)
  */
 
 const getJobPart = asyncHandler(async (req, res) => {
@@ -54,6 +54,7 @@ const getJobPart = asyncHandler(async (req, res) => {
     res.json(jobPart);
   } else {
     res.status(404);
+    throw new Error('Job part not found');
   }
 });
 

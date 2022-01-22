@@ -1379,17 +1379,17 @@ describe('Given we have an "/api/job/parts" endpoint', () => {
  */
 
 describe('Given we have an "/api/job/parts/:id" endpoint', () => {
-  it('When a user makes a valid GET request then it should respond with a 200 code and the job part', async () => {
-    const jobPart = {
-      jobPartTitle: 'make soup',
-    };
-
-    await JobPart.create(jobPart);
-
-    const savedJobPart = await JobPart.findOne(jobPart);
+  beforeEach(async () => {
+    await JobPart.create({ jobPartTitle: 'Make food', jobOrder: 0 });
+  });
+  afterEach(async () => {
+    await JobPart.deleteMany();
+  });
+  fit('When a user makes a valid GET request then it should respond with a 200 code and the job part', async () => {
+    const savedJobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
 
     const checkBody = (res) => {
-      expect(res.body).toEqual(expect.objectContaining(jobPart));
+      expect(res.body.jobPartTitle).toBe('Make food');
     };
 
     await request(app)
