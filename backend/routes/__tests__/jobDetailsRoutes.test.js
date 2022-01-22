@@ -1385,33 +1385,95 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
   afterEach(async () => {
     await JobPart.deleteMany();
   });
-  fit('When a user makes a valid GET request then it should respond with a 200 code and the job part', async () => {
+  it('When a GET request is valid and authorized, then it should respond with a 200 code and the job part', async () => {
     const savedJobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
 
     const checkBody = (res) => {
       expect(res.body.jobPartTitle).toBe('Make food');
     };
 
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'read:job_parts',
+    });
+
     await request(app)
       .get(`/api/job/parts/${savedJobPart._id}`)
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
   });
-  it('When a user makes a GET request with a jobPart that does not exist then it should respond with a 404 code and an error', async () => {
+  it('When a GET request is not appropriately authroized, then it should respond with a 403 response', async () => {
+    const savedJobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
     const checkBody = (res) => {
-      expect(res.body.message).toBe('Resource not found');
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .get(`/api/job/parts/${savedJobPart._id}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a GET request does not have a valid token, then it should respond with a 401 response', async () => {
+    const savedJobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://domain/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .get(`/api/job/parts/${savedJobPart._id}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a GET request with a jobPart that does not exist, then it should respond with a 404 code and an error', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job part not found');
     };
 
     await request(app)
-      .get(`/api/job/parts/incorrectId`)
+      .get(`/api/job/parts/507f191e810c19729de860ea`)
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(404);
+  });
+  it('When a GET request with an incorrect :id parameter, then it should respond with a 400 error code', async () => {
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid id parameter');
+    };
+
+    await request(app)
+      .get(`/api/job/parts/invalidparameter`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
   });
   it('When a valid PUT request is made then the jobs part is updated and returned with a 200 response', async () => {
     await JobPart.create({ jobPartTitle: 'go shopping' });
