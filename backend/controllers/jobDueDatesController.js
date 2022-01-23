@@ -6,7 +6,7 @@ const JobPart = require('../models/jobPartModel');
 /**
  * @Desc Get a list of all due dates for every job
  * @Route /api/job/duedates/parts
- * @Access Private (employee, admin)
+ * @Access Private ("read:due_dates", employee, admin)
  */
 
 const getAllJobDueDates = asyncHandler(async (req, res) => {
@@ -36,36 +36,6 @@ const getJobPartDueDates = asyncHandler(async (req, res) => {
 });
 
 /**
- * @Desc Update due dates of all due dates for a job
- * @Route /api/job/duedates/parts/:jobid
- * @Access Private (employee, admin)
- */
-
-const patchJobPartDueDates = asyncHandler(async (req, res) => {
-  const jobId = req.params.jobid;
-  const jobDueDates = await JobDueDate.find({ job: jobId });
-  for (const dueDate of jobDueDates) {
-    await JobDueDate.findByIdAndUpdate(dueDate._id, {
-      dueDate: DateTime.fromFormat(dueDate.dueDate, 'yyyy-MM-dd').plus({ days: req.body.scheduleShift }).toFormat('yyyy-MM-dd'),
-    });
-  }
-
-  res.json({ message: 'success' });
-});
-
-/**
- * @Desc Delete all of a job's duedates
- * @Route /api/job/duedates/parts/:jobid
- * @Access Private (admin)
- */
-
-const deleteJobPartDueDates = asyncHandler(async (req, res) => {
-  const jobId = req.params.jobid;
-  await JobDueDate.deleteMany({ job: jobId });
-  res.json({ message: 'deleted!' });
-});
-
-/**
  * @Desc Create a job's part duedates
  * @Route /api/job/duedates/parts/:jobid
  * @Access Private (admin)
@@ -84,9 +54,41 @@ const createJobPartDueDate = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Due date already exists');
   }
-  const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate });
+  const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate, dueDateRange: dueDate });
 
   res.status(201).json(created);
+});
+
+/**
+ * @Desc Update due dates of all due dates for a job
+ * @Route /api/job/duedates/parts/:jobid
+ * @Access Private (employee, admin)
+ */
+
+const patchJobPartDueDates = asyncHandler(async (req, res) => {
+  const jobId = req.params.jobid;
+  const jobDueDates = await JobDueDate.find({ job: jobId });
+  for (const dueDate of jobDueDates) {
+    const newDueDate = DateTime.fromFormat(dueDate.dueDate, 'yyyy-MM-dd').plus({ days: req.body.scheduleShift }).toFormat('yyyy-MM-dd');
+    await JobDueDate.findByIdAndUpdate(dueDate._id, {
+      dueDate: newDueDate,
+      dueDateRange: newDueDate,
+    });
+  }
+
+  res.json({ message: 'success' });
+});
+
+/**
+ * @Desc Delete all of a job's duedates
+ * @Route /api/job/duedates/parts/:jobid
+ * @Access Private (admin)
+ */
+
+const deleteJobPartDueDates = asyncHandler(async (req, res) => {
+  const jobId = req.params.jobid;
+  await JobDueDate.deleteMany({ job: jobId });
+  res.json({ message: 'deleted!' });
 });
 
 /**

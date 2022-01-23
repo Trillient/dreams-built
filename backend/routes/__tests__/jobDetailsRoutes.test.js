@@ -36,7 +36,7 @@ const token = jwks.token({
   aud: audience,
   iss: `https://${domain}/`,
   sub: 'test|123456',
-  permissions: ['read:jobs', 'create:jobs', 'update:jobs', 'delete:jobs', 'read:job_parts', 'create:job_parts', 'update:job_parts', 'delete:job_parts'],
+  permissions: ['read:jobs', 'create:jobs', 'update:jobs', 'delete:jobs', 'read:job_parts', 'create:job_parts', 'update:job_parts', 'delete:job_parts', 'create:due_dates', 'read:due_dates', 'update:due_dates', 'delete:due_dates'],
 });
 
 const createNewJob = (jobId, client, address = '12 abc lane', city = 'hamilton', area = 10, endClient = 'barney', color = '#bc12bc', isInvoiced = false) => {
@@ -1859,54 +1859,154 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
 
 describe('Given we have a "/api/job/duedates" endpoint', () => {
   beforeEach(async () => {
-    await Client.create({ clientName: 'Coca-cola' });
-    const clientId = await Client.findOne({ clientName: 'Coca-cola' });
-    await JobDetails.create(createNewJob(23000, clientId._id));
-    await JobPart.create({ jobPartTitle: 'strip walls' });
+    const clientId = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(1, clientId._id));
+    await JobPart.create({ jobPartTitle: 'strip walls', jobOrder: 0 });
+    await JobPart.create({ jobPartTitle: 'box walls', jobOrder: 1 });
   });
 
   afterEach(async () => {
-    await Client.deleteMany();
     await JobDetails.deleteMany();
     await JobPart.deleteMany();
+    await JobDueDate.deleteMany();
   });
-  it('When a valid and authenticated GET request is made, then a 200 respose with all due dates is recieved', async () => {
-    const databaseJob = await JobDetails.findOne({ clientName: 'Coca-cola' });
-    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+  it('When a GET request is valid and authorized, then a 200 respose with all due dates is recieved', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.find();
+
+    for (jobPart of databaseJobPart) {
+      await JobDueDate.create({
+        job: databaseJob._id,
+        jobPartTitle: jobPart._id,
+        dueDate: '2021-02-22',
+        dueDateRange: '2021-02-22T00:00:00.000+00:00',
+      });
+    }
+
+    const checkBody = (res) => {
+      expect(res.body.length).toBe(2);
+      expect(res.body[0].jobPartTitle.jobPartTitle).toBe('strip walls');
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'read:due_dates',
+    });
+
+    await request(app)
+      .get('/api/job/duedates/parts?rangeStart=2021/02/20&rangeEnd=2021/02/23')
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a GET request has an invalid token, then a 401 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://domain}/`,
+      sub: 'test|123456',
+      permissions: 'read:due_dates',
+    });
+
+    await request(app)
+      .get('/api/job/duedates/parts')
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a GET request has a token with insufficient permissions, then a 403 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .get('/api/job/duedates/parts')
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a GET request is made with date range queries, then only the due dates that are in the range are returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const firstJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+    const secondJobPart = await JobPart.findOne({ jobPartTitle: 'box walls' });
 
     await JobDueDate.create({
       job: databaseJob._id,
-      jobDescription: databaseJobPart._id,
-      dueDate: '11/12/2021',
+      jobPartTitle: firstJobPart._id,
+      dueDate: '2021-02-22',
+      dueDateRange: '2021-02-22T00:00:00.000+00:00',
+    });
+
+    await JobDueDate.create({
+      job: databaseJob._id,
+      jobPartTitle: secondJobPart._id,
+      dueDate: '2021-05-20',
+      dueDateRange: '2021-05-20T00:00:00.000+00:00',
     });
 
     const checkBody = (res) => {
       expect(res.body.length).toBe(1);
+      expect(res.body[0].jobPartTitle.jobPartTitle).toBe('strip walls');
     };
 
     await request(app)
-      .get('/api/job/duedates/parts')
+      .get('/api/job/duedates/parts?rangeStart=2021/02/20&rangeEnd=2021/03/20')
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
   });
+  it('When a GET request is made with invalid query parameters, then a 400 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid query parameters');
+    };
+
+    await request(app)
+      .get('/api/job/duedates/parts?rangeStart=water&rangeEnd=fire')
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
 });
 
 /**
  * @endpoint - /api/job/duedates/parts/:jobid
- * @paths - GET, POST, DELETE
+ * @paths - GET, POST, PATCH, DELETE
  */
 
 describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
-  beforeAll(async () => {
-    await Client.create({ clientName: 'Cherry' });
-    const clientId = await Client.findOne({ clientName: 'Cherry' });
-    await JobDetails.create(createNewJob(23002, clientId._id));
-    await JobPart.create({ jobPartTitle: 'box-up' });
+  beforeEach(async () => {
+    const clientId = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(1, clientId._id));
+    await JobPart.create({ jobPartTitle: 'strip walls' });
   });
-  it("When a valid and authenticated GET request is made, then a 200 response with the given job's due dates is recieved", async () => {
+
+  afterEach(async () => {
+    await JobDetails.deleteMany();
+    await JobPart.deleteMany();
+    await JobDueDate.deleteMany();
+  });
+  it("When a GET request is valid and has the required permissions, then a 200 response with the given job's due dates is recieved", async () => {
     const databaseClient = await Client.findOne({ clientName: 'Cherry' });
     const databaseJob = await JobDetails.findOne({ jobNumber: 23002 });
     const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'box-up' });
@@ -1941,7 +2041,38 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
       .expect(checkBody)
       .expect(200);
   });
-  it('When a valid authenticated DELETE request is made, then is should return a 200 response with a success message', async () => {
+  it.todo('When a GET request has an invalid token, then a 401 response is returned');
+  it.todo('When a GET request has insufficient permissions, then a 403 response is returned');
+  it.todo('When a GET request has an invalid ":jobid" parameter, then a 400 response is returned');
+  it.todo('When a GET request has a ":jobid" parameter that does not exist, then a 404 response is returned');
+  it.todo('When a GET request has no ":jobid" parameter, then a 404 response is returned');
+
+  it.todo('When a POST request is valid and authorized, then the due date is created and a 201 response is returned');
+  it.todo('When a POST request has an invalid token, then a 401 response is returned');
+  it.todo('When a POST request has insufficient permissions, then a 403 response is returned');
+  it.todo('When a POST request has an invalid ":jobid" parameter, then a 400 response is returned');
+  it.todo('When a POST request has a ":jobid" parameter that does not exist, then a 404 response is returned');
+  it.todo('When a POST request has no ":jobid" parameter, then a 404 response is returned');
+  it.todo('When a POST request has no "job" property then a 400 response is returned');
+  it.todo('When a POST request has an invalid "job" property, then a 400 response is returned');
+  it.todo('When a POST request has no "jobPartTitle" property then a 400 response is returned');
+  it.todo('When a POST request has an invalid "jobPartTitle" property, then a 400 response is returned');
+  it.todo('When a POST request has an invalid "dueDate" property, then a 400 response is returned');
+  it.todo('When a POST request has an invalid "startDate" property, then a 400 response is returned');
+  it.todo('When a POST request has an invalid "contractor.contact" property, then a 400 response is returned');
+  it.todo('When a POST request has an invalid "contractor.email" property, then a 400 response is returned');
+  it.todo('When a POST request has an invalid "contractor.phone" property, then a 400 response is returned');
+
+  it.todo('When a PATCH request is valid and authorized, then all job due dates are altered and a 200 response is returned');
+  it.todo('When a PATCH request has a negative "scheduleShift" property, then all job due dates are altered appropriately and a 200 response is returned');
+  it.todo('When a PATCH request has an invalid token, then a 401 response is returned');
+  it.todo('When a PATCH request has insufficient permissions, then a 403 response is returned');
+  it.todo('When a PATCH request has an invalid ":jobid" parameter, then a 400 response is returned');
+  it.todo('When a PATCH request has a ":jobid" parameter that does not exist, then a 404 response is returned');
+  it.todo('When a PATCH request has no ":jobid" parameter, then a 404 response is returned');
+  it.todo('When a PATCH request has a "scheduleShift" property that is not an integer, then a 400 response is returned');
+
+  it('When a DELETE request is valid and has the required permissions, then is should return a 200 response with a success message', async () => {
     const databaseJob = await JobDetails.findOne({ jobNumber: 23002 });
     const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'box-up' });
 
@@ -1963,6 +2094,11 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
       .expect(checkBody)
       .expect(200);
   });
+  it.todo('When a DELETE request has an invalid token, then a 401 response is returned');
+  it.todo('When a DELETE request has insufficient permissions, then a 403 response is returned');
+  it.todo('When a DELETE request has an invalid ":jobid" parameter, then a 400 response is returned');
+  it.todo('When a DELETE request has a ":jobid" parameter that does not exist, then a 404 response is returned');
+  it.todo('When a DELETE request has no ":jobid" parameter, then a 404 response is returned');
 });
 
 /**
@@ -1971,13 +2107,18 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
  */
 
 describe('Given we have a "/api/job/duedates/job/:jobid/part/:partid" endpoint', () => {
-  beforeAll(async () => {
-    await Client.create({ clientName: 'Liquidify' });
-    const clientId = await Client.findOne({ clientName: 'Liquidify' });
-    await JobDetails.create(createNewJob(23004, clientId._id));
-    await JobPart.create({ jobPartTitle: 'lay-concrete' });
+  beforeEach(async () => {
+    const clientId = await Client.findOne({ clientName: 'warehouse' });
+    await JobDetails.create(createNewJob(1, clientId._id));
+    await JobPart.create({ jobPartTitle: 'strip walls' });
   });
-  it('When a valid authenticated PUT request is made then is should update the job part due date and return a 200 response with the updated due date.', async () => {
+
+  afterEach(async () => {
+    await JobDetails.deleteMany();
+    await JobPart.deleteMany();
+    await JobDueDate.deleteMany();
+  });
+  it('When a PUT request is valid and appropriately authorized, then is should update the job part due date and return a 200 response with the updated due date.', async () => {
     const databaseJob = await JobDetails.findOne({ jobNumber: 23004 });
     const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'lay-concrete' });
 
@@ -2008,7 +2149,21 @@ describe('Given we have a "/api/job/duedates/job/:jobid/part/:partid" endpoint',
       .expect(checkBody)
       .expect(200);
   });
-  it('When a valid authenticated DELETE request is made then is should return a 200 response with a success message.', async () => {
+  it.todo('When a PUT request has an invalid token, then a 401 response is returned');
+  it.todo('When a PUT request has insufficient permissions, then a 403 response is returned');
+  it.todo('When a PUT request has an invalid ":id" parameter, then a 400 response is returned');
+  it.todo('When a PUT request has a ":id" parameter that does not exist, then a 404 response is returned');
+  it.todo('When a PUT request has no ":id" parameter, then a 404 response is returned');
+  it.todo('When a PUT request has no "job" property then a 400 response is returned');
+  it.todo('When a PUT request has an invalid "job" property, then a 400 response is returned');
+  it.todo('When a PUT request has no "jobPartTitle" property then a 400 response is returned');
+  it.todo('When a PUT request has an invalid "jobPartTitle" property, then a 400 response is returned');
+  it.todo('When a PUT request has an invalid "dueDate" property, then a 400 response is returned');
+  it.todo('When a PUT request has an invalid "startDate" property, then a 400 response is returned');
+  it.todo('When a PUT request has an invalid "contractor.contact" property, then a 400 response is returned');
+  it.todo('When a PUT request has an invalid "contractor.email" property, then a 400 response is returned');
+  it.todo('When a PUT request has an invalid "contractor.phone" property, then a 400 response is returned');
+  it('When a DELETE request is valid and authorized, then is should return a 200 response with a success message.', async () => {
     const databaseJob = await JobDetails.findOne({ jobNumber: 23004 });
     const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'lay-concrete' });
 
@@ -2033,4 +2188,9 @@ describe('Given we have a "/api/job/duedates/job/:jobid/part/:partid" endpoint',
       .expect(checkBody)
       .expect(200);
   });
+  it.todo('When a DELETE request has an invalid token, then a 401 response is returned');
+  it.todo('When a DELETE request has insufficient permissions, then a 403 response is returned');
+  it.todo('When a DELETE request has an invalid ":id" parameter, then a 400 response is returned');
+  it.todo('When a DELETE request has a ":id" parameter that does not exist, then a 404 response is returned');
+  it.todo('When a DELETE request has no ":id" parameter, then a 404 response is returned');
 });
