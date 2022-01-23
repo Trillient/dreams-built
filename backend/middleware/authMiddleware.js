@@ -32,6 +32,11 @@ const createJobPartsAuth = jwtAuthz(['create:job_parts'], options);
 const updateJobPartsAuth = jwtAuthz(['update:job_parts'], options);
 const deleteJobPartsAuth = jwtAuthz(['delete:job_parts'], options);
 
+const readJobPartDueDatesAuth = jwtAuthz(['read:due_dates'], options);
+const createJobPartDueDatesAuth = jwtAuthz(['create:due_dates'], options);
+const updateJobPartDueDatesAuth = jwtAuthz(['update:due_dates'], options);
+const deleteJobPartDueDatesAuth = jwtAuthz(['delete:due_dates'], options);
+
 module.exports = {
   checkJwt,
   readClientsAuth,
@@ -44,4 +49,8 @@ module.exports = {
   updateJobPartsAuth,
   createJobPartsAuth,
   deleteJobPartsAuth,
+  readJobPartDueDatesAuth,
+  updateJobPartDueDatesAuth,
+  createJobPartDueDatesAuth,
+  deleteJobPartDueDatesAuth,
 };

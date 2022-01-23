@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const { DateTime } = require('luxon');
 const JobDueDate = require('../models/jobPartDueDateModel');
 const JobPart = require('../models/jobPartModel');
 
@@ -35,6 +36,24 @@ const getJobPartDueDates = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @Desc Update due dates of all due dates for a job
+ * @Route /api/job/duedates/parts/:jobid
+ * @Access Private (employee, admin)
+ */
+
+const patchJobPartDueDates = asyncHandler(async (req, res) => {
+  const jobId = req.params.jobid;
+  const jobDueDates = await JobDueDate.find({ job: jobId });
+  for (const dueDate of jobDueDates) {
+    await JobDueDate.findByIdAndUpdate(dueDate._id, {
+      dueDate: DateTime.fromFormat(dueDate.dueDate, 'yyyy-MM-dd').plus({ days: req.body.scheduleShift }).toFormat('yyyy-MM-dd'),
+    });
+  }
+
+  res.json({ message: 'success' });
+});
+
+/**
  * @Desc Delete all of a job's duedates
  * @Route /api/job/duedates/parts/:jobid
  * @Access Private (admin)
@@ -65,7 +84,7 @@ const createJobPartDueDate = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Due date already exists');
   }
-  const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate, dueDateRange: dueDate });
+  const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate });
 
   res.status(201).json(created);
 });
@@ -108,4 +127,4 @@ const deleteJobPartDueDate = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getAllJobDueDates, getJobPartDueDates, deleteJobPartDueDates, createJobPartDueDate, updateJobPartDueDate, deleteJobPartDueDate };
+module.exports = { getAllJobDueDates, getJobPartDueDates, patchJobPartDueDates, deleteJobPartDueDates, createJobPartDueDate, updateJobPartDueDate, deleteJobPartDueDate };
