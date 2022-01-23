@@ -61,7 +61,7 @@ const getJobPart = asyncHandler(async (req, res) => {
 /**
  * @Desc Update a job part
  * @Route PUT /api/job/parts/:id
- * @Access Private (admin)
+ * @Access Private ("update:job_parts", admin)
  */
 
 const updateJobPart = asyncHandler(async (req, res) => {
@@ -71,27 +71,32 @@ const updateJobPart = asyncHandler(async (req, res) => {
 
   if (jobPartData) {
     jobPartData.jobPartTitle = jobPartTitle;
+    jobPartData.jobOrder = jobOrder || jobPartData.jobOrder;
     jobPartData.jobDescription = jobDescription;
-    jobPartData.jobOrder = jobOrder;
 
     const updatedJobPart = await jobPartData.save();
     res.json(updatedJobPart);
   } else {
     res.status(404);
+    throw new Error('Job part not found');
   }
 });
 
 /**
  * @Desc Delete a job part
  * @Route DELETE /api/job/parts/:id
- * @Access Private (admin)
+ * @Access Private ("delete:job_parts", admin)
  */
 
 const deleteJobPart = asyncHandler(async (req, res) => {
   const jobPart = await JobPart.findById(req.params.id);
-
-  await jobPart.remove();
-  res.json({ message: 'Job part removed' });
+  if (jobPart) {
+    await jobPart.remove();
+    res.json({ message: 'Job part removed' });
+  } else {
+    res.status(404);
+    throw new Error('Job part not found');
+  }
 });
 
 module.exports = { getJobParts, createJobPart, getJobPart, updateJobPart, deleteJobPart };

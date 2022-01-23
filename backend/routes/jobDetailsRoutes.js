@@ -14,7 +14,7 @@ router.route('/details').get(readJobDetailsAuth, getJobs).post(createJobDetailsA
 router.route('/details/:id').get(readJobDetailsAuth, jobIdParams, validation, getJob).put(updateJobDetailsAuth, jobIdParams, jobDetailsSchema, validation, updateJob).delete(deleteJobDetailsAuth, jobIdParams, validation, deleteJob);
 
 router.route('/parts').get(readJobPartsAuth, getJobParts).post(createJobPartsAuth, jobPartsSchema, validation, createJobPart);
-router.route('/parts/:id').get(readJobPartsAuth, jobPartParams, validation, getJobPart).put(updateJobPartsAuth, jobPartParams, validation, updateJobPart).delete(deleteJobPartsAuth, jobPartParams, validation, deleteJobPart);
+router.route('/parts/:id').get(readJobPartsAuth, jobPartParams, validation, getJobPart).put(updateJobPartsAuth, jobPartParams, jobPartsSchema, validation, updateJobPart).delete(deleteJobPartsAuth, jobPartParams, validation, deleteJobPart);
 
 router.route('/duedates/parts').get(getAllJobDueDates);
 router.route('/duedates/parts/:jobid').get(getJobPartDueDates).post(createJobPartDueDate).delete(deleteJobPartDueDates);

@@ -1299,7 +1299,7 @@ describe('Given we have an "/api/job/parts" endpoint', () => {
     };
 
     const checkBody = (res) => {
-      expect(res.body.errors[0].msg).toBe('Job Part must be a valid');
+      expect(res.body.errors[0].msg).toBe('Job Part must be valid');
     };
 
     await request(app)
@@ -1359,7 +1359,7 @@ describe('Given we have an "/api/job/parts" endpoint', () => {
     };
 
     const checkBody = (res) => {
-      expect(res.body.errors[0].msg).toBe('Job Desciption must be valid');
+      expect(res.body.errors[0].msg).toBe('Job Description must be valid');
     };
 
     await request(app)
@@ -1414,7 +1414,7 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
       expect(res.body.error).toBe('Forbidden');
     };
 
-    const validToken = jwks.token({
+    const invalidToken = jwks.token({
       aud: audience,
       iss: `https://${domain}/`,
       sub: 'test|123456',
@@ -1422,7 +1422,7 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
 
     await request(app)
       .get(`/api/job/parts/${savedJobPart._id}`)
-      .set(`Authorization`, `Bearer ${validToken}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
@@ -1435,7 +1435,7 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
       expect(res.body.code).toBe('invalid_token');
     };
 
-    const validToken = jwks.token({
+    const invalidToken = jwks.token({
       aud: audience,
       iss: `https://domain/`,
       sub: 'test|123456',
@@ -1443,7 +1443,7 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
 
     await request(app)
       .get(`/api/job/parts/${savedJobPart._id}`)
-      .set(`Authorization`, `Bearer ${validToken}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
@@ -1475,10 +1475,8 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
       .expect(checkBody)
       .expect(400);
   });
-  it('When a valid PUT request is made then the jobs part is updated and returned with a 200 response', async () => {
-    await JobPart.create({ jobPartTitle: 'go shopping' });
-
-    const jobPart = await JobPart.findOne({ jobPartTitle: 'go shopping' });
+  it('When a PUT request is valid and authorized, then a 200 response is returned and the jobPart is updated', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
 
     updatedJobPart = {
       jobPartTitle: 'call owners',
@@ -1486,6 +1484,146 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
 
     const checkBody = (res) => {
       expect(res.body.jobPartTitle).toBe(updatedJobPart.jobPartTitle);
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'update:job_parts',
+    });
+
+    await request(app)
+      .put(`/api/job/parts/${jobPart._id}`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a PUT request has an invalid token, then a 401 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    updatedJobPart = {
+      jobPartTitle: 'call owners',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://domain/`,
+      sub: 'test|123456',
+      permissions: 'update:job_parts',
+    });
+
+    await request(app)
+      .put(`/api/job/parts/${jobPart._id}`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a PUT request does not have a token then a 401 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    updatedJobPart = {
+      jobPartTitle: 'call owners',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('No authorization token was found');
+    };
+
+    await request(app)
+      .put(`/api/job/parts/${jobPart._id}`)
+      .send(updatedJobPart)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a PUT request is not appropriately authorized, the a 403 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    updatedJobPart = {
+      jobPartTitle: 'call owners',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .put(`/api/job/parts/${jobPart._id}`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a PUT request has a "jobPartTitle" in an incorrect format, then a 400 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    updatedJobPart = {
+      jobPartTitle: { test: 'test' },
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Job Part must be valid');
+    };
+
+    await request(app)
+      .put(`/api/job/parts/${jobPart._id}`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has no "jobPartTitle" property, then a 400 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    updatedJobPart = {
+      jobOrder: 2,
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Missing Job Part Title');
+    };
+
+    await request(app)
+      .put(`/api/job/parts/${jobPart._id}`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has no "jobOrder" property, then the jobOrder does not change and a 200 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    updatedJobPart = {
+      jobPartTitle: 'work',
+      jobDescription: 'do lots',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.jobOrder).toEqual(expect.any(Number));
     };
 
     await request(app)
@@ -1497,23 +1635,220 @@ describe('Given we have an "/api/job/parts/:id" endpoint', () => {
       .expect(checkBody)
       .expect(200);
   });
+  it('When a PUT request has "jobOrder" property that is entered in an incorrect format, then a 400 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    updatedJobPart = {
+      jobPartTitle: 'make boxes',
+      jobOrder: 'make boxes',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Job part order must be a number');
+    };
+
+    await request(app)
+      .put(`/api/job/parts/${jobPart._id}`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has "jobDescription" property that is entered in an incorrect format, then a 400 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    updatedJobPart = {
+      jobPartTitle: 'make boxes',
+      jobDescription: { job: 'description' },
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Job Description must be valid');
+    };
+
+    await request(app)
+      .put(`/api/job/parts/${jobPart._id}`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has an invalid ":id" parameter, then a 400 response is returned', async () => {
+    updatedJobPart = {
+      jobPartTitle: 'make boxes',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid id parameter');
+    };
+
+    await request(app)
+      .put(`/api/job/parts/invalidjobpartid`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PUT request has an ":id" parameter that does not exist, then a 404 response is returned', async () => {
+    updatedJobPart = {
+      jobPartTitle: 'make boxes',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job part not found');
+    };
+
+    await request(app)
+      .put(`/api/job/parts/507f191e810c19729de860ea`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  it('When a PUT request has an empty ":id" parameter, then a 404 response is returned', async () => {
+    updatedJobPart = {
+      jobPartTitle: 'make boxes',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Not Found - /api/job/parts');
+    };
+
+    await request(app)
+      .put(`/api/job/parts`)
+      .send(updatedJobPart)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
 
   it('When a valid DELETE request is made then the jobs part is deleted and returned with a 200 response', async () => {
-    await JobPart.create({ jobPartTitle: 'make calls' });
-
-    const jobPart = await JobPart.findOne({ jobPartTitle: 'make calls' });
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
 
     const checkBody = (res) => {
       expect(res.body.message).toBe('Job part removed');
     };
 
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'delete:job_parts',
+    });
+
     await request(app)
       .delete(`/api/job/parts/${jobPart._id}`)
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
+  });
+  it('When a DELETE request has an invalid token, then a 401 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: 'audience',
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'delete:job_parts',
+    });
+
+    await request(app)
+      .delete(`/api/job/parts/${jobPart._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a DELETE request does not have a token then a 401 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('No authorization token was found');
+    };
+
+    await request(app)
+      .delete(`/api/job/parts/${jobPart._id}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a DELETE request is not appropriately authorized, the a 403 response is returned', async () => {
+    const jobPart = await JobPart.findOne({ jobPartTitle: 'Make food' });
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .delete(`/api/job/parts/${jobPart._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a DELETE request has an invalid ":id" parameter, then a 400 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid id parameter');
+    };
+
+    await request(app)
+      .delete(`/api/job/parts/invalididparam`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a DELETE request has an ":id" parameter that does not exist, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job part not found');
+    };
+
+    await request(app)
+      .delete(`/api/job/parts/507f191e810c19729de860ea`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  it('When a DELETE request has an empty ":id" parameter, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Not Found - /api/job/parts/');
+    };
+
+    await request(app)
+      .delete(`/api/job/parts/`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
   });
 });
 
