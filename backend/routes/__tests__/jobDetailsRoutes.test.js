@@ -2744,7 +2744,7 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
-      .expect(200);
+      .expect(400);
   });
   it('When a DELETE request has a ":jobid" parameter that does not exist, then a 404 response is returned', async () => {
     const checkBody = (res) => {
@@ -2819,10 +2819,15 @@ describe('Given we have a "/api/job/duedates/job/:jobid/part/:partid" endpoint',
   it.todo('When a PUT request has no "jobPartTitle" property then a 400 response is returned');
   it.todo('When a PUT request has an invalid "jobPartTitle" property, then a 400 response is returned');
   it.todo('When a PUT request has an invalid "dueDate" property, then a 400 response is returned');
-  it.todo('When a PUT request has an invalid "startDate" property, then a 400 response is returned');
-  it.todo('When a PUT request has an invalid "contractor.contact" property, then a 400 response is returned');
-  it.todo('When a PUT request has an invalid "contractor.email" property, then a 400 response is returned');
-  it.todo('When a PUT request has an invalid "contractor.phone" property, then a 400 response is returned');
+  it.todo('When a PUT request has an invalid "contractor" property, then a 400 response is returned');
+
+  it.todo('When a PATCH request is valid and authorized, then the duedate is updated and a 200 response is returned');
+  it.todo('When a PATCH request has an invalid token, then a 401 response is returned');
+  it.todo('When a PATCH request has insufficient permissions, then a 403 response is returned');
+  it.todo('When a PATCH request has an invalid ":id" parameter, then a 400 response is returned');
+  it.todo('When a PATCH request has a ":id" parameter that does not exist, then a 404 response is returned');
+  it.todo('When a PATCH request has no ":id" parameter, then a 404 response is returned');
+  it.todo('When a PATCH request has an invalid "dueDate" property, then a 400 response is returned');
   it('When a DELETE request is valid and authorized, then is should return a 200 response with a success message.', async () => {
     const databaseJob = await JobDetails.findOne({ jobNumber: 23004 });
     const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'lay-concrete' });
