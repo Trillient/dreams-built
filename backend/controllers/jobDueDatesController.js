@@ -39,57 +39,86 @@ const getJobPartDueDates = asyncHandler(async (req, res) => {
 /**
  * @Desc Create a job's part duedates
  * @Route /api/job/duedates/parts/:jobid
- * @Access Private (admin)
+ * @Access Private ("create:due_dates", admin)
  */
 
 const createJobPartDueDate = asyncHandler(async (req, res) => {
-  const { dueDate } = req.body;
+  const { dueDate, contractor } = req.body;
   const jobId = req.params.jobid;
 
+  const checkJobExists = await JobDetails.findById(jobId);
+
+  if (!checkJobExists) {
+    res.status(404);
+    throw new Error('Job does not exist');
+  }
+
   const partId = req.query.partid;
-  await JobPart.findById(partId);
+  const checkJobPartExists = await JobPart.findById(partId);
 
-  const exists = await JobDueDate.findOne({ job: jobId, jobPartTitle: partId });
+  if (!checkJobPartExists) {
+    res.status(404);
+    throw new Error('Job part does not exist');
+  }
 
-  if (exists) {
+  const dueDateExists = await JobDueDate.findOne({ job: jobId, jobPartTitle: partId });
+
+  if (dueDateExists) {
     res.status(400);
     throw new Error('Due date already exists');
-  }
-  const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate, dueDateRange: dueDate });
+  } else {
+    const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate, dueDateRange: dueDate, contractor: contractor });
 
-  res.status(201).json(created);
+    res.status(201).json(created);
+  }
 });
 
 /**
  * @Desc Update due dates of all due dates for a job
  * @Route /api/job/duedates/parts/:jobid
- * @Access Private (employee, admin)
+ * @Access Private ("update:due_dates" admin)
  */
 
 const patchJobPartDueDates = asyncHandler(async (req, res) => {
+  const shift = req.body.scheduleShift;
   const jobId = req.params.jobid;
-  const jobDueDates = await JobDueDate.find({ job: jobId });
-  for (const dueDate of jobDueDates) {
-    const newDueDate = DateTime.fromFormat(dueDate.dueDate, 'yyyy-MM-dd').plus({ days: req.body.scheduleShift }).toFormat('yyyy-MM-dd');
-    await JobDueDate.findByIdAndUpdate(dueDate._id, {
-      dueDate: newDueDate,
-      dueDateRange: newDueDate,
-    });
-  }
 
-  res.json({ message: 'success' });
+  const jobDueDates = await JobDueDate.find({ job: jobId });
+
+  if (jobDueDates.length > 0) {
+    for (const dueDate of jobDueDates) {
+      const newDueDate = DateTime.fromFormat(dueDate.dueDate, 'yyyy-MM-dd').plus({ days: shift }).toFormat('yyyy-MM-dd');
+      await JobDueDate.findByIdAndUpdate(dueDate._id, {
+        dueDate: newDueDate,
+        dueDateRange: newDueDate,
+      });
+    }
+
+    res.json({ message: `Due Dates shifted by ${shift} day(s)` });
+  } else {
+    res.status(404);
+    throw new Error('Due date not found');
+  }
 });
 
 /**
  * @Desc Delete all of a job's duedates
  * @Route /api/job/duedates/parts/:jobid
- * @Access Private (admin)
+ * @Access Private ("delete:due_dates", admin)
  */
 
 const deleteJobPartDueDates = asyncHandler(async (req, res) => {
   const jobId = req.params.jobid;
-  await JobDueDate.deleteMany({ job: jobId });
-  res.json({ message: 'deleted!' });
+
+  const checkDueDatesExist = await JobDueDate.find({ job: jobId });
+
+  if (checkDueDatesExist.length > 0) {
+    await JobDueDate.deleteMany({ job: jobId });
+    res.json({ message: 'deleted!' });
+  } else {
+    res.status(404);
+    throw new Error("Due dates don't exist for this job");
+  }
 });
 
 /**

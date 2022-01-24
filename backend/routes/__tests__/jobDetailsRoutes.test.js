@@ -2129,64 +2129,641 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
       .expect(checkBody)
       .expect(404);
   });
+  it('When a POST request is valid and authorized, then the due date is created and a 201 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
 
-  it.todo('When a POST request is valid and authorized, then the due date is created and a 201 response is returned');
-  it.todo('When a POST request has an invalid token, then a 401 response is returned');
-  it.todo('When a POST request has insufficient permissions, then a 403 response is returned');
-  it.todo('When a POST request has an invalid ":jobid" parameter, then a 400 response is returned');
-  it.todo('When a POST request has a ":jobid" parameter that does not exist, then a 404 response is returned');
-  it.todo('When a POST request has no ":jobid" parameter, then a 404 response is returned');
-  it.todo('When a POST request has no "job" property then a 400 response is returned');
-  it.todo('When a POST request has an invalid "job" property, then a 400 response is returned');
-  it.todo('When a POST request has no "jobPartTitle" property then a 400 response is returned');
-  it.todo('When a POST request has an invalid "jobPartTitle" property, then a 400 response is returned');
-  it.todo('When a POST request has an invalid "dueDate" property, then a 400 response is returned');
-  it.todo('When a POST request has an invalid "startDate" property, then a 400 response is returned');
-  it.todo('When a POST request has an invalid "contractor.contact" property, then a 400 response is returned');
-  it.todo('When a POST request has an invalid "contractor.email" property, then a 400 response is returned');
-  it.todo('When a POST request has an invalid "contractor.phone" property, then a 400 response is returned');
-
-  it.todo('When a PATCH request is valid and authorized, then all job due dates are altered and a 200 response is returned');
-  it.todo('When a PATCH request has a negative "scheduleShift" property, then all job due dates are altered appropriately and a 200 response is returned');
-  it.todo('When a PATCH request has an invalid token, then a 401 response is returned');
-  it.todo('When a PATCH request has insufficient permissions, then a 403 response is returned');
-  it.todo('When a PATCH request has an invalid ":jobid" parameter, then a 400 response is returned');
-  it.todo('When a PATCH request has a ":jobid" parameter that does not exist, then a 404 response is returned');
-  it.todo('When a PATCH request has no ":jobid" parameter, then a 404 response is returned');
-  it.todo('When a PATCH request has a "scheduleShift" property that is not an integer, then a 400 response is returned');
-
-  it('When a DELETE request is valid and has the required permissions, then is should return a 200 response with a success message', async () => {
-    const databaseJob = await JobDetails.findOne({ jobNumber: 23002 });
-    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'box-up' });
-
-    await JobDueDate.create({
+    const dueDate = {
       job: databaseJob._id,
-      jobDescription: databaseJobPart._id,
-      dueDate: '10/12/2021',
-    });
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+      contractor: { contact: 'mark', email: 'mark@gmail.com', phone: '03232333' },
+    };
 
     const checkBody = (res) => {
-      expect(res.body.message).toBe('deleted!');
+      expect(res.body.job).toBe(String(databaseJob._id));
+      expect(res.body.jobPartTitle).toBe(String(databaseJobPart._id));
+      expect(res.body.dueDate).toBe('2021-12-10');
+      expect(res.body.contractor).toEqual(expect.objectContaining(dueDate.contractor));
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'create:due_dates',
+    });
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=${databaseJobPart._id}`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(201);
+  });
+  it('When a POST request has an invalid token, then a 401 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://{domain}/`,
+      sub: 'test|123456',
+      permissions: 'create:due_dates',
+    });
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=${databaseJobPart._id}`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a POST request has insufficient permissions, then a 403 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=${databaseJobPart._id}`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a POST request has an invalid ":jobid" parameter, then a 400 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=${databaseJobPart._id}`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a POST request has a ":jobid" parameter that does not exist, then a 404 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job does not exist');
     };
 
     await request(app)
-      .delete(`/api/job/duedates/parts/${databaseJob._id}`)
+      .post(`/api/job/duedates/parts/507f191e810c19729de860ea?partid=${databaseJobPart._id}`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  it('When a POST request has no ":jobid" parameter, then a 404 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe(`Not Found - /api/job/duedates/parts/?partid=${databaseJobPart._id}`);
+    };
+
+    await request(app)
+      .post(`/api/job/duedates/parts/?partid=${databaseJobPart._id}`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  it('When a POST request has an ":jobid" parameter that is not in the correct format, then a 400 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe(`Invalid jobid parameter`);
+    };
+
+    await request(app)
+      .post(`/api/job/duedates/parts/invalidjobid?partid=${databaseJobPart._id}`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request has a "partid" query property that does not exist, then a 404 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe(`Job part does not exist`);
+    };
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=507f191e810c19729de860ea`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  it('When a POST request has no "partid" query property property then a 400 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe(`Job Part must be valid`);
+    };
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request has an invalid "partid" query property, then a 400 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe(`Job Part must be valid`);
+    };
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=invalidJobpartid`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request has an invalid "dueDate" property, then a 400 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '20211210',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe(`Due date must be valid (yyyy-MM-dd)`);
+    };
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=${databaseJobPart._id}`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request has an invalid "contractor" properties, then a 400 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+      contractor: { contact: 222, email: 'abceemail', phone: false },
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe(`contact invalid`);
+      expect(res.body.errors[1].msg).toBe(`invalid email`);
+      expect(res.body.errors[2].msg).toBe(`invalid phone`);
+    };
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=${databaseJobPart._id}`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a POST request has already been created, then a 400 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const dueDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-10',
+    };
+
+    await JobDueDate.create(dueDate);
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe(`Due date already exists`);
+    };
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=${databaseJobPart._id}`)
+      .send(dueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a PATCH request is valid and authorized, then all job due dates are altered and a 200 response is returned', async () => {
+    await JobPart.create({ jobPartTitle: 'box walls', jobOrder: 1 });
+
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobParts = await JobPart.find();
+
+    for (const jobPart of databaseJobParts) {
+      await JobDueDate.create({
+        job: databaseJob._id,
+        jobPartTitle: jobPart._id,
+        dueDate: '2021-12-10',
+      });
+    }
+
+    const updateDueDate = {
+      scheduleShift: 5,
+    };
+
+    const checkBody = async (res) => {
+      const updatedDueDate = await JobDueDate.find({ job: databaseJob._id });
+      expect(res.body.message).toBe(`Due Dates shifted by 5 day(s)`);
+      expect(updatedDueDate[0].dueDate).toBe('2021-12-15');
+      expect(updatedDueDate[1].dueDate).toBe('2021-12-15');
+    };
+
+    await request(app)
+      .patch(`/api/job/duedates/parts/${databaseJob._id}`)
+      .send(updateDueDate)
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
   });
-  it.todo('When a DELETE request has an invalid token, then a 401 response is returned');
-  it.todo('When a DELETE request has insufficient permissions, then a 403 response is returned');
-  it.todo('When a DELETE request has an invalid ":jobid" parameter, then a 400 response is returned');
-  it.todo('When a DELETE request has a ":jobid" parameter that does not exist, then a 404 response is returned');
-  it.todo('When a DELETE request has no ":jobid" parameter, then a 404 response is returned');
+  it('When a PATCH request has a negative "scheduleShift" property, then all job due dates are altered appropriately and a 200 response is returned', async () => {
+    await JobPart.create({ jobPartTitle: 'box walls', jobOrder: 1 });
+
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobParts = await JobPart.find();
+
+    for (const jobPart of databaseJobParts) {
+      await JobDueDate.create({
+        job: databaseJob._id,
+        jobPartTitle: jobPart._id,
+        dueDate: '2021-12-10',
+      });
+    }
+
+    const updateDueDate = {
+      scheduleShift: -3,
+    };
+
+    const checkBody = async (res) => {
+      const updatedDueDate = await JobDueDate.find({ job: databaseJob._id });
+      expect(res.body.message).toBe(`Due Dates shifted by -3 day(s)`);
+      expect(updatedDueDate[0].dueDate).toBe('2021-12-07');
+      expect(updatedDueDate[1].dueDate).toBe('2021-12-07');
+    };
+
+    await request(app)
+      .patch(`/api/job/duedates/parts/${databaseJob._id}`)
+      .send(updateDueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a PATCH request has an invalid token, then a 401 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+
+    const updateDueDate = {
+      scheduleShift: 5,
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://{domain}/`,
+      sub: 'test|123456',
+      permissions: 'update:due_dates',
+    });
+
+    await request(app)
+      .patch(`/api/job/duedates/parts/${databaseJob._id}`)
+      .send(updateDueDate)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a PATCH request has insufficient permissions, then a 403 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+
+    const updateDueDate = {
+      scheduleShift: 5,
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .patch(`/api/job/duedates/parts/${databaseJob._id}`)
+      .send(updateDueDate)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a PATCH request has an invalid ":jobid" parameter, then a 400 response is returned', async () => {
+    const updateDueDate = {
+      scheduleShift: 5,
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid jobid parameter');
+    };
+
+    await request(app)
+      .patch(`/api/job/duedates/parts/invalidJobidparam`)
+      .send(updateDueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a PATCH request has a ":jobid" parameter that does not exist, then a 404 response is returned', async () => {
+    const updateDueDate = {
+      scheduleShift: 5,
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Due date not found');
+    };
+
+    await request(app)
+      .patch(`/api/job/duedates/parts/507f191e810c19729de860ea`)
+      .send(updateDueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  it('When a PATCH request has no ":jobid" parameter, then a 404 response is returned', async () => {
+    const updateDueDate = {
+      scheduleShift: 5,
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Not Found - /api/job/duedates/parts/');
+    };
+
+    await request(app)
+      .patch(`/api/job/duedates/parts/`)
+      .send(updateDueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  it('When a PATCH request has a "scheduleShift" property that is not an integer, then a 400 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+
+    const updateDueDate = {
+      scheduleShift: 'five',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Shift must be valid');
+    };
+
+    await request(app)
+      .patch(`/api/job/duedates/parts/${databaseJob._id}`)
+      .send(updateDueDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a DELETE request is valid and has the required permissions, then is should return a 200 response with a success message', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    await JobDueDate.create({
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      dueDate: '2021-12-12',
+    });
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('deleted!');
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'delete:due_dates',
+    });
+
+    await request(app)
+      .delete(`/api/job/duedates/parts/${databaseJob._id}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a DELETE request has an invalid token, then a 401 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://{domain}/`,
+      sub: 'test|123456',
+      permissions: 'delete:due_dates',
+    });
+
+    await request(app)
+      .delete(`/api/job/duedates/parts/${databaseJob._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a DELETE request has insufficient permissions, then a 403 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'read:due_dates',
+    });
+
+    await request(app)
+      .delete(`/api/job/duedates/parts/${databaseJob._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a DELETE request has an invalid ":jobid" parameter, then a 400 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid jobid parameter');
+    };
+
+    await request(app)
+      .delete(`/api/job/duedates/parts/{databaseJob._id}`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a DELETE request has a ":jobid" parameter that does not exist, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe("Due dates don't exist for this job");
+    };
+
+    await request(app)
+      .delete(`/api/job/duedates/parts/507f191e810c19729de860ea`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
 });
 
 /**
  * @endpoint - /api/job/duedates/job/part/:id
- * @paths - PUT, DELETE
+ * @paths - PUT, PATCH, DELETE
  */
 
 describe('Given we have a "/api/job/duedates/job/:jobid/part/:partid" endpoint', () => {
