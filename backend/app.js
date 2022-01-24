@@ -9,7 +9,7 @@ const timesheetRoutes = require('./routes/timeSheetRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
 const clientRoutes = require('./routes/clientRoutes');
 const { checkJwt } = require('./middleware/authMiddleware');
-const { errorHandler, notFound, idNotFound } = require('./middleware/errorMiddleware.js');
+const { errorHandler, notFound } = require('./middleware/errorMiddleware.js');
 
 dotenv.config();
 
@@ -27,7 +27,6 @@ app.use('/api/timesheet', checkJwt, timesheetRoutes);
 app.use('/api/job', checkJwt, jobDetailRoutes);
 app.use('/api/clients', checkJwt, clientRoutes);
 
-app.use(idNotFound);
 app.use(notFound);
 app.use(errorHandler);
 
