@@ -3132,33 +3132,109 @@ describe('Given we have a "/api/job/duedates/job/part/:id" endpoint', () => {
       .expect(400);
   });
   it('When a DELETE request is valid and authorized, then is should return a 200 response with a success message.', async () => {
-    const databaseJob = await JobDetails.findOne({ jobNumber: 23004 });
-    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'lay-concrete' });
+    const dueDateParams = await JobDueDate.findOne({ dueDate: '2021-10-12' });
 
-    await JobDueDate.create({
-      job: databaseJob._id,
-      jobDescription: databaseJobPart._id,
-      dueDate: '20/12/2020',
-      contractor: 'Builders',
-    });
-
-    const dueDateParams = await JobDueDate.findOne({ job: databaseJob._id, jobDescription: databaseJobPart._id });
-
-    const checkBody = (res) => {
+    const checkBody = async (res) => {
       expect(res.body.message).toBe('Deleted!');
+      const dueDate = await JobDueDate.findById(dueDateParams._id);
+      expect(dueDate).toBe(null);
     };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'delete:due_dates',
+    });
 
     await request(app)
       .delete(`/api/job/duedates/job/part/${dueDateParams._id}`)
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
   });
-  it.todo('When a DELETE request has an invalid token, then a 401 response is returned');
-  it.todo('When a DELETE request has insufficient permissions, then a 403 response is returned');
-  it.todo('When a DELETE request has an invalid ":id" parameter, then a 400 response is returned');
-  it.todo('When a DELETE request has a ":id" parameter that does not exist, then a 404 response is returned');
-  it.todo('When a DELETE request has no ":id" parameter, then a 404 response is returned');
+  it('When a DELETE request has an invalid token, then a 401 response is returned', async () => {
+    const dueDateParams = await JobDueDate.findOne({ dueDate: '2021-10-12' });
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://{domain}/`,
+      sub: 'test|123456',
+      permissions: 'delete:due_dates',
+    });
+
+    await request(app)
+      .delete(`/api/job/duedates/job/part/${dueDateParams._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a DELETE request has insufficient permissions, then a 403 response is returned', async () => {
+    const dueDateParams = await JobDueDate.findOne({ dueDate: '2021-10-12' });
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .delete(`/api/job/duedates/job/part/${dueDateParams._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a DELETE request has an invalid ":id" parameter, then a 400 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid id parameter');
+    };
+
+    await request(app)
+      .delete(`/api/job/duedates/job/part/invalididparam`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a DELETE request has a ":id" parameter that does not exist, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Due date not found');
+    };
+
+    await request(app)
+      .delete(`/api/job/duedates/job/part/507f191e810c19729de860ea`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  it('When a DELETE request has no ":id" parameter, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Not Found - /api/job/duedates/job/part/');
+    };
+
+    await request(app)
+      .delete(`/api/job/duedates/job/part/`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
 });
