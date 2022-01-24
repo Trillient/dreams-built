@@ -124,7 +124,7 @@ const deleteJobPartDueDates = asyncHandler(async (req, res) => {
 /**
  * @Desc Update a job's part's duedate all fields
  * @Route /api/job/duedates/job/part/:id
- * @Access Private (admin)
+ * @Access Private ("update:due_dates", admin)
  */
 
 const updateJobPartDueDate = asyncHandler(async (req, res) => {
@@ -138,13 +138,16 @@ const updateJobPartDueDate = asyncHandler(async (req, res) => {
 
     const updatedDueDate = await jobPartDueDateItem.save();
     res.json(updatedDueDate);
+  } else {
+    res.status(404);
+    throw new Error('Due date not found');
   }
 });
 
 /**
  * @Desc Update a job's part's duedate field only
  * @Route /api/job/duedates/job/part/:id
- * @Access Private (admin)
+ * @Access Private ('update:due_dates', admin)
  */
 
 const patchJobPartDueDate = asyncHandler(async (req, res) => {
@@ -158,13 +161,16 @@ const patchJobPartDueDate = asyncHandler(async (req, res) => {
     });
 
     res.json({ message: 'due date updated' });
+  } else {
+    res.status(404);
+    throw new Error('Due date not found');
   }
 });
 
 /**
  * @Desc Delete a job's part's duedate
  * @Route /api/job/
- * @Access Private (admin)
+ * @Access Private ('delete:due_dates', admin)
  */
 
 const deleteJobPartDueDate = asyncHandler(async (req, res) => {
@@ -175,6 +181,7 @@ const deleteJobPartDueDate = asyncHandler(async (req, res) => {
     res.json({ message: 'Deleted!' });
   } else {
     res.status(404);
+    throw new Error('Due date not found');
   }
 });
 

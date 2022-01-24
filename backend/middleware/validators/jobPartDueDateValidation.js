@@ -1,7 +1,7 @@
 const { param, body, query } = require('express-validator');
 const { DateTime } = require('luxon');
 
-const dueDateCreateSchema = [
+const dueDateFullSchema = [
   body('dueDate', 'Due date must be valid (yyyy-MM-dd)')
     .optional()
     .isString()
@@ -13,6 +13,16 @@ const dueDateCreateSchema = [
   body('contractor.contact', 'contact invalid').optional().isString(),
   body('contractor.email', 'invalid email').optional().normalizeEmail().isEmail(),
   body('contractor.phone', 'invalid phone').optional().isMobilePhone(),
+];
+
+const dueDatePartialSchema = [
+  body('dueDate', 'Due date must be valid (yyyy-MM-dd)')
+    .optional()
+    .isString()
+    .custom((value) => {
+      const dt = DateTime.fromFormat(value, 'yyyy-MM-dd');
+      return dt.isValid;
+    }),
 ];
 
 const dueDateQuerySchema = [
@@ -39,4 +49,4 @@ const dueDatePartIdQueryParams = [query('partid').exists().withMessage('Missing 
 
 const dueDateIdParams = [param('id').exists({ checkFalsy: true }).isMongoId().withMessage('Invalid id parameter')];
 
-module.exports = { dueDateCreateSchema, dueDatePatchSchema, dueDateQuerySchema, dueDateIdParams, dueDateJobIdParams, dueDatePartIdQueryParams };
+module.exports = { dueDateFullSchema, dueDatePartialSchema, dueDatePatchSchema, dueDateQuerySchema, dueDateIdParams, dueDateJobIdParams, dueDatePartIdQueryParams };

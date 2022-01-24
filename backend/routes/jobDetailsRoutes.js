@@ -22,7 +22,7 @@ const {
 const { jobDetailsSchema, jobIdParams } = require('../middleware/validators/jobDetailsValidation');
 const { jobPartsSchema, jobPartParams } = require('../middleware/validators/jobPartsValidation');
 const validation = require('../middleware/validatorMiddleware');
-const { dueDatePatchSchema, dueDateQuerySchema, dueDateIdParams, dueDatePartIdQueryParams, dueDateJobIdParams, dueDateCreateSchema } = require('../middleware/validators/jobPartDueDateValidation');
+const { dueDatePatchSchema, dueDateQuerySchema, dueDateIdParams, dueDatePartIdQueryParams, dueDateJobIdParams, dueDateFullSchema, dueDatePartialSchema } = require('../middleware/validators/jobPartDueDateValidation');
 
 // Job details
 router.route('/details').get(readJobDetailsAuth, getJobs).post(createJobDetailsAuth, jobDetailsSchema, validation, createJob);
@@ -37,13 +37,13 @@ router.route('/duedates/parts').get(readJobPartDueDatesAuth, dueDateQuerySchema,
 router
   .route('/duedates/parts/:jobid')
   .get(readJobPartDueDatesAuth, dueDateJobIdParams, validation, getJobPartDueDates)
-  .post(createJobPartDueDatesAuth, dueDateJobIdParams, dueDatePartIdQueryParams, dueDateCreateSchema, validation, createJobPartDueDate)
+  .post(createJobPartDueDatesAuth, dueDateJobIdParams, dueDatePartIdQueryParams, dueDateFullSchema, validation, createJobPartDueDate)
   .patch(updateJobPartDueDatesAuth, dueDateJobIdParams, dueDatePatchSchema, validation, patchJobPartDueDates)
   .delete(deleteJobPartDueDatesAuth, dueDateJobIdParams, validation, deleteJobPartDueDates);
 router
   .route('/duedates/job/part/:id')
-  .put(updateJobPartDueDatesAuth, dueDateIdParams, validation, updateJobPartDueDate)
-  .patch(updateJobPartDueDatesAuth, dueDateIdParams, patchJobPartDueDate)
+  .put(updateJobPartDueDatesAuth, dueDateIdParams, dueDateFullSchema, validation, updateJobPartDueDate)
+  .patch(updateJobPartDueDatesAuth, dueDateIdParams, dueDatePartialSchema, validation, patchJobPartDueDate)
   .delete(deleteJobPartDueDatesAuth, dueDateIdParams, validation, deleteJobPartDueDate);
 
 module.exports = router;
