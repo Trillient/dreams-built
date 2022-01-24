@@ -1896,7 +1896,7 @@ describe('Given we have a "/api/job/duedates" endpoint', () => {
     });
 
     await request(app)
-      .get('/api/job/duedates/parts?rangeStart=2021/02/20&rangeEnd=2021/02/23')
+      .get('/api/job/duedates/parts?rangeStart=2021-02-20&rangeEnd=2021-02-23')
       .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
@@ -1967,7 +1967,7 @@ describe('Given we have a "/api/job/duedates" endpoint', () => {
     };
 
     await request(app)
-      .get('/api/job/duedates/parts?rangeStart=2021/02/20&rangeEnd=2021/03/20')
+      .get('/api/job/duedates/parts?rangeStart=2021-02-20&rangeEnd=2021-03-20')
       .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
@@ -1998,7 +1998,7 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
   beforeEach(async () => {
     const clientId = await Client.findOne({ clientName: 'warehouse' });
     await JobDetails.create(createNewJob(1, clientId._id));
-    await JobPart.create({ jobPartTitle: 'strip walls' });
+    await JobPart.create({ jobPartTitle: 'strip walls', jobOrder: 0 });
   });
 
   afterEach(async () => {
@@ -2007,45 +2007,128 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
     await JobDueDate.deleteMany();
   });
   it("When a GET request is valid and has the required permissions, then a 200 response with the given job's due dates is recieved", async () => {
-    const databaseClient = await Client.findOne({ clientName: 'Cherry' });
-    const databaseJob = await JobDetails.findOne({ jobNumber: 23002 });
-    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'box-up' });
+    // Create a new job part so there are two job parts
+    await JobPart.create({ jobPartTitle: 'break walls', jobOrder: 1 });
 
-    await JobDueDate.create({
-      job: databaseJob._id,
-      jobDescription: databaseJobPart._id,
-      dueDate: '10/12/2021',
-    });
+    const databaseClient = await Client.findOne({ clientName: 'warehouse' });
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
 
-    await JobDetails.create(createNewJob(23003, databaseClient._id));
-    const databaseDifferentJob = await JobDetails.findOne({ jobNumber: 23003 });
+    const databaseJobParts = await JobPart.find();
 
-    const differentJob = {
-      job: databaseDifferentJob._id,
-      jobDescription: databaseJobPart._id,
-      dueDate: '12/12/2022',
-    };
+    // Create a new job to make sure only the required job due dates are returned
+    await JobDetails.create(createNewJob(2, databaseClient._id));
+    const databaseDifferentJob = await JobDetails.findOne({ jobNumber: 2 });
 
-    await JobDueDate.create(differentJob);
+    // Create a due date for each job part (2) and for each job (2). This would create 4 entries in total
+    for (const jobPart of databaseJobParts) {
+      await JobDueDate.create({
+        job: databaseJob._id,
+        jobPartTitle: jobPart._id,
+        dueDate: '2021-12-10',
+        dueDateRange: '2021-12-10T00:00:00.000+00:00',
+      });
 
+      const differentJob = {
+        job: databaseDifferentJob._id,
+        jobPartTitle: jobPart._id,
+        dueDate: '2021-12-10',
+        dueDateRange: '2021-12-10T00:00:00.000+00:00',
+      };
+
+      await JobDueDate.create(differentJob);
+    }
+
+    // Should return only 2 results and should be for the desired job
     const checkBody = (res) => {
-      expect(res.body.length).toBe(1);
-      expect(res.body[0]).not.toEqual(expect.objectContaining(differentJob));
+      expect(res.body.length).toBe(2);
+      expect(res.body).toEqual(expect.arrayContaining([expect.objectContaining({ job: String(databaseJob._id) })]));
+      expect(res.body).not.toEqual(expect.arrayContaining([expect.objectContaining({ job: String(databaseDifferentJob._id) })]));
     };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+      permissions: 'read:due_dates',
+    });
 
     await request(app)
       .get(`/api/job/duedates/parts/${databaseJob._id}`)
-      .set(`Authorization`, `Bearer ${token}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
   });
-  it.todo('When a GET request has an invalid token, then a 401 response is returned');
-  it.todo('When a GET request has insufficient permissions, then a 403 response is returned');
-  it.todo('When a GET request has an invalid ":jobid" parameter, then a 400 response is returned');
-  it.todo('When a GET request has a ":jobid" parameter that does not exist, then a 404 response is returned');
-  it.todo('When a GET request has no ":jobid" parameter, then a 404 response is returned');
+  it('When a GET request has an invalid token, then a 401 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://{domain/`,
+      sub: 'test|123456',
+      permissions: 'read:due_dates',
+    });
+
+    await request(app)
+      .get(`/api/job/duedates/parts/${databaseJob._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a GET request has insufficient permissions, then a 403 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: 'test|123456',
+    });
+
+    await request(app)
+      .get(`/api/job/duedates/parts/${databaseJob._id}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a GET request has an invalid ":jobid" parameter, then a 400 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid jobid parameter');
+    };
+
+    await request(app)
+      .get(`/api/job/duedates/parts/invalidjobid`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a GET request has a ":jobid" parameter that does not exist, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Job not found');
+    };
+
+    await request(app)
+      .get(`/api/job/duedates/parts/507f191e810c19729de860ea`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
 
   it.todo('When a POST request is valid and authorized, then the due date is created and a 201 response is returned');
   it.todo('When a POST request has an invalid token, then a 401 response is returned');

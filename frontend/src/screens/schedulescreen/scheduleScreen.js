@@ -27,15 +27,15 @@ const ScheduleScreen = () => {
   const startWeekInit = DateTime.now().startOf('week');
   const endWeekInit = DateTime.now().endOf('week').plus({ days: 1 });
 
-  const [weekStart] = useState(startWeekInit.toFormat('yyyy/MM/dd'));
-  const [weekEnd] = useState(endWeekInit.toFormat('yyyy/MM/dd'));
+  const [weekStart] = useState(startWeekInit.toFormat('yyyy-MM-dd'));
+  const [weekEnd] = useState(endWeekInit.toFormat('yyyy-MM-dd'));
 
   let weekArray = [];
   for (let i = 0; i < 7; i++) {
     weekArray.push({
-      day: DateTime.fromFormat(weekStart, 'yyyy/MM/dd').plus({ days: i }).toFormat('EEEE'),
-      date: DateTime.fromFormat(weekStart, 'yyyy/MM/dd').plus({ days: i }).toFormat('yyyy-MM-dd'),
-      shortDate: DateTime.fromFormat(weekStart, 'yyyy/MM/dd').plus({ days: i }).toFormat('d MMM'),
+      day: DateTime.fromFormat(weekStart, 'yyyy-MM-dd').plus({ days: i }).toFormat('EEEE'),
+      date: DateTime.fromFormat(weekStart, 'yyyy-MM-dd').plus({ days: i }).toFormat('yyyy-MM-dd'),
+      shortDate: DateTime.fromFormat(weekStart, 'yyyy-MM-dd').plus({ days: i }).toFormat('d MMM'),
     });
   }
 

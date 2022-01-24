@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const { DateTime } = require('luxon');
+const JobDetails = require('../models/jobModel');
 const JobDueDate = require('../models/jobPartDueDateModel');
 const JobPart = require('../models/jobPartModel');
 
@@ -10,15 +11,7 @@ const JobPart = require('../models/jobPartModel');
  */
 
 const getAllJobDueDates = asyncHandler(async (req, res) => {
-  const jobDueDates = await JobDueDate.find({ dueDateRange: { $gte: req.query.rangeStart, $lt: req.query.rangeEnd } })
-    .populate('job jobPartTitle', 'jobNumber client address jobPartTitle jobOrder color')
-    .populate({
-      path: 'job',
-      populate: {
-        path: 'client',
-        select: 'color',
-      },
-    });
+  const jobDueDates = await JobDueDate.find({ dueDateRange: { $gte: req.query.rangeStart, $lt: req.query.rangeEnd } }).populate('job jobPartTitle', 'jobNumber client address jobPartTitle jobOrder color');
 
   res.json(jobDueDates);
 });
@@ -26,13 +19,21 @@ const getAllJobDueDates = asyncHandler(async (req, res) => {
 /**
  * @Desc Get a list of all due dates for a job
  * @Route /api/job/duedates/parts/:jobid
- * @Access Private (employee, admin)
+ * @Access Private ("read:due_dates", employee, admin)
  */
 
 const getJobPartDueDates = asyncHandler(async (req, res) => {
-  const jobId = req.params.jobid;
-  const jobDueDates = await JobDueDate.find({ job: jobId }).populate('jobPartTitle', 'jobPartTitle');
-  res.json(jobDueDates);
+  const jobParams = req.params.jobid;
+
+  const checkJobExists = await JobDetails.findById(jobParams);
+
+  if (checkJobExists) {
+    const jobDueDates = await JobDueDate.find({ job: req.params.jobid }).populate('jobPartTitle', 'jobPartTitle');
+    res.json(jobDueDates);
+  } else {
+    res.status(404);
+    throw new Error('Job not found');
+  }
 });
 
 /**
@@ -92,7 +93,7 @@ const deleteJobPartDueDates = asyncHandler(async (req, res) => {
 });
 
 /**
- * @Desc Update a job's part's duedate
+ * @Desc Update a job's part's duedate all fields
  * @Route /api/job/duedates/job/part/:id
  * @Access Private (admin)
  */
@@ -104,11 +105,30 @@ const updateJobPartDueDate = asyncHandler(async (req, res) => {
   if (jobPartDueDateItem) {
     jobPartDueDateItem.dueDate = dueDate;
     jobPartDueDateItem.dueDateRange = dueDate;
-    if (contractor) {
-      jobPartDueDateItem.contractor = contractor;
-    }
+    jobPartDueDateItem.contractor = contractor;
+
     const updatedDueDate = await jobPartDueDateItem.save();
     res.json(updatedDueDate);
+  }
+});
+
+/**
+ * @Desc Update a job's part's duedate field only
+ * @Route /api/job/duedates/job/part/:id
+ * @Access Private (admin)
+ */
+
+const patchJobPartDueDate = asyncHandler(async (req, res) => {
+  const { dueDate } = req.body;
+  const jobPartDueDateItem = await JobDueDate.findById(req.params.id);
+
+  if (jobPartDueDateItem) {
+    await JobDueDate.findByIdAndUpdate(req.params.id, {
+      dueDate: dueDate,
+      dueDateRange: dueDate,
+    });
+
+    res.json({ message: 'due date updated' });
   }
 });
 
@@ -129,4 +149,4 @@ const deleteJobPartDueDate = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getAllJobDueDates, getJobPartDueDates, patchJobPartDueDates, deleteJobPartDueDates, createJobPartDueDate, updateJobPartDueDate, deleteJobPartDueDate };
+module.exports = { getAllJobDueDates, getJobPartDueDates, patchJobPartDueDates, deleteJobPartDueDates, createJobPartDueDate, patchJobPartDueDate, updateJobPartDueDate, deleteJobPartDueDate };

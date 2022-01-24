@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { getJobs, getJob, createJob, updateJob, deleteJob } = require('../controllers/jobDetailsController');
 const { getJobParts, createJobPart, getJobPart, updateJobPart, deleteJobPart } = require('../controllers/jobPartsController');
-const { getAllJobDueDates, getJobPartDueDates, deleteJobPartDueDates, createJobPartDueDate, updateJobPartDueDate, deleteJobPartDueDate, patchJobPartDueDates } = require('../controllers/jobDueDatesController');
+const { getAllJobDueDates, getJobPartDueDates, deleteJobPartDueDates, createJobPartDueDate, updateJobPartDueDate, deleteJobPartDueDate, patchJobPartDueDates, patchJobPartDueDate } = require('../controllers/jobDueDatesController');
 
 const {
   readJobDetailsAuth,
@@ -22,21 +22,28 @@ const {
 const { jobDetailsSchema, jobIdParams } = require('../middleware/validators/jobDetailsValidation');
 const { jobPartsSchema, jobPartParams } = require('../middleware/validators/jobPartsValidation');
 const validation = require('../middleware/validatorMiddleware');
-const { dueDatePatchSchema, jobPartsDueDateSchema, jobPartJobDueDateParams, jobPartDueDateParams, dueDateQuerySchema } = require('../middleware/validators/jobPartDueDateValidation');
+const { dueDatePatchSchema, dueDateQuerySchema, dueDateIdParams, dueDatePartIdQueryParams, dueDateJobIdParams, dueDateCreateSchema } = require('../middleware/validators/jobPartDueDateValidation');
 
+// Job details
 router.route('/details').get(readJobDetailsAuth, getJobs).post(createJobDetailsAuth, jobDetailsSchema, validation, createJob);
 router.route('/details/:id').get(readJobDetailsAuth, jobIdParams, validation, getJob).put(updateJobDetailsAuth, jobIdParams, jobDetailsSchema, validation, updateJob).delete(deleteJobDetailsAuth, jobIdParams, validation, deleteJob);
 
+// Job parts
 router.route('/parts').get(readJobPartsAuth, getJobParts).post(createJobPartsAuth, jobPartsSchema, validation, createJobPart);
 router.route('/parts/:id').get(readJobPartsAuth, jobPartParams, validation, getJobPart).put(updateJobPartsAuth, jobPartParams, jobPartsSchema, validation, updateJobPart).delete(deleteJobPartsAuth, jobPartParams, validation, deleteJobPart);
 
+// Job due dates
 router.route('/duedates/parts').get(readJobPartDueDatesAuth, dueDateQuerySchema, validation, getAllJobDueDates);
 router
   .route('/duedates/parts/:jobid')
-  .get(readJobPartDueDatesAuth, jobPartJobDueDateParams, validation, getJobPartDueDates)
-  .post(createJobPartDueDatesAuth, jobPartJobDueDateParams, jobPartsDueDateSchema, validation, createJobPartDueDate)
-  .patch(updateJobPartDueDatesAuth, jobPartJobDueDateParams, dueDatePatchSchema, validation, patchJobPartDueDates)
-  .delete(deleteJobPartDueDatesAuth, jobPartJobDueDateParams, validation, deleteJobPartDueDates);
-router.route('/duedates/job/part/:id').put(updateJobPartDueDatesAuth, jobPartDueDateParams, jobPartsDueDateSchema, validation, updateJobPartDueDate).delete(deleteJobPartDueDatesAuth, jobPartDueDateParams, validation, deleteJobPartDueDate);
+  .get(readJobPartDueDatesAuth, dueDateJobIdParams, validation, getJobPartDueDates)
+  .post(createJobPartDueDatesAuth, dueDateJobIdParams, dueDatePartIdQueryParams, dueDateCreateSchema, validation, createJobPartDueDate)
+  .patch(updateJobPartDueDatesAuth, dueDateJobIdParams, dueDatePatchSchema, validation, patchJobPartDueDates)
+  .delete(deleteJobPartDueDatesAuth, dueDateJobIdParams, validation, deleteJobPartDueDates);
+router
+  .route('/duedates/job/part/:id')
+  .put(updateJobPartDueDatesAuth, dueDateIdParams, validation, updateJobPartDueDate)
+  .patch(updateJobPartDueDatesAuth, dueDateIdParams, patchJobPartDueDate)
+  .delete(deleteJobPartDueDatesAuth, dueDateIdParams, validation, deleteJobPartDueDate);
 
 module.exports = router;
