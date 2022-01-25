@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const timeSheetEntrySchema = mongoose.Schema(
+const timesheetEntrySchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,6 +22,6 @@ const timeSheetEntrySchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const TimeSheetEntry = mongoose.model('TimeSheetEntry', timeSheetEntrySchema);
+const TimesheetEntry = mongoose.model('TimesheetEntry', timesheetEntrySchema);
 
-module.exports = TimeSheetEntry;
+module.exports = TimesheetEntry;

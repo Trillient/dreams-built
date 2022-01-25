@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const TimeSheetEntry = require('../models/timeSheetEntryModel');
+const TimesheetEntry = require('../models/timesheetEntryModel');
 const User = require('../models/userModel');
 
 /**
@@ -11,7 +11,7 @@ const User = require('../models/userModel');
 const getUserEntries = asyncHandler(async (req, res) => {
   const weekStart = req.query.weekstart;
 
-  const entries = await TimeSheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: false });
+  const entries = await TimesheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: false });
 
   res.json({ weekStart: weekStart, entries: entries });
 });
@@ -33,14 +33,14 @@ const createUserEntry = asyncHandler(async (req, res) => {
   }
 
   // TODO - Run validation on parameters
-  const archive = await TimeSheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: false });
+  const archive = await TimesheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: false });
 
-  const totalEntriesArchieved = await TimeSheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: true });
+  const totalEntriesArchieved = await TimesheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: true });
 
-  await TimeSheetEntry.updateMany({ weekStart: weekStart, userId: req.params.id }, { $set: { isArchive: true } });
+  await TimesheetEntry.updateMany({ weekStart: weekStart, userId: req.params.id }, { $set: { isArchive: true } });
 
   const data = await entries.map((entry) => {
-    TimeSheetEntry.create({
+    TimesheetEntry.create({
       user: user._id,
       userId: req.params.id,
       entryId: entry.entryId,
@@ -65,7 +65,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
  */
 
 const getAllUsers = asyncHandler(async (req, res) => {
-  const result = await TimeSheetEntry.find({ weekStart: req.query.weekstart, isArchive: false }).populate('user', 'firstName lastName hourlyRate');
+  const result = await TimesheetEntry.find({ weekStart: req.query.weekstart, isArchive: false }).populate('user', 'firstName lastName hourlyRate');
 
   res.json(result);
 });
@@ -81,9 +81,9 @@ const deleteArchive = asyncHandler(async (req, res) => {
   cutoff.setDate(cutoff.getDate() - 14);
 
   const fields = { isArchive: true, updatedAt: { $lt: cutoff } };
-  const entries = await TimeSheetEntry.find(fields);
+  const entries = await TimesheetEntry.find(fields);
 
-  await TimeSheetEntry.deleteMany(fields);
+  await TimesheetEntry.deleteMany(fields);
 
   res.json({ cutOffDate: cutoff, deletedEntries: entries.length });
 });

@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 
 const jobDetailRoutes = require('./routes/jobDetailsRoutes');
-const timesheetRoutes = require('./routes/timeSheetRoutes.js');
+const timesheetRoutes = require('./routes/timesheetRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
 const clientRoutes = require('./routes/clientRoutes');
 const { checkJwt } = require('./middleware/authMiddleware');
