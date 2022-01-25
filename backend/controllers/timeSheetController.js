@@ -71,6 +71,35 @@ const getAllUsers = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @Desc Create a timesheet entry for a user
+ * @Route POST/api/timesheet/admin
+ * @Access Private - Admin
+ */
+
+const createAUsersEntry = asyncHandler(async (req, res) => {
+  res.json({});
+});
+
+/**
+ * @Desc Update a timesheet entry for a user
+ * @Route PUT /api/timesheet/admin
+ * @Access Private - Admin
+ */
+
+const updateAUsersEntry = asyncHandler(async (req, res) => {
+  res.json({});
+});
+/**
+ * @Desc Delete a timesheet entry for a user
+ * @Route DELETE /api/timesheet/admin
+ * @Access Private - Admin
+ */
+
+const deleteAUsersEntry = asyncHandler(async (req, res) => {
+  res.json({});
+});
+
+/**
  * @Desc Delete user archive timesheet entries
  * @Route POST /api/timesheet/admin/archive
  * @Access Private - Admin
@@ -88,4 +117,4 @@ const deleteArchive = asyncHandler(async (req, res) => {
   res.json({ cutOffDate: cutoff, deletedEntries: entries.length });
 });
 
-module.exports = { getUserEntries, createUserEntry, getAllUsers, deleteArchive };
+module.exports = { getUserEntries, createUserEntry, getAllUsers, createAUsersEntry, updateAUsersEntry, deleteAUsersEntry, deleteArchive };

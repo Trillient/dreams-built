@@ -7,7 +7,7 @@ const { default: createJWKSMock } = require('mock-jwks');
 const database = require('../../config/database');
 const { domain, audience } = require('../../config/env');
 const User = require('../../models/userModel');
-const TimeSheetEntry = require('../../models/TimeSheetEntryModel');
+const TimesheetEntry = require('../../models/timesheetEntryModel');
 
 beforeAll(async () => {
   const mongoServer = await MongoMemoryServer.create();
@@ -30,6 +30,7 @@ const token = jwks.token({
   aud: audience,
   iss: `https://${domain}/`,
   sub: clientId,
+  permissions: ['read:timesheet', 'create:timesheet', 'admin_read:timesheet', 'admin_create:timesheet', 'admin_update:timesheet', 'admin_delete:timesheet'],
 });
 
 const createNewUser = (userId, firstName, lastName, email = 'abc@gmail.com', phoneNumber = 2111111, isAdmin = false, birthDate = '10-10-2020', hourlyRate = 10, startDate = '10-01-2020') => {
@@ -46,7 +47,7 @@ const createNewUser = (userId, firstName, lastName, email = 'abc@gmail.com', pho
   };
 };
 
-const createTimeSheetEntry = (entries = null, weekStart = '2021/12/14', weekEnd = '2021/12/20') => {
+const createTimesheetEntry = (entries = null, weekStart = '2021/12/14', weekEnd = '2021/12/20') => {
   return {
     weekStart: weekStart,
     weekEnd: weekEnd,
@@ -110,7 +111,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
       const userParams = await user.userId;
 
       // Create timesheet entry
-      await TimeSheetEntry.create(createReturnedEntry(userId, userParams));
+      await TimesheetEntry.create(createReturnedEntry(userId, userParams));
 
       // Check response
       const checkBody = (res) => {
@@ -141,7 +142,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
 
       // Create timesheet entry
       const singleEntry = createSingleEntry('2');
-      const newTimeSheet = createTimeSheetEntry(singleEntry);
+      const newTimeSheet = createTimesheetEntry(singleEntry);
 
       // Check response
       const checkBody = (res) => {

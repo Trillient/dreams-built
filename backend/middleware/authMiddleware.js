@@ -37,6 +37,13 @@ const createJobPartDueDatesAuth = jwtAuthz(['create:due_dates'], options);
 const updateJobPartDueDatesAuth = jwtAuthz(['update:due_dates'], options);
 const deleteJobPartDueDatesAuth = jwtAuthz(['delete:due_dates'], options);
 
+const readTimesheetAuth = jwtAuthz(['read:timesheet'], options);
+const createTimesheetAuth = jwtAuthz(['create:timesheet'], options);
+const readAllUserTimesheetAuth = jwtAuthz(['admin_read:timesheet'], options);
+const createAllUserTimesheetAuth = jwtAuthz(['admin_create:timesheet'], options);
+const updateAllUserTimesheetAuth = jwtAuthz(['admin_update:timesheet'], options);
+const deleteAllUserTimesheetAuth = jwtAuthz(['admin_delete:timesheet'], options);
+
 module.exports = {
   checkJwt,
   readClientsAuth,
@@ -53,4 +60,10 @@ module.exports = {
   updateJobPartDueDatesAuth,
   createJobPartDueDatesAuth,
   deleteJobPartDueDatesAuth,
+  readTimesheetAuth,
+  createTimesheetAuth,
+  readAllUserTimesheetAuth,
+  createAllUserTimesheetAuth,
+  updateAllUserTimesheetAuth,
+  deleteAllUserTimesheetAuth,
 };
