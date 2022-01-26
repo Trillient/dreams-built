@@ -21,7 +21,7 @@ const timesheetSchema = [
       value.split(':');
       return Boolean(24 > parseFloat(parseInt(value[0], 10) + parseInt(value[1], 10) / 60));
     }),
-  body('entries.*.endTime')
+  body('entries.*.endTime', 'End time invalid')
     .exists()
     .isString()
     .custom((value) => {
@@ -36,19 +36,25 @@ const timesheetSchema = [
   body('weekStart')
     .isString()
     .custom((value) => {
-      const dt = DateTime.fromFormat(value, 'dd/MM/yyyy');
+      const dt = DateTime.fromFormat(value, 'yyyy-MM-dd');
       return dt.isValid;
     }),
   body('weekEnd')
     .isString()
     .custom((value) => {
-      const dt = DateTime.fromFormat(value, 'dd/MM/yyyy');
+      const dt = DateTime.fromFormat(value, 'yyyy-MM-dd');
       return dt.isValid;
     }),
   body('isArchive').optional().isBoolean(),
 ];
 
-const userQueryParams = [query('id').exists().withMessage('Missing user Query').isMongoId().withMessage('User must be valid')];
-const userParams = [param('id').exists().withMessage('Missing user Param').isMongoId().withMessage('User must be valid')];
+const adminQueryParams = [query('id').exists().withMessage('Missing user Query').isMongoId().withMessage('User must be valid')];
+const userParams = [param('id').exists().withMessage('Missing user Param')];
+const userQuery = [
+  query('weekstart').custom((value) => {
+    const dt = DateTime.fromFormat(value, 'yyyy-MM-dd');
+    return dt.isValid;
+  }),
+];
 
-module.exports = { userQueryParams, userParams, adminAddSchema, timesheetSchema };
+module.exports = { adminQueryParams, userParams, userQuery, timesheetSchema };

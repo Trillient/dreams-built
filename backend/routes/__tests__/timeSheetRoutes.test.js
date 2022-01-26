@@ -9,21 +9,6 @@ const { domain, audience } = require('../../config/env');
 const User = require('../../models/userModel');
 const TimesheetEntry = require('../../models/timesheetEntryModel');
 
-beforeAll(async () => {
-  const mongoServer = await MongoMemoryServer.create();
-  await database.connect(mongoServer.getUri());
-  jwks.start();
-});
-
-afterEach(async () => {
-  await User.deleteMany();
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  jwks.stop();
-});
-
 const jwks = createJWKSMock(`https://${domain}/`);
 const clientId = 'test|123456';
 const token = jwks.token({
@@ -33,7 +18,7 @@ const token = jwks.token({
   permissions: ['read:timesheet', 'create:timesheet', 'admin_read:timesheet', 'admin_create:timesheet', 'admin_update:timesheet', 'admin_delete:timesheet'],
 });
 
-const createNewUser = (userId, firstName, lastName, auth0Email = 'abc@gmail.com', hourlyRate = 10) => {
+const createNewUser = (userId, firstName, lastName, auth0Email = 'abc@gmail.com', hourlyRate = 30) => {
   return {
     userId: userId,
     firstName: firstName,
@@ -51,7 +36,7 @@ const createTimesheetEntry = (entries = null, weekStart = '2021/12/14', weekEnd 
   };
 };
 
-const createSingleEntry = (entryId = '1', day = 'Monday', date = '2021/12/14', startTime = '10:50am', endTime = '11:50am', jobNumber = 22001, jobTime = 10) => {
+const createSingleEntry = (entryId, day = 'Monday', date = '2021/12/14', startTime = '10:50am', endTime = '11:50am', jobNumber = 1, jobTime = 1) => {
   return {
     entryId: entryId,
     day: day,
@@ -63,67 +48,69 @@ const createSingleEntry = (entryId = '1', day = 'Monday', date = '2021/12/14', s
   };
 };
 
-const createReturnedEntry = (
-  user,
-  userId = clientId,
-  entryId = '1',
-  day = 'Monday',
-  date = '2021/12/14',
-  startTime = '10:50am',
-  endTime = '11:50am',
-  jobNumber = 22001,
-  jobTime = 10,
-  weekStart = '2021/12/14',
-  weekEnd = '2021/12/20',
-  isArchive = false
-) => {
-  return {
-    user: user,
-    userId: userId,
-    entryId: entryId,
-    day: day,
-    date: date,
-    startTime: startTime,
-    endTime: endTime,
-    jobNumber: jobNumber,
-    jobTime: jobTime,
-    weekStart: weekStart,
-    weekEnd: weekEnd,
-    isArchive,
-  };
-};
+beforeAll(async () => {
+  const mongoServer = await MongoMemoryServer.create();
+  await database.connect(mongoServer.getUri());
+  jwks.start();
+  await User.create(createNewUser(clientId, 'eric', 'doe'));
+});
+
+afterEach(async () => {
+  await TimesheetEntry.deleteMany();
+});
+
+afterAll(async () => {
+  await User.deleteMany();
+  await mongoose.disconnect();
+  jwks.stop();
+});
 
 describe('Given we have an /api/timesheet/user/:id endpoint', () => {
-  describe('and a GET method', () => {
-    it("when an authenticated user makes a valid request then it should return a 200 response with the user's weekly entries", async () => {
-      // Create and save a user
-      const newUser = createNewUser(clientId, 'eric', 'doe', 'eric@gmail.com');
-      const row = new User(newUser);
-      await row.save();
+  describe('When a GET request is made', () => {
+    beforeEach(async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      await TimesheetEntry.create({
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        date: '2022-01-24',
+        startTime: '11:00',
+        endTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+        weekStart: '2022-01-24',
+        weekEnd: '2022-01-30',
+      });
+    });
+    fit("and is valid and authenticated, then a 200 response with the user's weekly entries are returned", async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = user.userId;
 
-      // Retrieve user _id
-      const user = await User.findOne({ email: 'eric@gmail.com' });
-      const userId = await user._id;
-      const userParams = await user.userId;
-
-      // Create timesheet entry
-      await TimesheetEntry.create(createReturnedEntry(userId, userParams));
-
-      // Check response
       const checkBody = (res) => {
+        console.log(res.body);
+        expect(res.body.entries).toBeTruthy();
         expect(res.body.entries[0].userId).toBe(clientId);
-        expect(res.body.entries[0].entryId).toBe('1');
+        expect(res.body.entries[0].entryId).toBe('9daf2326-c637-4761-8736-e68d36b33d3e');
+        expect(res.body.entries.length).toBe(1);
       };
 
-      // Make request
+      const validToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+        permissions: ['read:timesheet'],
+      });
+
       await request(app)
-        .get(`/api/timesheet/user/${userParams}?weekstart=2021/12/14`)
-        .set(`Authorization`, `Bearer ${token}`)
+        .get(`/api/timesheet/user/${userParams}?weekstart=2022-01-24`)
+        .set(`Authorization`, `Bearer ${validToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
         .expect(200);
     });
+    //TODO - ALL GET REQs
   });
   describe('and a POST method', () => {
     it('when an authenticated user makes a valid request then it should return a 201 response with the created data', async () => {
@@ -157,6 +144,12 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
         .expect(201);
     });
 
+    //TODO all POST reqs
+
     it.todo('when an authenticated user makes a request to the wrong "/:id" endpoint then it should return 401 with an error message');
   });
+
+  //TODO all /admin GET,POST,PATCH,DELETE
+
+  //TODO all /admin/archive DELETE
 });

@@ -10,8 +10,9 @@ const User = require('../models/userModel');
 
 const getUserEntries = asyncHandler(async (req, res) => {
   const weekStart = req.query.weekstart;
+  const user = req.params.id;
 
-  const entries = await TimesheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: false });
+  const entries = await TimesheetEntry.find({ weekStart: weekStart, userId: user, isArchive: false });
 
   res.json({ weekStart: weekStart, entries: entries });
 });
@@ -81,7 +82,7 @@ const createAUsersEntry = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Update a timesheet entry for a user
- * @Route PUT /api/timesheet/admin
+ * @Route PATCH /api/timesheet/admin
  * @Access Private - Admin
  */
 
