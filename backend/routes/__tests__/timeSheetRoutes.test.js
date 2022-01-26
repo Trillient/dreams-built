@@ -83,12 +83,11 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
         weekEnd: '2022-01-30',
       });
     });
-    fit("and is valid and authenticated, then a 200 response with the user's weekly entries are returned", async () => {
+    it("and is valid and authenticated, then a 200 response with the user's weekly entries are returned", async () => {
       const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
       const userParams = user.userId;
 
       const checkBody = (res) => {
-        console.log(res.body);
         expect(res.body.entries).toBeTruthy();
         expect(res.body.entries[0].userId).toBe(clientId);
         expect(res.body.entries[0].entryId).toBe('9daf2326-c637-4761-8736-e68d36b33d3e');
@@ -110,9 +109,115 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
         .expect(checkBody)
         .expect(200);
     });
-    //TODO - ALL GET REQs
+    it('and has an invalid token, then a 401 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = user.userId;
+
+      const checkBody = (res) => {
+        expect(res.body.code).toBe('invalid_token');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://{domain}/`,
+        sub: clientId,
+        permissions: ['read:timesheet'],
+      });
+
+      await request(app)
+        .get(`/api/timesheet/user/${userParams}?weekstart=2022-01-24`)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(401);
+    });
+    it('and has insufficient permissions, then a 403 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = user.userId;
+
+      const checkBody = (res) => {
+        expect(res.body.error).toBe('Forbidden');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+      });
+
+      await request(app)
+        .get(`/api/timesheet/user/${userParams}?weekstart=2022-01-24`)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(403);
+    });
+    it('and there are no entries for the week, then a 200 response is returned with an empty array', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = user.userId;
+
+      const checkBody = (res) => {
+        expect(res.body.entries).toBeTruthy();
+        expect(res.body.entries).toEqual([]);
+      };
+
+      await request(app)
+        .get(`/api/timesheet/user/${userParams}?weekstart=2022-01-31`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+    it('and has an invalid "weekstart" query property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = user.userId;
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('invalid weekstart (yyyy-MM-dd)');
+      };
+
+      await request(app)
+        .get(`/api/timesheet/user/${userParams}?weekstart=2022/01/24`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has no "weekstart" query property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = user.userId;
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('invalid weekstart (yyyy-MM-dd)');
+      };
+
+      await request(app)
+        .get(`/api/timesheet/user/${userParams}`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has a ":id" parameter that does not exist, then a 404 response is returned', async () => {
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('User does not exist');
+      };
+
+      await request(app)
+        .get(`/api/timesheet/user/invalidIdParam?weekstart=2022-01-24`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(404);
+    });
   });
-  describe('and a POST method', () => {
+  describe.skip('and a POST method', () => {
     it('when an authenticated user makes a valid request then it should return a 201 response with the created data', async () => {
       // Create and save a user
       const newUser = createNewUser(clientId, 'mary', 'doe', 'mary@gmail.com');

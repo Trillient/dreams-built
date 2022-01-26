@@ -12,9 +12,16 @@ const getUserEntries = asyncHandler(async (req, res) => {
   const weekStart = req.query.weekstart;
   const user = req.params.id;
 
-  const entries = await TimesheetEntry.find({ weekStart: weekStart, userId: user, isArchive: false });
+  const userExists = await User.findOne({ userId: user });
 
-  res.json({ weekStart: weekStart, entries: entries });
+  if (userExists) {
+    const entries = await TimesheetEntry.find({ weekStart: weekStart, userId: user, isArchive: false });
+
+    res.json({ weekStart: weekStart, entries: entries });
+  } else {
+    res.status(404);
+    throw new Error('User does not exist');
+  }
 });
 
 /**

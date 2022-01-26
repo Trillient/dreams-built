@@ -51,10 +51,12 @@ const timesheetSchema = [
 const adminQueryParams = [query('id').exists().withMessage('Missing user Query').isMongoId().withMessage('User must be valid')];
 const userParams = [param('id').exists().withMessage('Missing user Param')];
 const userQuery = [
-  query('weekstart').custom((value) => {
-    const dt = DateTime.fromFormat(value, 'yyyy-MM-dd');
-    return dt.isValid;
-  }),
+  query('weekstart', 'invalid weekstart (yyyy-MM-dd)')
+    .exists()
+    .custom((value) => {
+      const dt = DateTime.fromFormat(value, 'yyyy-MM-dd');
+      return dt.isValid;
+    }),
 ];
 
 module.exports = { adminQueryParams, userParams, userQuery, timesheetSchema };
