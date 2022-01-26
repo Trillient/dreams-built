@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { DateTime, Interval } from 'luxon';
 import { toast } from 'react-toastify';
 
 import * as actions from '../constants/jobConstants';
@@ -352,22 +351,7 @@ export const createJobPartDueDate = (token, jobId, jobPart, dueDate, startDate) 
       },
     };
 
-    let dateRange = [];
-
-    if (startDate && dueDate) {
-      const daysInterval = Interval.fromDateTimes(DateTime.fromFormat(startDate, 'yyyy-MM-dd'), DateTime.fromFormat(dueDate, 'yyyy-MM-dd'));
-      const interval = daysInterval.length('days') + 1;
-
-      for (let i = 0; i < interval; i++) {
-        dateRange.push(DateTime.fromFormat(startDate, 'yyyy-MM-dd').plus({ days: i }).toFormat('yyyy-MM-dd'));
-      }
-    } else if (startDate) {
-      dateRange.push(startDate);
-    } else if (dueDate) {
-      dateRange.push(dueDate);
-    }
-
-    const dates = { dueDate: dueDate, startDate: startDate, dueDateRange: dateRange };
+    const dates = { dueDate: dueDate, startDate: startDate };
 
     const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/job/duedates/parts/${jobId}?partid=${jobPart}`, dates, config);
 
@@ -398,22 +382,7 @@ export const updateJobPartDueDate = (token, dueId, dueDate, startDate) => async 
       },
     };
 
-    let dateRange = [];
-
-    if (startDate && dueDate) {
-      const daysInterval = Interval.fromDateTimes(DateTime.fromFormat(startDate, 'yyyy-MM-dd'), DateTime.fromFormat(dueDate, 'yyyy-MM-dd'));
-      const interval = daysInterval.length('days') + 1;
-
-      for (let i = 0; i < interval; i++) {
-        dateRange.push(DateTime.fromFormat(startDate, 'yyyy-MM-dd').plus({ days: i }).toFormat('yyyy-MM-dd'));
-      }
-    } else if (startDate) {
-      dateRange.push(startDate);
-    } else if (dueDate) {
-      dateRange.push(dueDate);
-    }
-
-    const dates = { dueDate: dueDate, startDate: startDate, dueDateRange: dateRange };
+    const dates = { dueDate: dueDate, startDate: startDate };
 
     const { data } = await axios.patch(`${process.env.REACT_APP_API_URL}/job/duedates/job/part/${dueId}`, dates, config);
 
