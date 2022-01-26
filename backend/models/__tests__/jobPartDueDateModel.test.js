@@ -17,25 +17,21 @@ describe('Given a JobPartDueDate schema model, when JobPartDueDates has been upd
     expect(dueDate).toBeTruthy();
     expect(dueDate.type()).toEqual(expect.any(String));
   });
+  it("A property named 'startDate' should be on the schema", () => {
+    const startDate = JobPartDueDate.schema.obj.startDate;
+    expect(startDate).toBeTruthy();
+    expect(startDate.type()).toEqual(expect.any(String));
+  });
   it("A property named 'dueDateRange' should be on the schema", () => {
     const dueDateRange = JobPartDueDate.schema.obj.dueDateRange;
     expect(dueDateRange).toBeTruthy();
-    expect(dueDateRange.type()).toEqual(expect.any(String));
+    expect(Array.isArray(dueDateRange)).toBeTruthy();
+    expect(dueDateRange[0].type()).toEqual(expect.any(String));
   });
-  it("A property named 'contractor.contact' should be on the schema", () => {
-    const contact = JobPartDueDate.schema.obj.contractor.contact;
-    expect(contact).toBeTruthy();
-    expect(contact.type()).toEqual(expect.any(String));
-  });
-
-  it("A property named 'contractor.email' should be on the schema", () => {
-    const email = JobPartDueDate.schema.obj.contractor.email;
-    expect(email).toBeTruthy();
-    expect(email.type()).toEqual(expect.any(String));
-  });
-  it("A property named 'contractor.phone' should be on the schema", () => {
-    const phone = JobPartDueDate.schema.obj.contractor.phone;
-    expect(phone).toBeTruthy();
-    expect(phone.type()).toEqual(expect.any(String));
+  it("A property named 'contractors' should be on the schema", () => {
+    const contractors = JobPartDueDate.schema.obj.contractors;
+    expect(contractors).toBeTruthy();
+    expect(Array.isArray(contractors)).toBeTruthy();
+    expect(contractors[0].ref).toBe('Contractor');
   });
 });

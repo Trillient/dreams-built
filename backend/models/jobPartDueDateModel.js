@@ -14,7 +14,7 @@ const jobDueDateSchema = mongoose.Schema({
   dueDate: { type: String },
   startDate: { type: String },
   dueDateRange: [{ type: Date }],
-  contractor: { contact: { type: String }, email: { type: String }, phone: { type: String } },
+  contractors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Contractor' }],
 });
 
 const JobDueDate = mongoose.model('JobDueDate', jobDueDateSchema);

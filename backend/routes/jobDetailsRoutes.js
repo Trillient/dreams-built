@@ -22,7 +22,7 @@ const {
 const { jobDetailsSchema, jobIdParams } = require('../middleware/validators/jobDetailsValidation');
 const { jobPartsSchema, jobPartParams } = require('../middleware/validators/jobPartsValidation');
 const validation = require('../middleware/validatorMiddleware');
-const { dueDatePatchSchema, dueDateQuerySchema, dueDateIdParams, dueDatePartIdQueryParams, dueDateJobIdParams, dueDateFullSchema, dueDatePartialSchema } = require('../middleware/validators/jobPartDueDateValidation');
+const { shiftPatchSchema, dueDateQuerySchema, dueDateIdParams, dueDatePartIdQueryParams, dueDateJobIdParams, dueDateFullSchema, dueDatePartialSchema } = require('../middleware/validators/jobPartDueDateValidation');
 
 // Job details
 router.route('/details').get(readJobDetailsAuth, getJobs).post(createJobDetailsAuth, jobDetailsSchema, validation, createJob);
@@ -38,7 +38,7 @@ router
   .route('/duedates/parts/:jobid')
   .get(readJobPartDueDatesAuth, dueDateJobIdParams, validation, getJobPartDueDates)
   .post(createJobPartDueDatesAuth, dueDateJobIdParams, dueDatePartIdQueryParams, dueDateFullSchema, validation, createJobPartDueDate)
-  .patch(updateJobPartDueDatesAuth, dueDateJobIdParams, dueDatePatchSchema, validation, patchJobPartDueDates)
+  .patch(updateJobPartDueDatesAuth, dueDateJobIdParams, shiftPatchSchema, validation, patchJobPartDueDates)
   .delete(deleteJobPartDueDatesAuth, dueDateJobIdParams, validation, deleteJobPartDueDates);
 router
   .route('/duedates/job/part/:id')

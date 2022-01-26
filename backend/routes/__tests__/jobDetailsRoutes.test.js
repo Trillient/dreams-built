@@ -10,6 +10,8 @@ const JobDetails = require('../../models/jobModel');
 const Client = require('../../models/clientModel');
 const JobPart = require('../../models/jobPartModel');
 const JobDueDate = require('../../models/jobPartDueDateModel');
+const Contractor = require('../../models/contractorModel');
+const { findOne } = require('../../models/clientModel');
 
 beforeAll(async () => {
   const mongoServer = await MongoMemoryServer.create();
@@ -1879,7 +1881,8 @@ describe('Given we have a "/api/job/duedates" endpoint', () => {
         job: databaseJob._id,
         jobPartTitle: jobPart._id,
         dueDate: '2021-02-22',
-        dueDateRange: '2021-02-22T00:00:00.000+00:00',
+        startDate: '2021-02-21',
+        dueDateRange: ['2021-02-22T00:00:00.000+00:00', '2021-02-21T00:00:00.000+00:00'],
       });
     }
 
@@ -1951,14 +1954,14 @@ describe('Given we have a "/api/job/duedates" endpoint', () => {
       job: databaseJob._id,
       jobPartTitle: firstJobPart._id,
       dueDate: '2021-02-22',
-      dueDateRange: '2021-02-22T00:00:00.000+00:00',
+      dueDateRange: ['2021-02-22T00:00:00.000+00:00'],
     });
 
     await JobDueDate.create({
       job: databaseJob._id,
       jobPartTitle: secondJobPart._id,
       dueDate: '2021-05-20',
-      dueDateRange: '2021-05-20T00:00:00.000+00:00',
+      dueDateRange: ['2021-05-20T00:00:00.000+00:00'],
     });
 
     const checkBody = (res) => {
@@ -2133,18 +2136,22 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
     const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
     const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
 
+    const newContractor = { contractor: 'maxs', name: 'max', email: 'max@gmail.com' };
+    await Contractor.create(newContractor);
+    const databaseContractor = await Contractor.findOne({ contractor: 'maxs' });
+
     const dueDate = {
       job: databaseJob._id,
       jobPartTitle: databaseJobPart._id,
       dueDate: '2021-12-10',
-      contractor: { contact: 'mark', email: 'mark@gmail.com', phone: '03232333' },
+      contractors: [databaseContractor._id],
     };
 
     const checkBody = (res) => {
       expect(res.body.job).toBe(String(databaseJob._id));
       expect(res.body.jobPartTitle).toBe(String(databaseJobPart._id));
       expect(res.body.dueDate).toBe('2021-12-10');
-      expect(res.body.contractor).toEqual(expect.objectContaining(dueDate.contractor));
+      expect(res.body.contractors[0]).toBe(String(databaseContractor._id));
     };
 
     const validToken = jwks.token({
@@ -2412,6 +2419,29 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
       .expect(checkBody)
       .expect(400);
   });
+  it('When a POST request has an invalid "startDate" property, then a 400 response is returned', async () => {
+    const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
+    const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
+
+    const startDate = {
+      job: databaseJob._id,
+      jobPartTitle: databaseJobPart._id,
+      startDate: '20211210',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe(`Start date must be valid (yyyy-MM-dd)`);
+    };
+
+    await request(app)
+      .post(`/api/job/duedates/parts/${databaseJob._id}?partid=${databaseJobPart._id}`)
+      .send(startDate)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
   it('When a POST request has an invalid "contractor" properties, then a 400 response is returned', async () => {
     const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
     const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
@@ -2420,13 +2450,11 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
       job: databaseJob._id,
       jobPartTitle: databaseJobPart._id,
       dueDate: '2021-12-10',
-      contractor: { contact: 222, email: 'abceemail', phone: false },
+      contractors: [{ contact: 222, email: 'abceemail', phone: false }],
     };
 
     const checkBody = (res) => {
-      expect(res.body.errors[0].msg).toBe(`contact invalid`);
-      expect(res.body.errors[1].msg).toBe(`invalid email`);
-      expect(res.body.errors[2].msg).toBe(`invalid phone`);
+      expect(res.body.errors[0].msg).toBe(`contractors field must be valid`);
     };
 
     await request(app)
@@ -2793,7 +2821,7 @@ describe('Given we have a "/api/job/duedates/job/part/:id" endpoint', () => {
 
     const updatedDueDate = {
       dueDate: '2021-12-12',
-      contractor: { contact: 'flooring R us', email: 'abc@gmail.com' },
+      contractors: ['507f191e810c19729de860ea'],
     };
 
     const checkBody = (res) => {
@@ -2933,7 +2961,6 @@ describe('Given we have a "/api/job/duedates/job/part/:id" endpoint', () => {
 
     const updatedDueDate = {
       dueDate: '12/10/2021',
-      contractor: { contact: 'flooring R us', email: 'abc@gmail.com' },
     };
 
     const checkBody = (res) => {
@@ -2954,12 +2981,11 @@ describe('Given we have a "/api/job/duedates/job/part/:id" endpoint', () => {
 
     const updatedDueDate = {
       dueDate: '2021-10-10',
-      contractor: { contact: 332321, email: 'abcgmail.com' },
+      contractors: { contact: 332321, email: 'abcgmail.com' },
     };
 
     const checkBody = (res) => {
-      expect(res.body.errors[0].msg).toBe('contact invalid');
-      expect(res.body.errors[1].msg).toBe('invalid email');
+      expect(res.body.errors[0].msg).toBe('contractors field must be valid');
     };
 
     await request(app)
@@ -2983,9 +3009,7 @@ describe('Given we have a "/api/job/duedates/job/part/:id" endpoint', () => {
       expect(res.body.message).toBe('due date updated');
       const dbUpdatedDueDate = await JobDueDate.findById(dueDateParams._id);
       expect(dbUpdatedDueDate).toEqual(expect.objectContaining(updatedDueDate));
-      expect(dbUpdatedDueDate.contractor.contact).toBeTruthy();
-      expect(dbUpdatedDueDate.contractor.email).toBeTruthy();
-      expect(dbUpdatedDueDate.contractor.phone).toBeTruthy();
+      expect(dbUpdatedDueDate.contractors).toBeTruthy();
     };
 
     const validToken = jwks.token({
