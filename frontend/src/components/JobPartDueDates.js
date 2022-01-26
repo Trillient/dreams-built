@@ -14,6 +14,7 @@ const JobPartDueDates = ({ jobPart, jobId }) => {
   const { loading, jobDueDates } = dueDates;
 
   const [dueDate, setDueDate] = useState('');
+  const [startDate, setStartDate] = useState('');
   const [dueDateStore, setDueDateStore] = useState('');
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const JobPartDueDates = ({ jobPart, jobId }) => {
     }
     if (dueDateStore) {
       setDueDate(dueDateStore.dueDate);
+      setStartDate(dueDateStore.startDate);
     }
   }, [loading, jobDueDates, dueDateStore, jobPart._id, jobId]);
 
@@ -30,9 +32,9 @@ const JobPartDueDates = ({ jobPart, jobId }) => {
     e.preventDefault();
     const token = await getAccessTokenSilently();
     if (dueDateStore) {
-      dispatch(updateJobPartDueDate(token, dueDateStore._id, dueDate));
+      dispatch(updateJobPartDueDate(token, dueDateStore._id, dueDate, startDate));
     } else {
-      dispatch(createJobPartDueDate(token, jobId, jobPart._id, dueDate));
+      dispatch(createJobPartDueDate(token, jobId, jobPart._id, dueDate, startDate));
     }
   };
 
@@ -40,7 +42,6 @@ const JobPartDueDates = ({ jobPart, jobId }) => {
     const token = await getAccessTokenSilently();
     if (dueDateStore) {
       dispatch(deleteJobPartDueDate(token, dueDateStore._id));
-      setDueDate('');
     } else {
       toast.info('Due date does not exist');
     }
@@ -49,8 +50,13 @@ const JobPartDueDates = ({ jobPart, jobId }) => {
     <>
       <ToastContainer theme="colored" />
       <Form onSubmit={submitHandler}>
-        <Form.Group controlId={jobPart.jobPartTitle}>
-          <Form.Label>{jobPart.jobPartTitle}</Form.Label>
+        <h3>{jobPart.jobPartTitle}</h3>
+        <Form.Group controlId={jobPart.jobPartTitle.startDate}>
+          <Form.Label>Start Date</Form.Label>
+          <Form.Control type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}></Form.Control>
+        </Form.Group>
+        <Form.Group controlId={jobPart.jobPartTitle.dueDate}>
+          <Form.Label>Due Date</Form.Label>
           <Form.Control type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}></Form.Control>
         </Form.Group>
         <Button type="submit" variant="primary">

@@ -35,6 +35,7 @@ const ScheduleScreen = () => {
     weekArray.push({
       day: DateTime.fromFormat(weekStart, 'yyyy-MM-dd').plus({ days: i }).toFormat('EEEE'),
       date: DateTime.fromFormat(weekStart, 'yyyy-MM-dd').plus({ days: i }).toFormat('yyyy-MM-dd'),
+      isoDate: new Date(DateTime.fromFormat(weekStart, 'yyyy-MM-dd').plus({ days: i }).toISODate()).toISOString(),
       shortDate: DateTime.fromFormat(weekStart, 'yyyy-MM-dd').plus({ days: i }).toFormat('d MMM'),
     });
   }

@@ -19,11 +19,11 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
     !dueDateLoading && (
       <tr>
         <th>{jobPart.jobPartTitle}</th>
-        {week.map(({ date }) => (
-          <td key={date} className={styles.item}>
+        {week.map(({ isoDate }) => (
+          <td key={isoDate} className={styles.item}>
             {actionItem &&
               actionItem
-                .filter((dueDate) => dueDate.dueDate === date)
+                .filter((dueDate) => dueDate.dueDateRange.includes(isoDate))
                 .map((job) => (
                   <LinkContainer key={job.job._id} style={{ backgroundColor: job.job.color, color: fontColorContrast(job.job.color) }} to={`/job/details/${job.job._id}`}>
                     <div className={styles['job-insert']}>
