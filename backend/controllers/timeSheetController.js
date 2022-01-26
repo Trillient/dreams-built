@@ -5,7 +5,7 @@ const User = require('../models/userModel');
 /**
  * @Desc Get a user's timesheet entries
  * @Route GET /api/timesheet/user/:id
- * @Access Private
+ * @Access Private ("read:timesheet", employee, admin)
  */
 
 const getUserEntries = asyncHandler(async (req, res) => {

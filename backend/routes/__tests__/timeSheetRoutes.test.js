@@ -55,6 +55,23 @@ beforeAll(async () => {
   await User.create(createNewUser(clientId, 'eric', 'doe'));
 });
 
+beforeEach(async () => {
+  const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+  await TimesheetEntry.create({
+    user: user._id,
+    userId: clientId,
+    entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+    day: 'Monday',
+    date: '2022-01-24',
+    startTime: '11:00',
+    endTime: '12:00',
+    jobNumber: 2,
+    jobTime: 1,
+    weekStart: '2022-01-24',
+    weekEnd: '2022-01-30',
+  });
+});
+
 afterEach(async () => {
   await TimesheetEntry.deleteMany();
 });
@@ -67,22 +84,6 @@ afterAll(async () => {
 
 describe('Given we have an /api/timesheet/user/:id endpoint', () => {
   describe('When a GET request is made', () => {
-    beforeEach(async () => {
-      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
-      await TimesheetEntry.create({
-        user: user._id,
-        userId: clientId,
-        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
-        day: 'Monday',
-        date: '2022-01-24',
-        startTime: '11:00',
-        endTime: '12:00',
-        jobNumber: 2,
-        jobTime: 1,
-        weekStart: '2022-01-24',
-        weekEnd: '2022-01-30',
-      });
-    });
     it("and is valid and authenticated, then a 200 response with the user's weekly entries are returned", async () => {
       const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
       const userParams = user.userId;
@@ -217,15 +218,10 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
         .expect(404);
     });
   });
-  describe.skip('and a POST method', () => {
-    it('when an authenticated user makes a valid request then it should return a 201 response with the created data', async () => {
-      // Create and save a user
-      const newUser = createNewUser(clientId, 'mary', 'doe', 'mary@gmail.com');
-      const row = new User(newUser);
-      await row.save();
-
+  describe('When a POST request is made,', () => {
+    it('and is valid, authenticated and appropriately authorized, then it should return a 201 response with the created data', async () => {
       // Retrieve user _id
-      const user = await User.findOne({ email: 'mary@gmail.com' });
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
       const userParams = await user.userId;
 
       // Create timesheet entry
