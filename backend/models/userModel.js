@@ -5,9 +5,8 @@ const userSchema = mongoose.Schema(
     userId: { type: String, required: true, unique: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    birthDate: Date,
+    auth0Email: { type: String },
     hourlyRate: Number,
-    startDate: Date,
   },
   { timestamps: true }
 );

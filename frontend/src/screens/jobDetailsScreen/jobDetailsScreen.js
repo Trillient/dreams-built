@@ -37,7 +37,7 @@ const JobDetailsScreen = () => {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [color, setColor] = useState('#00ccb4');
-  const [area, setArea] = useState('');
+  const [area, setArea] = useState(0);
 
   useEffect(() => {
     if (redirect) {
@@ -66,7 +66,7 @@ const JobDetailsScreen = () => {
       setAddress(job.address);
       setCity(job.city);
       setColor(job.color);
-      setArea(job.area || '');
+      setArea(job.area || 0);
     }
 
     if (dueDateUpdated) {

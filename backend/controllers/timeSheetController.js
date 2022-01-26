@@ -18,7 +18,7 @@ const getUserEntries = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Create a user timesheet entry
- * @Route POST /api/timesheet/user
+ * @Route POST /api/timesheet/user/:id
  * @Access Private
  */
 
@@ -27,12 +27,11 @@ const createUserEntry = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ userId: req.params.id });
 
-  if (user.userId !== req.params.id) {
-    res.status(401);
-    throw new Error('Invalid user credentials');
+  if (!user) {
+    res.status(404);
+    throw new Error('Invalid user');
   }
 
-  // TODO - Run validation on parameters
   const archive = await TimesheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: false });
 
   const totalEntriesArchieved = await TimesheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: true });

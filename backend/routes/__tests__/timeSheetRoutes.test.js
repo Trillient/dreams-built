@@ -33,17 +33,13 @@ const token = jwks.token({
   permissions: ['read:timesheet', 'create:timesheet', 'admin_read:timesheet', 'admin_create:timesheet', 'admin_update:timesheet', 'admin_delete:timesheet'],
 });
 
-const createNewUser = (userId, firstName, lastName, email = 'abc@gmail.com', phoneNumber = 2111111, isAdmin = false, birthDate = '10-10-2020', hourlyRate = 10, startDate = '10-01-2020') => {
+const createNewUser = (userId, firstName, lastName, auth0Email = 'abc@gmail.com', hourlyRate = 10) => {
   return {
     userId: userId,
     firstName: firstName,
     lastName: lastName,
-    email: email,
-    phoneNumber: phoneNumber,
-    isAdmin: isAdmin,
-    birthDate: birthDate,
+    auth0Email: auth0Email,
     hourlyRate: hourlyRate,
-    startDate: startDate,
   };
 };
 

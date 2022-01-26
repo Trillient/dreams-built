@@ -5,7 +5,7 @@ const jobDetailsSchema = [
   body('client').exists().withMessage('Missing Client').isMongoId().withMessage('Invalid client field'),
   body('address', 'Address must be valid').optional().not().isBoolean().isString(),
   body('city', 'City must be valid').optional().isString(),
-  body('area', 'Area must be a number').optional().not().isBoolean().isNumeric().isFloat(),
+  body('area', 'Area must be a number').optional().isFloat(),
   body('endClient', 'End Client must be valid').optional().isString(),
   body('color', 'Color must be entered as a Hex value').exists().not().isBoolean().isString().isHexColor(),
   body('isInvoiced', 'Invoiced must be a boolean value').optional().not().isInt().isBoolean(),
