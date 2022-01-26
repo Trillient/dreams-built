@@ -11,7 +11,7 @@ const JobPart = require('../models/jobPartModel');
  */
 
 const getAllJobDueDates = asyncHandler(async (req, res) => {
-  const jobDueDates = await JobDueDate.find({ dueDateRange: { $gte: req.query.rangeStart, $lt: req.query.rangeEnd } }).populate('job jobPartTitle', 'jobNumber client address jobPartTitle jobOrder color');
+  const jobDueDates = await JobDueDate.find({ dueDateRange: { $elemMatch: { $gte: req.query.rangeStart, $lt: req.query.rangeEnd } } }).populate('job jobPartTitle', 'jobNumber client address jobPartTitle jobOrder color');
 
   res.json(jobDueDates);
 });
@@ -43,7 +43,7 @@ const getJobPartDueDates = asyncHandler(async (req, res) => {
  */
 
 const createJobPartDueDate = asyncHandler(async (req, res) => {
-  const { dueDate, contractor } = req.body;
+  const { dueDate, contractor, startDate, dueDateRange } = req.body;
   const jobId = req.params.jobid;
 
   const checkJobExists = await JobDetails.findById(jobId);
@@ -67,7 +67,7 @@ const createJobPartDueDate = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Due date already exists');
   } else {
-    const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate, dueDateRange: dueDate, contractor: contractor });
+    const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate, startDate: startDate, dueDateRange: dueDateRange, contractor: contractor });
 
     res.status(201).json(created);
   }
@@ -88,9 +88,26 @@ const patchJobPartDueDates = asyncHandler(async (req, res) => {
   if (jobDueDates.length > 0) {
     for (const dueDate of jobDueDates) {
       const newDueDate = DateTime.fromFormat(dueDate.dueDate, 'yyyy-MM-dd').plus({ days: shift }).toFormat('yyyy-MM-dd');
+      const newStartDate = DateTime.fromFormat(dueDate.startDate, 'yyyy-MM-dd').plus({ days: shift }).toFormat('yyyy-MM-dd');
+      let dateRange = [];
+
+      if (dueDate.startDate && dueDate.dueDate) {
+        const daysInterval = Interval.fromDateTimes(DateTime.fromFormat(newStartDate, 'yyyy-MM-dd'), DateTime.fromFormat(newDueDate, 'yyyy-MM-dd'));
+        const interval = daysInterval.length('days') + 1;
+
+        for (let i = 0; i < interval; i++) {
+          dateRange.push(DateTime.fromFormat(newStartDate, 'yyyy-MM-dd').plus({ days: i }).toFormat('yyyy-MM-dd'));
+        }
+      } else if (dueDate.startDate) {
+        dateRange.push(newStartDate);
+      } else if (dueDate.dueDate) {
+        dateRange.push(newDueDate);
+      }
+
       await JobDueDate.findByIdAndUpdate(dueDate._id, {
         dueDate: newDueDate,
-        dueDateRange: newDueDate,
+        startDate: newStartDate,
+        dueDateRange: dateRange,
       });
     }
 
@@ -128,12 +145,13 @@ const deleteJobPartDueDates = asyncHandler(async (req, res) => {
  */
 
 const updateJobPartDueDate = asyncHandler(async (req, res) => {
-  const { dueDate, contractor } = req.body;
+  const { dueDate, startDate, dueDateRange, contractor } = req.body;
   const jobPartDueDateItem = await JobDueDate.findById(req.params.id);
 
   if (jobPartDueDateItem) {
     jobPartDueDateItem.dueDate = dueDate;
-    jobPartDueDateItem.dueDateRange = dueDate;
+    jobPartDueDateItem.startDate = startDate;
+    jobPartDueDateItem.dueDateRange = dueDateRange;
     jobPartDueDateItem.contractor = contractor;
 
     const updatedDueDate = await jobPartDueDateItem.save();
@@ -151,13 +169,14 @@ const updateJobPartDueDate = asyncHandler(async (req, res) => {
  */
 
 const patchJobPartDueDate = asyncHandler(async (req, res) => {
-  const { dueDate } = req.body;
+  const { dueDate, startDate, dueDateRange } = req.body;
   const jobPartDueDateItem = await JobDueDate.findById(req.params.id);
 
   if (jobPartDueDateItem) {
     await JobDueDate.findByIdAndUpdate(req.params.id, {
       dueDate: dueDate,
-      dueDateRange: dueDate,
+      dueDateRange: dueDateRange,
+      startDate: startDate,
     });
 
     res.json({ message: 'due date updated' });
