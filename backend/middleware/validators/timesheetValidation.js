@@ -36,13 +36,13 @@ const timesheetSchema = [
   body('weekStart')
     .isString()
     .custom((value) => {
-      const dt = DateTime.fromFormat(value, 'yyyy-MM-dd');
+      const dt = DateTime.fromFormat(value, 'dd/MM/yyyy');
       return dt.isValid;
     }),
   body('weekEnd')
     .isString()
     .custom((value) => {
-      const dt = DateTime.fromFormat(value, 'yyyy-MM-dd');
+      const dt = DateTime.fromFormat(value, 'dd/MM/yyyy');
       return dt.isValid;
     }),
   body('isArchive').optional().isBoolean(),
@@ -51,10 +51,10 @@ const timesheetSchema = [
 const adminQueryParams = [query('id').exists().withMessage('Missing user Query').isMongoId().withMessage('User must be valid')];
 const userParams = [param('id').exists().withMessage('Missing user Param')];
 const userQuery = [
-  query('weekstart', 'invalid weekstart (yyyy-MM-dd)')
+  query('weekstart', 'invalid weekstart (dd/MM/yyyy)')
     .exists()
     .custom((value) => {
-      const dt = DateTime.fromFormat(value, 'yyyy-MM-dd');
+      const dt = DateTime.fromFormat(value, 'dd/MM/yyyy');
       return dt.isValid;
     }),
 ];

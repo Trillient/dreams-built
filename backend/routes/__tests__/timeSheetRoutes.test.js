@@ -62,13 +62,12 @@ beforeEach(async () => {
     userId: clientId,
     entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
     day: 'Monday',
-    date: '2022-01-24',
     startTime: '11:00',
     endTime: '12:00',
     jobNumber: 2,
     jobTime: 1,
-    weekStart: '2022-01-24',
-    weekEnd: '2022-01-30',
+    weekStart: '24/01/2022',
+    weekEnd: '30/01/2022',
   });
 });
 
@@ -103,7 +102,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
       });
 
       await request(app)
-        .get(`/api/timesheet/user/${userParams}?weekstart=2022-01-24`)
+        .get(`/api/timesheet/user/${userParams}?weekstart=24/01/2022`)
         .set(`Authorization`, `Bearer ${validToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -126,7 +125,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
       });
 
       await request(app)
-        .get(`/api/timesheet/user/${userParams}?weekstart=2022-01-24`)
+        .get(`/api/timesheet/user/${userParams}?weekstart=24/01/2022`)
         .set(`Authorization`, `Bearer ${invalidToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -148,7 +147,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
       });
 
       await request(app)
-        .get(`/api/timesheet/user/${userParams}?weekstart=2022-01-24`)
+        .get(`/api/timesheet/user/${userParams}?weekstart=24/01/2022`)
         .set(`Authorization`, `Bearer ${invalidToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -165,7 +164,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
       };
 
       await request(app)
-        .get(`/api/timesheet/user/${userParams}?weekstart=2022-01-31`)
+        .get(`/api/timesheet/user/${userParams}?weekstart=31/01/2022`)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -177,7 +176,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
       const userParams = user.userId;
 
       const checkBody = (res) => {
-        expect(res.body.errors[0].msg).toBe('invalid weekstart (yyyy-MM-dd)');
+        expect(res.body.errors[0].msg).toBe('invalid weekstart (dd/MM/yyyy)');
       };
 
       await request(app)
@@ -193,7 +192,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
       const userParams = user.userId;
 
       const checkBody = (res) => {
-        expect(res.body.errors[0].msg).toBe('invalid weekstart (yyyy-MM-dd)');
+        expect(res.body.errors[0].msg).toBe('invalid weekstart (dd/MM/yyyy)');
       };
 
       await request(app)
@@ -210,7 +209,7 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
       };
 
       await request(app)
-        .get(`/api/timesheet/user/invalidIdParam?weekstart=2022-01-24`)
+        .get(`/api/timesheet/user/invalidIdParam?weekstart=24/01/2022`)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
