@@ -18,7 +18,7 @@ const token = jwks.token({
   permissions: ['read:timesheet', 'create:timesheet', 'admin_read:timesheet', 'admin_create:timesheet', 'admin_update:timesheet', 'admin_delete:timesheet'],
 });
 
-const createNewUser = (userId, firstName, lastName, auth0Email = 'abc@gmail.com', hourlyRate = 30) => {
+const createNewUser = (userId, firstName = 'John', lastName = 'Doe', auth0Email = 'abc@gmail.com', hourlyRate = 30) => {
   return {
     userId: userId,
     firstName: firstName,
@@ -28,7 +28,7 @@ const createNewUser = (userId, firstName, lastName, auth0Email = 'abc@gmail.com'
   };
 };
 
-const createTimesheetEntry = (entries = null, weekStart = '2021/12/14', weekEnd = '2021/12/20') => {
+const createTimesheetEntry = (entries = null, weekStart = '24/01/2022', weekEnd = '30/01/2022') => {
   return {
     weekStart: weekStart,
     weekEnd: weekEnd,
@@ -36,11 +36,10 @@ const createTimesheetEntry = (entries = null, weekStart = '2021/12/14', weekEnd 
   };
 };
 
-const createSingleEntry = (entryId, day = 'Monday', date = '2021/12/14', startTime = '10:50am', endTime = '11:50am', jobNumber = 1, jobTime = 1) => {
+const createSingleEntry = (entryId, day = 'Monday', startTime = '10:50', endTime = '11:50', jobNumber = 1, jobTime = 1) => {
   return {
     entryId: entryId,
     day: day,
-    date: date,
     startTime: startTime,
     endTime: endTime,
     jobNumber: jobNumber,
@@ -219,37 +218,66 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
   });
   describe('When a POST request is made,', () => {
     it('and is valid, authenticated and appropriately authorized, then it should return a 201 response with the created data', async () => {
-      // Retrieve user _id
       const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
       const userParams = await user.userId;
 
-      // Create timesheet entry
-      const singleEntry = createSingleEntry('2');
+      const singleEntry = createSingleEntry('9daf2326-c637-4761-8736-e68d36b33d3e');
       const newTimeSheet = createTimesheetEntry(singleEntry);
 
-      // Check response
       const checkBody = (res) => {
         expect(res.body.entriesCreated).toBe(1);
         expect(res.body.entriesArchived).toBe(1);
       };
 
-      // Make request
+      const validToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+        permissions: ['create:timesheet'],
+      });
+
       await request(app)
         .post(`/api/timesheet/user/${userParams}`)
         .send(newTimeSheet)
-        .set(`Authorization`, `Bearer ${token}`)
+        .set(`Authorization`, `Bearer ${validToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
         .expect(201);
     });
 
-    //TODO all POST reqs
-
-    it.todo('when an authenticated user makes a request to the wrong "/:id" endpoint then it should return 401 with an error message');
+    it.todo('and has an invalid token, then a 401 response is returned');
+    it.todo('and has insufficient permissions, then a 403 response is returned');
+    it.todo('and has an invalid ":id" parameter property, then a 400 response is returned');
+    it.todo('and has an ":id" parameter that does not exist, then a 404 response is returned');
+    it.todo('and does not have "entryId" property, then a 400 response is returned');
+    it.todo('and has an invalid "entryId" property, then a 400 response is returned');
+    it.todo('and has an invalid "day" property, then a 400 response is returned');
+    it.todo('and is missing the "day" property, then a 400 response is returned');
+    it.todo('and has an invalid "startTime" property, then a 400 response is returned');
+    it.todo('and is missing the "startTime" property, then a 400 response is returned');
+    it.todo('and has an invalid "endTime" property, then a 400 response is returned');
+    it.todo('and is missing the "endTime" property, then a 400 response is returned');
+    it.todo('and has an invalid "jobNumber" property, then a 400 response is returned');
+    it.todo('and is missing the "jobNumber" property, then a 400 response is returned');
+    it.todo('and the "jobNumber" property is negative, then a 400 response is returned');
+    it.todo('and has an invalid "jobTime" property, then a 400 response is returned');
+    it.todo('and is missing the "jobTime" property, then a 400 response is returned');
+    it.todo('and the "jobTime" property is greater than 24, then a 400 response is returned');
+    it.todo('and has an invalid "weekStart" property, then a 400 response is returned');
+    it.todo('and is missing the "weekStart" property, then a 400 response is returned');
+    it.todo('and has an invalid "weekEnd" property, then a 400 response is returned');
+    it.todo('and is missing the "weekEnd" property, then a 400 response is returned');
   });
+});
 
-  //TODO all /admin GET,POST,PATCH,DELETE
+describe('Given we have an /api/timesheet/admin endpoint', () => {
+  describe('When a GET request is made', () => {});
+  describe('When a POST request is made', () => {});
+  describe('When a PATCH request is made', () => {});
+  describe('When a DELETE request is made', () => {});
+});
 
-  //TODO all /admin/archive DELETE
+describe('Given we have an /api/timesheet/admin/archive endpoint', () => {
+  describe('When a DELETE request is made', () => {});
 });

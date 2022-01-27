@@ -10,7 +10,6 @@ const timesheetSchema = [
       const dt = DateTime.fromFormat(value, 'EEEE');
       return dt.isValid;
     }),
-  body('entries.*.date', 'Invalid Date').exists().isDate(),
   body('entries.*.startTime', 'Start time invalid')
     .exists()
     .isString()
@@ -31,8 +30,8 @@ const timesheetSchema = [
       value.split(':');
       return Boolean(24 > parseFloat(parseInt(value[0], 10) + parseInt(value[1], 10) / 60));
     }),
-  body('entries.*.jobNumber', 'Job number required').exists().isInt(),
-  body('entries.*.jobTime', 'Job time invalid').exists().isFloat(),
+  body('entries.*.jobNumber', 'Job number required').exists().isInt({ min: 0 }),
+  body('entries.*.jobTime', 'Job time invalid').exists().isFloat({ min: 0, max: 24 }),
   body('weekStart')
     .isString()
     .custom((value) => {
