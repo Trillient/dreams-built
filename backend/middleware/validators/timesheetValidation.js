@@ -49,9 +49,35 @@ const timesheetSchema = [
   body('isArchive').optional().isBoolean(),
 ];
 
-const patchTimesheetSchema = [];
+const patchTimesheetSchema = [
+  body('startTime')
+    .exists()
+    .withMessage('Start Time is missing')
+    .isString()
+    .custom((value) => {
+      if (value.length > 5 || value[2] !== ':') {
+        return false;
+      }
+      value.split(':');
+      return Boolean(24 > parseFloat(parseInt(value[0], 10) + parseInt(value[1], 10) / 60));
+    })
+    .withMessage('Start time invalid, "HH:MM" format required'),
+  body('endTime', 'End time invalid, "HH:MM" format required')
+    .exists()
+    .withMessage('End Time is missing')
+    .isString()
+    .custom((value) => {
+      if (value.length > 5 || value[2] !== ':') {
+        return false;
+      }
+      value.split(':');
+      return Boolean(24 > parseFloat(parseInt(value[0], 10) + parseInt(value[1], 10) / 60));
+    }),
+  body('jobNumber', 'Job number invalid, must be a positive integer').exists().withMessage('Job Number is missing').isInt({ min: 0 }),
+  body('jobTime', 'Job time invalid').exists().withMessage('Job Time is missing').isFloat({ min: 0, max: 24 }),
+];
 
-const entryParams = [param('id').exists().withMessage('Missing user Query').isMongoId().withMessage('User must be valid')];
+const entryParams = [param('id').exists().withMessage('Missing user Query').isMongoId().withMessage('Invalid entry id parameter')];
 const userParams = [param('id').exists().withMessage('Missing entry Param')];
 
 const weekStartQuery = [

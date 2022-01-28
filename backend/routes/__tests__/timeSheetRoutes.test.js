@@ -982,8 +982,393 @@ describe('Given we have an /api/timesheet/admin/users/:id endpoint', () => {
         .expect(checkBody)
         .expect(200);
     });
+    it('and has an invalid token, then a 401 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '19:30',
+        jobNumber: 30,
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.code).toBe('invalid_token');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://{domain}/`,
+        sub: 'admin|123456',
+        permissions: ['admin_update:timesheet'],
+      });
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(401);
+    });
+    it('and has insufficient permissions, then a 403 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '19:30',
+        jobNumber: 30,
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.error).toBe('Forbidden');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: 'admin|123456',
+      });
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(403);
+    });
+    it('and has an invalid "startTime" property, then a 400 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '1800',
+        endTime: '19:30',
+        jobNumber: 30,
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Start time invalid, "HH:MM" format required');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has a missing "startTime" property, then a 400 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        endTime: '19:30',
+        jobNumber: 30,
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Start Time is missing');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "endTime" property, then a 400 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '1930',
+        jobNumber: 30,
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('End time invalid, "HH:MM" format required');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has a missing "endTime" property, then a 400 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '18:00',
+        jobNumber: 30,
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('End Time is missing');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "jobNumber" property, then a 400 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '19:30',
+        jobNumber: 'thirty',
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Job number invalid, must be a positive integer');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has a missing "jobNumber" property, then a 400 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '19:30',
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Job Number is missing');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "jobTime" property, then a 400 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '19:30',
+        jobNumber: 30,
+        jobTime: '1.5g',
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Job time invalid');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has a missing "jobTime" property, then a 400 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '19:30',
+        jobNumber: 30,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Job Time is missing');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has no ":id" parameter, then a 404 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '19:30',
+        jobNumber: 30,
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('Not Found - /api/timesheet/admin/users/entry/');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(404);
+    });
+    it('and has an invalid":id" parameter, then a 400 reponse is returned', async () => {
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '19:30',
+        jobNumber: 30,
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Invalid entry id parameter');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/{timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an "id" parameter that does not exist, then a 404 response is returned', async () => {
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '19:30',
+        jobNumber: 30,
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('Entry not found');
+      };
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/507f191e810c19729de860ea`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(404);
+    });
   });
-  describe('When a DELETE request is made', () => {});
+  describe('When a DELETE request is made', () => {
+    it('and is both valid and authorized, then the entry is deleted and a 200 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('Entry Deleted');
+      };
+
+      const validToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: 'admin|123456',
+        permissions: ['admin_delete:timesheet'],
+      });
+
+      await request(app)
+        .delete(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .set(`Authorization`, `Bearer ${validToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+    it('and has an invalid token, then a 401 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+
+      const checkBody = (res) => {
+        expect(res.body.code).toBe('invalid_token');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://{domain}/`,
+        sub: 'admin|123456',
+        permissions: ['admin_delete:timesheet'],
+      });
+
+      await request(app)
+        .delete(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(401);
+    });
+    it('and has insufficient permissions, then a 403 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+
+      const checkBody = (res) => {
+        expect(res.body.error).toBe('Forbidden');
+      };
+
+      const validToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: 'admin|123456',
+      });
+
+      await request(app)
+        .delete(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .set(`Authorization`, `Bearer ${validToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(403);
+    });
+    it('and has an "id" parameter that does not exist, then a 404 response is returned', async () => {
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('Entry not found');
+      };
+
+      await request(app)
+        .delete(`/api/timesheet/admin/users/entry/507f191e810c19729de860ea`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(404);
+    });
+    it('and has an invalid "id" parameter, then a 400 repsonse is returned', async () => {
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Invalid entry id parameter');
+      };
+
+      await request(app)
+        .delete(`/api/timesheet/admin/users/entry/29de860ea`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+  });
 });
 
 describe('Given we have an /api/timesheet/admin/archive endpoint', () => {

@@ -68,7 +68,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
 /**
  * @Desc Get all users timesheet entries for week
  * @Route GET /api/timesheet/admin
- * @Access Private - ("admin_create:timesheet", Admin)
+ * @Access Private - ("admin_read:timesheet", Admin)
  */
 
 const getAllUsers = asyncHandler(async (req, res) => {
@@ -79,8 +79,8 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Update a timesheet entry for a user
- * @Route PATCH /api/timesheet/admin
- * @Access Private - Admin
+ * @Route PATCH /api/timesheet/admin/users/entry/:id
+ * @Access Private - ("admin_update:timesheet", Admin)
  */
 
 const updateAUsersEntry = asyncHandler(async (req, res) => {
@@ -102,18 +102,26 @@ const updateAUsersEntry = asyncHandler(async (req, res) => {
 });
 /**
  * @Desc Delete a timesheet entry for a user
- * @Route DELETE /api/timesheet/admin
- * @Access Private - Admin
+ * @Route DELETE /api/timesheet/admin/users/entry/:id
+ * @Access Private - ("admin_delete:timesheet", Admin)
  */
 
 const deleteAUsersEntry = asyncHandler(async (req, res) => {
-  res.json({});
+  const entry = await TimesheetEntry.findById(req.params.id);
+
+  if (entry) {
+    entry.remove();
+    res.json({ message: 'Entry Deleted' });
+  } else {
+    res.status(404);
+    throw new Error('Entry not found');
+  }
 });
 
 /**
  * @Desc Delete user archive timesheet entries
  * @Route POST /api/timesheet/admin/archive
- * @Access Private - Admin
+ * @Access Private - ("admin_delete:timesheet", Admin)
  */
 
 const deleteArchive = asyncHandler(async (req, res) => {
