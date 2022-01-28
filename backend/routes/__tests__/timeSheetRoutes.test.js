@@ -1372,5 +1372,27 @@ describe('Given we have an /api/timesheet/admin/users/:id endpoint', () => {
 });
 
 describe('Given we have an /api/timesheet/admin/archive endpoint', () => {
-  describe('When a DELETE request is made', () => {});
+  describe('When a DELETE request is made', () => {
+    it('and is valid, and authorized, then all archived greater than 14 days are deleted and a 200 response is returned', async () => {
+      const test = await TimesheetEntry.find({ day: 'Tuesday' });
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('Success');
+      };
+
+      const validToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: 'admin|123456',
+        permissions: ['admin_delete:timesheet'],
+      });
+
+      await request(app)
+        .delete(`/api/timesheet/admin/archive`)
+        .set(`Authorization`, `Bearer ${validToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+  });
 });

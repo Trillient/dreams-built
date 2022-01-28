@@ -133,7 +133,7 @@ const deleteArchive = asyncHandler(async (req, res) => {
 
   await TimesheetEntry.deleteMany(fields);
 
-  res.json({ cutOffDate: cutoff, deletedEntries: entries.length });
+  res.json({ message: 'Success', cutOffDate: cutoff, deletedEntries: entries.length });
 });
 
 module.exports = { getUserEntries, createUserEntry, getAllUsers, updateAUsersEntry, deleteAUsersEntry, deleteArchive };
