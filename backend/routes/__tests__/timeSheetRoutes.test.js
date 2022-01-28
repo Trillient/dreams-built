@@ -245,29 +245,576 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
         .expect(checkBody)
         .expect(201);
     });
+    it('and has an invalid token, then a 401 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
 
-    it.todo('and has an invalid token, then a 401 response is returned');
-    it.todo('and has insufficient permissions, then a 403 response is returned');
-    it.todo('and has an invalid ":id" parameter property, then a 400 response is returned');
-    it.todo('and has an ":id" parameter that does not exist, then a 404 response is returned');
-    it.todo('and does not have "entryId" property, then a 400 response is returned');
-    it.todo('and has an invalid "entryId" property, then a 400 response is returned');
-    it.todo('and has an invalid "day" property, then a 400 response is returned');
-    it.todo('and is missing the "day" property, then a 400 response is returned');
-    it.todo('and has an invalid "startTime" property, then a 400 response is returned');
-    it.todo('and is missing the "startTime" property, then a 400 response is returned');
-    it.todo('and has an invalid "endTime" property, then a 400 response is returned');
-    it.todo('and is missing the "endTime" property, then a 400 response is returned');
-    it.todo('and has an invalid "jobNumber" property, then a 400 response is returned');
-    it.todo('and is missing the "jobNumber" property, then a 400 response is returned');
-    it.todo('and the "jobNumber" property is negative, then a 400 response is returned');
-    it.todo('and has an invalid "jobTime" property, then a 400 response is returned');
-    it.todo('and is missing the "jobTime" property, then a 400 response is returned');
-    it.todo('and the "jobTime" property is greater than 24, then a 400 response is returned');
-    it.todo('and has an invalid "weekStart" property, then a 400 response is returned');
-    it.todo('and is missing the "weekStart" property, then a 400 response is returned');
-    it.todo('and has an invalid "weekEnd" property, then a 400 response is returned');
-    it.todo('and is missing the "weekEnd" property, then a 400 response is returned');
+      const singleEntry = createSingleEntry('9daf2326-c637-4761-8736-e68d36b33d3e');
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.code).toBe('invalid_token');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://{domain}/`,
+        sub: clientId,
+        permissions: ['create:timesheet'],
+      });
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(401);
+    });
+    it('and has insufficient permissions, then a 403 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = createSingleEntry('9daf2326-c637-4761-8736-e68d36b33d3e');
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.error).toBe('Forbidden');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+      });
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(403);
+    });
+
+    it('and has an ":id" parameter that does not exist, then a 404 response is returned', async () => {
+      const singleEntry = createSingleEntry('9daf2326-c637-4761-8736-e68d36b33d3e');
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('Invalid user');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/invalidclientparam`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(404);
+    });
+    it('and does not have "entryId" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = createSingleEntry();
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Vaild entry id required');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "entryId" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = createSingleEntry('2x');
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Vaild entry id required');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "day" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'xxx',
+        startTime: '11:00',
+        endTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Day must be a valid weekday, ie(Monday)');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and is missing the "day" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        startTime: '11:00',
+        endTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Day must be a valid weekday, ie(Monday)');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "startTime" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        startTime: '1:00',
+        endTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Start time invalid, "HH:MM" format required');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and is missing the "startTime" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Start time invalid, "HH:MM" format required');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "endTime" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '12:00PM',
+        startTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('End time invalid, "HH:MM" format required');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and is missing the "endTime" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        startTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('End time invalid, "HH:MM" format required');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "jobNumber" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '11:00',
+        startTime: '12:00',
+        jobNumber: 'f2',
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Job number invalid, must be a positive integer');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and is missing the "jobNumber" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '11:00',
+        startTime: '12:00',
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Job number invalid, must be a positive integer');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and the "jobNumber" property is negative, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '11:00',
+        startTime: '12:00',
+        jobNumber: -2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Job number invalid, must be a positive integer');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "jobTime" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '11:00',
+        startTime: '12:00',
+        jobNumber: 2,
+        jobTime: 'f1',
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Job time invalid');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and is missing the "jobTime" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '11:00',
+        startTime: '12:00',
+        jobNumber: 2,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Job time invalid');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and the "jobTime" property is greater than 24, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '11:00',
+        startTime: '12:00',
+        jobNumber: 26,
+        jobTime: 'f1',
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Job time invalid');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "weekStart" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '11:00',
+        startTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry, '20-20-2020');
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Week Start value invalid (dd/MM/yyyy)');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and is missing the "weekStart" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '11:00',
+        startTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry, null);
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Week Start value invalid (dd/MM/yyyy)');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has an invalid "weekEnd" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '11:00',
+        startTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry, '24/01/2022', '2022/01/24');
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Week End value invalid (dd/MM/yyyy)');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and is missing the "weekEnd" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'abc@gmail.com' });
+      const userParams = await user.userId;
+
+      const singleEntry = {
+        user: user._id,
+        userId: clientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        endTime: '11:00',
+        startTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+      };
+      const newTimeSheet = createTimesheetEntry(singleEntry, '24/01/2022', '');
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Week End value invalid (dd/MM/yyyy)');
+      };
+
+      await request(app)
+        .post(`/api/timesheet/user/${userParams}`)
+        .send(newTimeSheet)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
   });
 });
 

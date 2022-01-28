@@ -27,7 +27,7 @@ const getUserEntries = asyncHandler(async (req, res) => {
 /**
  * @Desc Create a user timesheet entry
  * @Route POST /api/timesheet/user/:id
- * @Access Private
+ * @Access Private ("create:timesheet", employee, admin)
  */
 
 const createUserEntry = asyncHandler(async (req, res) => {

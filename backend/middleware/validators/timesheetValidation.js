@@ -10,7 +10,7 @@ const timesheetSchema = [
       const dt = DateTime.fromFormat(value, 'EEEE');
       return dt.isValid;
     }),
-  body('entries.*.startTime', 'Start time invalid')
+  body('entries.*.startTime', 'Start time invalid, "HH:MM" format required')
     .exists()
     .isString()
     .custom((value) => {
@@ -20,7 +20,7 @@ const timesheetSchema = [
       value.split(':');
       return Boolean(24 > parseFloat(parseInt(value[0], 10) + parseInt(value[1], 10) / 60));
     }),
-  body('entries.*.endTime', 'End time invalid')
+  body('entries.*.endTime', 'End time invalid, "HH:MM" format required')
     .exists()
     .isString()
     .custom((value) => {
@@ -30,15 +30,15 @@ const timesheetSchema = [
       value.split(':');
       return Boolean(24 > parseFloat(parseInt(value[0], 10) + parseInt(value[1], 10) / 60));
     }),
-  body('entries.*.jobNumber', 'Job number required').exists().isInt({ min: 0 }),
+  body('entries.*.jobNumber', 'Job number invalid, must be a positive integer').exists().isInt({ min: 0 }),
   body('entries.*.jobTime', 'Job time invalid').exists().isFloat({ min: 0, max: 24 }),
-  body('weekStart')
+  body('weekStart', 'Week Start value invalid (dd/MM/yyyy)')
     .isString()
     .custom((value) => {
       const dt = DateTime.fromFormat(value, 'dd/MM/yyyy');
       return dt.isValid;
     }),
-  body('weekEnd')
+  body('weekEnd', 'Week End value invalid (dd/MM/yyyy)')
     .isString()
     .custom((value) => {
       const dt = DateTime.fromFormat(value, 'dd/MM/yyyy');
