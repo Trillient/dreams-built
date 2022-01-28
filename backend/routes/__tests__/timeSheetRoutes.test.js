@@ -1374,7 +1374,6 @@ describe('Given we have an /api/timesheet/admin/users/:id endpoint', () => {
 describe('Given we have an /api/timesheet/admin/archive endpoint', () => {
   describe('When a DELETE request is made', () => {
     it('and is valid, and authorized, then all archived greater than 14 days are deleted and a 200 response is returned', async () => {
-      const test = await TimesheetEntry.find({ day: 'Tuesday' });
       const checkBody = (res) => {
         expect(res.body.message).toBe('Success');
       };
