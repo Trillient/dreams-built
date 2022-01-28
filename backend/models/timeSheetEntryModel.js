@@ -15,7 +15,7 @@ const timesheetEntrySchema = mongoose.Schema(
     jobNumber: { type: Number, required: true },
     jobTime: { type: Number, required: true },
     weekStart: { type: String, required: true },
-    weekEnd: { type: String, required: true },
+    weekEnd: { type: String },
     isArchive: { type: Boolean, default: false },
   },
   { timestamps: true }

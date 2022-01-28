@@ -68,7 +68,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
 /**
  * @Desc Get all users timesheet entries for week
  * @Route GET /api/timesheet/admin
- * @Access Private - Admin
+ * @Access Private - ("admin_create:timesheet", Admin)
  */
 
 const getAllUsers = asyncHandler(async (req, res) => {
@@ -78,23 +78,27 @@ const getAllUsers = asyncHandler(async (req, res) => {
 });
 
 /**
- * @Desc Create a timesheet entry for a user
- * @Route POST/api/timesheet/admin
- * @Access Private - Admin
- */
-
-const createAUsersEntry = asyncHandler(async (req, res) => {
-  res.json({});
-});
-
-/**
  * @Desc Update a timesheet entry for a user
  * @Route PATCH /api/timesheet/admin
  * @Access Private - Admin
  */
 
 const updateAUsersEntry = asyncHandler(async (req, res) => {
-  res.json({});
+  const { startTime, endTime, jobNumber, jobTime } = req.body;
+
+  const entry = await TimesheetEntry.findById(req.params.id);
+
+  if (entry) {
+    entry.startTime = startTime;
+    entry.endTime = endTime;
+    entry.jobNumber = jobNumber;
+    entry.jobTime = jobTime;
+    entry.save();
+    res.json(entry);
+  } else {
+    res.status(404);
+    throw new Error('Entry not found');
+  }
 });
 /**
  * @Desc Delete a timesheet entry for a user
@@ -124,4 +128,4 @@ const deleteArchive = asyncHandler(async (req, res) => {
   res.json({ cutOffDate: cutoff, deletedEntries: entries.length });
 });
 
-module.exports = { getUserEntries, createUserEntry, getAllUsers, createAUsersEntry, updateAUsersEntry, deleteAUsersEntry, deleteArchive };
+module.exports = { getUserEntries, createUserEntry, getAllUsers, updateAUsersEntry, deleteAUsersEntry, deleteArchive };

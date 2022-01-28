@@ -33,12 +33,14 @@ const timesheetSchema = [
   body('entries.*.jobNumber', 'Job number invalid, must be a positive integer').exists().isInt({ min: 0 }),
   body('entries.*.jobTime', 'Job time invalid').exists().isFloat({ min: 0, max: 24 }),
   body('weekStart', 'Week Start value invalid (dd/MM/yyyy)')
+    .exists()
     .isString()
     .custom((value) => {
       const dt = DateTime.fromFormat(value, 'dd/MM/yyyy');
       return dt.isValid;
     }),
   body('weekEnd', 'Week End value invalid (dd/MM/yyyy)')
+    .optional()
     .isString()
     .custom((value) => {
       const dt = DateTime.fromFormat(value, 'dd/MM/yyyy');
@@ -47,9 +49,12 @@ const timesheetSchema = [
   body('isArchive').optional().isBoolean(),
 ];
 
-const adminQueryParams = [query('id').exists().withMessage('Missing user Query').isMongoId().withMessage('User must be valid')];
-const userParams = [param('id').exists().withMessage('Missing user Param')];
-const userQuery = [
+const patchTimesheetSchema = [];
+
+const entryParams = [param('id').exists().withMessage('Missing user Query').isMongoId().withMessage('User must be valid')];
+const userParams = [param('id').exists().withMessage('Missing entry Param')];
+
+const weekStartQuery = [
   query('weekstart', 'invalid weekstart (dd/MM/yyyy)')
     .exists()
     .custom((value) => {
@@ -58,4 +63,4 @@ const userQuery = [
     }),
 ];
 
-module.exports = { adminQueryParams, userParams, userQuery, timesheetSchema };
+module.exports = { entryParams, userParams, weekStartQuery, patchTimesheetSchema, timesheetSchema };

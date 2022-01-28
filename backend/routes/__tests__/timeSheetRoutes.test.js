@@ -819,9 +819,170 @@ describe('Given we have an /api/timesheet/user/:id endpoint', () => {
 });
 
 describe('Given we have an /api/timesheet/admin endpoint', () => {
-  describe('When a GET request is made', () => {});
-  describe('When a POST request is made', () => {});
-  describe('When a PATCH request is made', () => {});
+  describe('When a GET request is made', () => {
+    const secondClientId = 'alpha|123456';
+    beforeAll(async () => {
+      await User.create(createNewUser(secondClientId, 'alpha', 'doe', 'alpha@gmail.com'));
+      const secondUser = await User.findOne({ auth0Email: 'alpha@gmail.com' });
+      await TimesheetEntry.create({
+        user: secondUser._id,
+        userId: secondClientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        startTime: '11:00',
+        endTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+        weekStart: '24/01/2022',
+        weekEnd: '30/01/2022',
+      });
+      await TimesheetEntry.create({
+        user: secondUser._id,
+        userId: secondClientId,
+        entryId: '9daf2326-c637-4761-8736-e68d36b33d3e',
+        day: 'Monday',
+        startTime: '11:00',
+        endTime: '12:00',
+        jobNumber: 2,
+        jobTime: 1,
+        weekStart: '31/01/2022',
+        weekEnd: '06/02/2022',
+      });
+    });
+    it('and is valid, authenticated and appropriately authorized, then it returns the entries with the applicable weekstart period and a 200 response', async () => {
+      const checkBody = (res) => {
+        expect(res.body[0].weekStart).toBe('24/01/2022');
+        expect(res.body.length).toBe(2);
+        expect(res.body[0].userId).not.toBe(res.body[1].userId);
+      };
+
+      const validToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+        permissions: ['admin_read:timesheet'],
+      });
+
+      await request(app)
+        .get(`/api/timesheet/admin?weekstart=24/01/2022`)
+        .set(`Authorization`, `Bearer ${validToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+    it('and has an invaid token, then it returns a 401 response', async () => {
+      const checkBody = (res) => {
+        expect(res.body.code).toBe('invalid_token');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://{domain}/`,
+        sub: clientId,
+        permissions: ['admin_read:timesheet'],
+      });
+
+      await request(app)
+        .get(`/api/timesheet/admin?weekstart=24/01/2022`)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(401);
+    });
+    it('and has insufficient permissions, then it returns a 403 response', async () => {
+      const checkBody = (res) => {
+        expect(res.body.error).toBe('Forbidden');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+      });
+
+      await request(app)
+        .get(`/api/timesheet/admin?weekstart=24/01/2022`)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(403);
+    });
+    it('and has an invalid "weekstart" query property, then a 400 response is returned', async () => {
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('invalid weekstart (dd/MM/yyyy)');
+      };
+
+      await request(app)
+        .get(`/api/timesheet/admin?weekstart=01/31/2022`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has no "weekstart" query property, then a 400 response is returned', async () => {
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('invalid weekstart (dd/MM/yyyy)');
+      };
+
+      await request(app)
+        .get(`/api/timesheet/admin`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('and has a valid "weekstart" property that has no data, then an empty array is returned', async () => {
+      const checkBody = (res) => {
+        expect(res.body).toEqual([]);
+      };
+
+      await request(app)
+        .get(`/api/timesheet/admin?weekstart=31/01/2022`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+  });
+});
+describe('Given we have an /api/timesheet/admin/users/:id endpoint', () => {
+  describe('When a PATCH request is made', () => {
+    it('and is valid, authenticated and appropriately authorized, then it updates the entry and a 200 response is returned', async () => {
+      const timesheetEntry = await TimesheetEntry.findOne({ userId: clientId });
+      const timesheetUpdates = {
+        startTime: '18:00',
+        endTime: '19:30',
+        jobNumber: 30,
+        jobTime: 1.5,
+      };
+
+      const checkBody = (res) => {
+        expect(res.body).toEqual(expect.objectContaining(timesheetUpdates));
+      };
+
+      const validToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: 'admin|123456',
+        permissions: ['admin_update:timesheet'],
+      });
+
+      await request(app)
+        .patch(`/api/timesheet/admin/users/entry/${timesheetEntry._id}`)
+        .send(timesheetUpdates)
+        .set(`Authorization`, `Bearer ${validToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+  });
   describe('When a DELETE request is made', () => {});
 });
 
