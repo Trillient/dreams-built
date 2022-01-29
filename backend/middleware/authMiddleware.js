@@ -44,6 +44,13 @@ const createAllUserTimesheetAuth = jwtAuthz(['admin_create:timesheet'], options)
 const updateAllUserTimesheetAuth = jwtAuthz(['admin_update:timesheet'], options);
 const deleteAllUserTimesheetAuth = jwtAuthz(['admin_delete:timesheet'], options);
 
+const readUsersAuth = jwtAuthz(['read:users'], options);
+const createUsersAuth = jwtAuthz(['create:users'], options);
+const updateUsersAuth = jwtAuthz(['update:users'], options);
+const deleteUsersAuth = jwtAuthz(['delete:users'], options);
+const readProfileAuth = jwtAuthz(['read:user_profile'], options);
+const updateProfileAuth = jwtAuthz(['update:user_profile'], options);
+
 module.exports = {
   checkJwt,
   readClientsAuth,
@@ -66,4 +73,10 @@ module.exports = {
   createAllUserTimesheetAuth,
   updateAllUserTimesheetAuth,
   deleteAllUserTimesheetAuth,
+  readUsersAuth,
+  createUsersAuth,
+  updateUsersAuth,
+  deleteUsersAuth,
+  readProfileAuth,
+  updateProfileAuth,
 };

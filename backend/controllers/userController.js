@@ -1,12 +1,12 @@
 const asyncHandler = require('express-async-handler');
 const axios = require('axios').default;
 const User = require('../models/userModel');
-const { domain, auth0ClientId, auth0ClientSecret, audience } = require('../config/env');
+const { domain, auth0ClientId, auth0ClientSecret } = require('../config/env');
 
 /**
  * @Desc Get a list of all users
  * @Route GET /api/users
- * @Access Private (admin user) //TODO add admin constraints
+ * @Access Private ("read:users", admin)
  */
 
 const getUsers = asyncHandler(async (req, res) => {
@@ -37,27 +37,19 @@ const getUsers = asyncHandler(async (req, res) => {
  */
 
 const createUser = asyncHandler(async (req, res) => {
-  const { userId, firstName, lastName, birthDate, hourlyRate, startDate } = req.body;
+  const { userId, firstName, lastName, auth0Email } = req.body;
 
-  const user = await User.create({
-    userId,
-    firstName,
-    lastName,
-    birthDate,
-    hourlyRate,
-    startDate,
-  });
+  const user = await User.findOne({ userId: userId });
 
-  if (user) {
-    res.status(201).json({
-      _id: user._id,
-      userId: user.userId,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      birthDate: user.birthDate,
-      hourlyRate: user.hourlyRate,
-      startDate: user.startDate,
-    });
+  if (!user) {
+    const newUser = {
+      userId: userId,
+      firstName: firstName,
+      lastName: lastName,
+      auth0Email: auth0Email,
+    };
+    const createdUser = await User.create(newUser);
+    res.status(201).json(createdUser);
   } else {
     res.status(400);
     throw new Error('Invalid user data');
@@ -67,40 +59,48 @@ const createUser = asyncHandler(async (req, res) => {
 /**
  * @Desc Get a user's details
  * @Route GET /api/users/:id
- * @Access Private (Admin) //TODO add admin constraints
+ * @Access Private ("read:users", admin)
  */
 
 const getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
-  res.json(user);
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error('User does not exist');
+  }
 });
 
 /**
  * @Desc Update a single user
  * @Route PUT /api/users/:id
- * @Access Private (only admin) //TODO add admin constraints
+ * @Access Private ("update:users" admin)
  */
 
 const updateUser = asyncHandler(async (req, res) => {
-  const { firstName, lastName, birthDate, hourlyRate } = req.body;
+  const { firstName, lastName, auth0Email, hourlyRate } = req.body;
 
   const user = await User.findById(req.params.id);
 
   if (user) {
-    user.firstName = firstName || user.firstName;
-    user.lastName = lastName || user.lastName;
-    user.birthDate = birthDate || user.birthDate;
-    user.hourlyRate = hourlyRate || user.hourlyRate;
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.auth0Email = auth0Email;
+    user.hourlyRate = hourlyRate;
 
     await user.save();
     res.json(user);
+  } else {
+    res.status(404);
+    throw new Error('User not found');
   }
 });
 
 /**
  * @Desc Delete a single user
  * @Route DELETE /api/users/:id
- * @Access Private (only admin) //TODO add admin constraints
+ * @Access Private ("delete:users", admin)
  */
 
 const deleteUser = asyncHandler(async (req, res) => {
