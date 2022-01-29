@@ -25,11 +25,6 @@ describe('Given a timesheet schema model has been updated', () => {
     expect(entry.type()).toEqual(expect.any(String));
     expect(entry.required).toBeTruthy();
   });
-  it('Then it may contain the date the entry was made for', () => {
-    const entry = TimesheetEntry.schema.obj.date;
-    expect(entry).toBeTruthy();
-    expect(entry.type()).toEqual(expect.any(String));
-  });
   it('Then it should contain the startTime', () => {
     const entry = TimesheetEntry.schema.obj.startTime;
     expect(entry).toBeTruthy();
@@ -60,11 +55,10 @@ describe('Given a timesheet schema model has been updated', () => {
     expect(entry.type()).toEqual(expect.any(String));
     expect(entry.required).toBeTruthy();
   });
-  it('A property of "weekEnd" should be own the schema and be a date', () => {
+  it('A property of "weekEnd" may be own the schema and be a date', () => {
     const entry = TimesheetEntry.schema.obj.weekEnd;
     expect(entry).toBeTruthy();
     expect(entry.type()).toEqual(expect.any(String));
-    expect(entry.required).toBeTruthy();
   });
   it('A property of "isArchive" should be own the schema', () => {
     const entry = TimesheetEntry.schema.obj.isArchive;
