@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema(
   {
     userId: { type: String, required: true, unique: true },
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    auth0Email: { type: String },
-    hourlyRate: Number,
+    firstName: { type: String },
+    lastName: { type: String },
+    auth0Email: { type: String, required: true },
+    hourlyRate: { type: Number },
   },
   { timestamps: true }
 );

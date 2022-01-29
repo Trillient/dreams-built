@@ -143,36 +143,22 @@ const getUserProfile = asyncHandler(async (req, res) => {
  */
 
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email, phoneNumber } = req.body;
+  const { firstName, lastName, email } = req.body;
 
   const user = await User.findById(req.params.id);
-
-  //TODO cross check JWT with userID to confirm correct user
 
   if (user) {
     user.firstName = firstName || user.firstName;
     user.lastName = lastName || user.lastName;
     user.email = email || user.email;
-    user.phoneNumber = phoneNumber || user.phoneNumber;
-    user.isAdmin = user.isAdmin;
-    user.birthDate = user.birthDate;
     user.hourlyRate = user.hourlyRate;
-    user.startDate = user.startDate;
 
     await user.save();
 
-    const userProfile = {
-      _id: user._id,
-      userId: user.userId,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      isAdmin: user.isAdmin,
-    };
-    res.json(userProfile);
+    res.json(user);
   } else {
-    throw new Error('Something went wrong');
+    res.status(404);
+    throw new Error('User not found');
   }
 });
 
