@@ -122,7 +122,7 @@ const deleteUser = asyncHandler(async (req, res) => {
  */
 
 const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findOne({ userId: req.params.id });
 
   if (user) {
     const userProfile = {
@@ -148,7 +148,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
   const { firstName, lastName, auth0Email } = req.body;
 
-  const user = await User.findById(req.params.id);
+  const user = await User.findOne({ userId: req.params.id });
 
   if (user) {
     user.firstName = firstName;

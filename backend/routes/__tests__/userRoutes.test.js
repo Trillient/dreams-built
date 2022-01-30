@@ -606,7 +606,7 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
       });
 
       await request(app)
-        .get(`/api/users/profile/${user._id}`)
+        .get(`/api/users/profile/${user.userId}`)
         .set(`Authorization`, `Bearer ${validToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -628,7 +628,7 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
       });
 
       await request(app)
-        .get(`/api/users/profile/${user._id}`)
+        .get(`/api/users/profile/${user.userId}`)
         .set(`Authorization`, `Bearer ${invalidToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -649,26 +649,14 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
       });
 
       await request(app)
-        .get(`/api/users/profile/${user._id}`)
+        .get(`/api/users/profile/${user.userId}`)
         .set(`Authorization`, `Bearer ${invalidToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
         .expect(403);
     });
-    it('when a request has an invalid "id" parameter, then a 400 response is returned', async () => {
-      const checkBody = (res) => {
-        expect(res.body.errors[0].msg).toBe('Invalid user');
-      };
 
-      await request(app)
-        .get(`/api/users/profile/{user._id}`)
-        .set(`Authorization`, `Bearer ${token}`)
-        .set('Content-Type', 'application/json')
-        .expect('Content-Type', /application\/json/)
-        .expect(checkBody)
-        .expect(400);
-    });
     it('when a request has a "id" paramtere that does not exist, then a 404 response is returned', async () => {
       const checkBody = (res) => {
         expect(res.body.message).toBe('User not found');
@@ -687,7 +675,7 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
   describe('and a PUT method', () => {
     it('when a valid request is made then it should return a 200 response with an updated user', async () => {
       const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
-      const userParams = await user._id;
+      const userParams = user.userId;
 
       const updatedUserDetails = {
         firstName: user.firstName,
@@ -697,7 +685,7 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
 
       const checkBody = async (res) => {
         expect(res.body.message).toBe('Details updated!');
-        const savedResult = await User.findById(userParams);
+        const savedResult = await User.findOne({ userId: userParams });
         expect(savedResult.auth0Email).toBe(updatedUserDetails.auth0Email);
       };
 
@@ -719,7 +707,7 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
     });
     it('when a request has an invalid token, then a 401 response is returned', async () => {
       const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
-      const userParams = await user._id;
+      const userParams = user.userId;
 
       const updatedUserDetails = {
         firstName: user.firstName,
@@ -749,7 +737,7 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
     });
     it('when a request has insufficient permissions, then a 403 response is returned', async () => {
       const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
-      const userParams = await user._id;
+      const userParams = await user.userId;
 
       const updatedUserDetails = {
         firstName: user.firstName,
@@ -778,7 +766,7 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
     });
     it('when a request has an invalid "firstName" property, then a 400 response is returned', async () => {
       const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
-      const userParams = await user._id;
+      const userParams = user.userId;
 
       const updatedUserDetails = {
         firstName: 11111,
@@ -801,7 +789,7 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
     });
     it('when a request has an invalid "lastName" proeprty, then a 400 response is returned', async () => {
       const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
-      const userParams = await user._id;
+      const userParams = user.userId;
 
       const updatedUserDetails = {
         firstName: user.firstName,
@@ -824,7 +812,7 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
     });
     it('when a request has an invalid "auth0Email" property, then a 400 response is returned', async () => {
       const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
-      const userParams = user._id;
+      const userParams = user.userId;
 
       const updatedUserDetails = {
         firstName: user.firstName,
@@ -845,29 +833,7 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
         .expect(checkBody)
         .expect(400);
     });
-    it('when a request has an invalid "id" parameter, then a 400 response is returned', async () => {
-      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
-      const userParams = user._id;
 
-      const updatedUserDetails = {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        auth0Email: 'kraiggmail.com',
-      };
-
-      const checkBody = (res) => {
-        expect(res.body.errors[0].msg).toBe('Must enter a valid email');
-      };
-
-      await request(app)
-        .put(`/api/users/profile/${userParams}`)
-        .send(updatedUserDetails)
-        .set(`Authorization`, `Bearer ${token}`)
-        .set('Content-Type', 'application/json')
-        .expect('Content-Type', /application\/json/)
-        .expect(checkBody)
-        .expect(400);
-    });
     it('when a request has an "id" parameter that does not exist, then a 404 response is returned', async () => {
       const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
 
