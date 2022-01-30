@@ -488,24 +488,96 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
   });
 
   describe('and a DELETE method', () => {
-    it.skip('when a valid request is made then it should return with a 200 repsonse and delete the user', async () => {
-      const newUser = createNewUser(7, 'allen', 'doe', 'allen@gmail.com');
-      const row = new User(newUser);
-      await row.save();
-
-      const user = await User.findOne({ email: 'allen@gmail.com' });
+    it('when a valid request is made then it should return with a 200 repsonse and delete the user', async () => {
+      const user = await User.findOne({ email: 'foo@gmail.com' });
 
       const checkBody = (res) => {
         expect(res.body.message).toBe('User removed');
       };
 
+      const validToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+        permissions: 'delete:users',
+      });
+
       await request(app)
         .delete(`/api/users/${user._id}`)
-        .set(`Authorization`, `Bearer ${token}`)
+        .set(`Authorization`, `Bearer ${validToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
         .expect(200);
+    });
+    it('when a request has in invalid token, then a 401 response is returned', async () => {
+      const user = await User.findOne({ email: 'foo@gmail.com' });
+
+      const checkBody = (res) => {
+        expect(res.body.code).toBe('invalid_token');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://{domain}/`,
+        sub: clientId,
+        permissions: 'delete:users',
+      });
+
+      await request(app)
+        .delete(`/api/users/${user._id}`)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(401);
+    });
+    it('when a request has insufficient permissions, then a 403 response is returned', async () => {
+      const user = await User.findOne({ email: 'foo@gmail.com' });
+
+      const checkBody = (res) => {
+        expect(res.body.error).toBe('Forbidden');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+      });
+
+      await request(app)
+        .delete(`/api/users/${user._id}`)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(403);
+    });
+    it('when a request has an invalid "id" parameter, then a 400 response is returned', async () => {
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Invalid user');
+      };
+
+      await request(app)
+        .delete(`/api/users/{user._id}`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('when a request has an "id" parameter that does not exist, then a 404 response is returned', async () => {
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('User not found');
+      };
+
+      await request(app)
+        .delete(`/api/users/507f191e810c19729de860ea`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(404);
     });
   });
 });
