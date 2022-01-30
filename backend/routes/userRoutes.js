@@ -14,6 +14,6 @@ router
   .put(checkJwt, updateUsersAuth, userParams, userUpdateSchema, userAdminUpdateSchema, validation, updateUser)
   .delete(checkJwt, deleteUsersAuth, userParams, validation, deleteUser);
 // User
-router.route('/profile/:id').get(checkJwt, readProfileAuth, userParams, validation, getUserProfile).put(checkJwt, updateProfileAuth, userParams, validation, updateUserProfile);
+router.route('/profile/:id').get(checkJwt, readProfileAuth, userParams, validation, getUserProfile).put(checkJwt, updateProfileAuth, userParams, userUpdateSchema, validation, updateUserProfile);
 
 module.exports = router;

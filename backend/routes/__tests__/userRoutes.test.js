@@ -15,6 +15,10 @@ beforeAll(async () => {
   jwks.start();
 });
 
+beforeEach(async () => {
+  await User.create(createNewUser(clientId, 'foo', 'fighter', 'foo@gmail.com'));
+});
+
 afterEach(async () => {
   await User.deleteMany();
 });
@@ -161,9 +165,6 @@ describe('Given we have an "/api/users" endpoint', () => {
  * @Route /api/users/:id
  */
 describe('Given we have an "/api/users/:id" endpoint', () => {
-  beforeEach(async () => {
-    await User.create(createNewUser(clientId, 'foo', 'fighter', 'foo@gmail.com'));
-  });
   describe('and a GET method', () => {
     it("when a valid request is made then it should return a 200 response with the user's details", async () => {
       const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
@@ -588,56 +589,306 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
 
 describe('Given we have an "/api/users/profile/:id" endpoint', () => {
   describe('and a GET method', () => {
-    it.skip("when a valid request is made then it should return a 200 response with the user's details", async () => {
-      const newUser = createNewUser(9, 'falter', 'doe', 'falter@gmail.com');
-      const row = new User(newUser);
-      await row.save();
-
-      const user = await User.findOne({ email: 'falter@gmail.com' });
+    it("when a valid request is made then it should return a 200 response with the user's details", async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
 
       const checkBody = (res) => {
-        expect(res.body.firstName).toBe('falter');
-        expect(res.body.email).toBe('falter@gmail.com');
+        expect(res.body.firstName).toBe('foo');
+        expect(res.body.auth0Email).toBe('foo@gmail.com');
         expect(res.body.hourlyPay).toBeUndefined();
       };
 
+      const validToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+        permissions: 'read:user_profile',
+      });
+
       await request(app)
         .get(`/api/users/profile/${user._id}`)
-        .set(`Authorization`, `Bearer ${token}`)
+        .set(`Authorization`, `Bearer ${validToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
         .expect(200);
     });
-  });
-
-  describe('and a PUT method', () => {
-    it.skip('when a valid request is made then it should return a 200 response with an updated user', async () => {
-      const newUser = createNewUser(12, 'craig', 'doe', 'craig@gmail.com');
-      const row = new User(newUser);
-      await row.save();
-
-      const user = await User.findOne({ email: 'craig@gmail.com' });
-      const userParams = await user._id;
-
-      const updatedUserDetails = {
-        email: 'kraig@gmail.com',
-      };
+    it('when a request has an invalid token, then a 401 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
 
       const checkBody = (res) => {
-        expect(res.body.firstName).toBe('craig');
-        expect(res.body.email).toBe('kraig@gmail.com');
-        expect(res.body.hourlyPay).toBeUndefined();
+        expect(res.body.code).toBe('invalid_token');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://{domain}/`,
+        sub: clientId,
+        permissions: 'read:user_profile',
+      });
+
+      await request(app)
+        .get(`/api/users/profile/${user._id}`)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(401);
+    });
+    it('when a request has insufficient permissions, then a 403 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
+
+      const checkBody = (res) => {
+        expect(res.body.error).toBe('Forbidden');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+      });
+
+      await request(app)
+        .get(`/api/users/profile/${user._id}`)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(403);
+    });
+    it('when a request has an invalid "id" parameter, then a 400 response is returned', async () => {
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Invalid user');
       };
 
       await request(app)
-        .put(`/api/users/${userParams}`)
+        .get(`/api/users/profile/{user._id}`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('when a request has a "id" paramtere that does not exist, then a 404 response is returned', async () => {
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('User not found');
+      };
+
+      await request(app)
+        .get(`/api/users/profile/507f191e810c19729de860ea`)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(404);
+    });
+  });
+
+  describe('and a PUT method', () => {
+    it('when a valid request is made then it should return a 200 response with an updated user', async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
+      const userParams = await user._id;
+
+      const updatedUserDetails = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        auth0Email: 'kraig@gmail.com',
+      };
+
+      const checkBody = async (res) => {
+        expect(res.body.message).toBe('Details updated!');
+        const savedResult = await User.findById(userParams);
+        expect(savedResult.auth0Email).toBe(updatedUserDetails.auth0Email);
+      };
+
+      const validToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+        permissions: 'update:user_profile',
+      });
+
+      await request(app)
+        .put(`/api/users/profile/${userParams}`)
+        .send(updatedUserDetails)
+        .set(`Authorization`, `Bearer ${validToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(200);
+    });
+    it('when a request has an invalid token, then a 401 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
+      const userParams = await user._id;
+
+      const updatedUserDetails = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        auth0Email: 'kraig@gmail.com',
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.code).toBe('invalid_token');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://{domain}/`,
+        sub: clientId,
+        permissions: 'update:user_profile',
+      });
+
+      await request(app)
+        .put(`/api/users/profile/${userParams}`)
+        .send(updatedUserDetails)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(401);
+    });
+    it('when a request has insufficient permissions, then a 403 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
+      const userParams = await user._id;
+
+      const updatedUserDetails = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        auth0Email: 'kraig@gmail.com',
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.error).toBe('Forbidden');
+      };
+
+      const invalidToken = jwks.token({
+        aud: audience,
+        iss: `https://${domain}/`,
+        sub: clientId,
+      });
+
+      await request(app)
+        .put(`/api/users/profile/${userParams}`)
+        .send(updatedUserDetails)
+        .set(`Authorization`, `Bearer ${invalidToken}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(403);
+    });
+    it('when a request has an invalid "firstName" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
+      const userParams = await user._id;
+
+      const updatedUserDetails = {
+        firstName: 11111,
+        lastName: user.lastName,
+        auth0Email: 'kraig@gmail.com',
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('First Name must be valid');
+      };
+
+      await request(app)
+        .put(`/api/users/profile/${userParams}`)
         .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(checkBody)
-        .expect(200);
+        .expect(400);
+    });
+    it('when a request has an invalid "lastName" proeprty, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
+      const userParams = await user._id;
+
+      const updatedUserDetails = {
+        firstName: user.firstName,
+        lastName: 11111,
+        auth0Email: 'kraig@gmail.com',
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Last Name must be valid');
+      };
+
+      await request(app)
+        .put(`/api/users/profile/${userParams}`)
+        .send(updatedUserDetails)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('when a request has an invalid "auth0Email" property, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
+      const userParams = user._id;
+
+      const updatedUserDetails = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        auth0Email: 'kraiggmail.com',
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Must enter a valid email');
+      };
+
+      await request(app)
+        .put(`/api/users/profile/${userParams}`)
+        .send(updatedUserDetails)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('when a request has an invalid "id" parameter, then a 400 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
+      const userParams = user._id;
+
+      const updatedUserDetails = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        auth0Email: 'kraiggmail.com',
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.errors[0].msg).toBe('Must enter a valid email');
+      };
+
+      await request(app)
+        .put(`/api/users/profile/${userParams}`)
+        .send(updatedUserDetails)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(400);
+    });
+    it('when a request has an "id" parameter that does not exist, then a 404 response is returned', async () => {
+      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
+
+      const updatedUserDetails = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        auth0Email: 'kraig@gmail.com',
+      };
+
+      const checkBody = (res) => {
+        expect(res.body.message).toBe('User not found');
+      };
+
+      await request(app)
+        .put(`/api/users/profile/507f191e810c19729de860ea`)
+        .send(updatedUserDetails)
+        .set(`Authorization`, `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(checkBody)
+        .expect(404);
     });
   });
 });

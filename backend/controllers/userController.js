@@ -118,47 +118,46 @@ const deleteUser = asyncHandler(async (req, res) => {
 /**
  * @Desc Get a user's profile
  * @Route GET /api/users/profile/:id
- * @Access Private
+ * @Access Private ("read:user_profile", employee)
  */
 
 const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
-  //TODO cross check JWT with userID to confirm correct user
+  if (user) {
+    const userProfile = {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      auth0Email: user.auth0Email,
+    };
 
-  const userProfile = {
-    _id: user._id,
-    userId: user.userId,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    phoneNumber: user.phoneNumber,
-    isAdmin: user.isAdmin,
-  };
-
-  res.json(userProfile);
+    res.json(userProfile);
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
 });
 
 /**
- * @Desc Update a single user
+ * @Desc Update user profile
  * @Route PUT /api/users/:id
- * @Access Private
+ * @Access Private ("update:user_profile", employee)
  */
 
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email } = req.body;
+  const { firstName, lastName, auth0Email } = req.body;
 
   const user = await User.findById(req.params.id);
 
   if (user) {
-    user.firstName = firstName || user.firstName;
-    user.lastName = lastName || user.lastName;
-    user.email = email || user.email;
-    user.hourlyRate = user.hourlyRate;
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.auth0Email = auth0Email;
 
     await user.save();
 
-    res.json(user);
+    res.json({ message: 'Details updated!' });
   } else {
     res.status(404);
     throw new Error('User not found');
