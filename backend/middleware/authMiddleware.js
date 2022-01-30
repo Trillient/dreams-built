@@ -51,6 +51,11 @@ const deleteUsersAuth = jwtAuthz(['delete:users'], options);
 const readProfileAuth = jwtAuthz(['read:user_profile'], options);
 const updateProfileAuth = jwtAuthz(['update:user_profile'], options);
 
+const readContractorsAuth = jwtAuthz(['read:contractors'], options);
+const createContractorsAuth = jwtAuthz(['create:contractors'], options);
+const updateContractorsAuth = jwtAuthz(['update:contractors'], options);
+const deleteContractorsAuth = jwtAuthz(['delete:contractors'], options);
+
 module.exports = {
   checkJwt,
   readClientsAuth,
@@ -79,4 +84,8 @@ module.exports = {
   deleteUsersAuth,
   readProfileAuth,
   updateProfileAuth,
+  readContractorsAuth,
+  createContractorsAuth,
+  updateContractorsAuth,
+  deleteContractorsAuth,
 };
