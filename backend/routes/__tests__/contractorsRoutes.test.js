@@ -384,4 +384,124 @@ describe('Given we have an "/api/contractors/:id" endpoint', () => {
       .expect(checkBody)
       .expect(404);
   });
+
+  it("When a PUT request is made and is valid, authenticated and appropriately authorized, then a 200 response with a contractor's details should be returned", async () => {
+    const contractor = await Contractor.findOne({ contractor: 'fooMill' });
+    const contractorId = contractor._id;
+
+    const updateContractor = {
+      contractor: 'foodMill',
+      contact: 'phil',
+      email: 'phil@gmail.com',
+      phone: '+555 211 122',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body).toEqual(expect.objectContaining(updateContractor));
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'update:contractors',
+    });
+
+    await request(app)
+      .put(`/api/contractors/${contractorId}`)
+      .send(updateContractor)
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a PUT request is made and has an invalid token, then a 401 response is returned', async () => {
+    const contractor = await Contractor.findOne({ contractor: 'fooMill' });
+    const contractorId = contractor._id;
+
+    const updateContractor = {
+      contractor: 'foodMill',
+      contact: 'phil',
+      email: 'phil@gmail.com',
+      phone: '+555 211 122',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://{domain}/`,
+      sub: clientId,
+      permissions: 'update:contractors',
+    });
+
+    await request(app)
+      .put(`/api/contractors/${contractorId}`)
+      .send(updateContractor)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a PUT request is made and has insufficient permissions, then a 403 response is returned', async () => {
+    const contractor = await Contractor.findOne({ contractor: 'fooMill' });
+    const contractorId = contractor._id;
+
+    const updateContractor = {
+      contractor: 'foodMill',
+      contact: 'phil',
+      email: 'phil@gmail.com',
+      phone: '+555 211 122',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+    });
+
+    await request(app)
+      .put(`/api/contractors/${contractorId}`)
+      .send(updateContractor)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a PUT request is made and has an invalid update properties, then a 400 response is returned', async () => {
+    const contractor = await Contractor.findOne({ contractor: 'fooMill' });
+    const contractorId = contractor._id;
+
+    const updateContractor = {
+      contractor: 1234156,
+      contact: 1234,
+      email: 'philmail.com',
+      phone: { test: 'test' },
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Contractor Invalid');
+      expect(res.body.errors[1].msg).toBe('Contact Invalid');
+      expect(res.body.errors[2].msg).toBe('Email invalid');
+      expect(res.body.errors[3].msg).toBe('Phone invalid');
+    };
+
+    await request(app)
+      .put(`/api/contractors/${contractorId}`)
+      .send(updateContractor)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
 });

@@ -33,6 +33,12 @@ const createContractors = asyncHandler(async (req, res) => {
   }
 });
 
+/**
+ * @Desc Get a Contractor details
+ * @Route GET /api/contractors/:id
+ * @Access Private ("read:contractors" permission, employee, Admin)
+ */
+
 const getContractor = asyncHandler(async (req, res) => {
   const contractor = await Contractor.findById(req.params.id);
 
@@ -44,7 +50,35 @@ const getContractor = asyncHandler(async (req, res) => {
   }
 });
 
-const updateContractor = asyncHandler(async (req, res) => {});
+/**
+ * @Desc Update a Contractor details
+ * @Route PUT /api/contractors/:id
+ * @Access Private ("update:contractors" permission, Admin)
+ */
+
+const updateContractor = asyncHandler(async (req, res) => {
+  const { contractor, contact, email, phone } = req.body;
+  const contractorExists = await Contractor.findById(req.params.id);
+
+  if (contractorExists) {
+    contractorExists.contractor = contractor;
+    contractorExists.contact = contact;
+    contractorExists.email = email;
+    contractorExists.phone = phone;
+
+    await contractorExists.save();
+    res.json(contractorExists);
+  } else {
+    res.status(404);
+    throw new Error('Contractor not found');
+  }
+});
+
+/**
+ * @Desc Delete a Contractor
+ * @Route DELETE /api/contractors/:id
+ * @Access Private ("delete:contractors" permission, Admin)
+ */
 
 const deleteContractor = asyncHandler(async (req, res) => {});
 
