@@ -61,6 +61,13 @@ const updateContractor = asyncHandler(async (req, res) => {
   const contractorExists = await Contractor.findById(req.params.id);
 
   if (contractorExists) {
+    const contractorNameExists = await Contractor.findOne({ contractor: contractor });
+
+    if (contractorNameExists) {
+      res.status(409);
+      throw new Error('Contractor already exists');
+    }
+
     contractorExists.contractor = contractor;
     contractorExists.contact = contact;
     contractorExists.email = email;
@@ -80,6 +87,15 @@ const updateContractor = asyncHandler(async (req, res) => {
  * @Access Private ("delete:contractors" permission, Admin)
  */
 
-const deleteContractor = asyncHandler(async (req, res) => {});
+const deleteContractor = asyncHandler(async (req, res) => {
+  const contractor = await Contractor.findById(req.params.id);
+  if (contractor) {
+    contractor.remove();
+    res.json({ message: 'Contractor removed!' });
+  } else {
+    res.status(404);
+    throw new Error('Contractor not found');
+  }
+});
 
 module.exports = { getContractors, createContractors, getContractor, updateContractor, deleteContractor };

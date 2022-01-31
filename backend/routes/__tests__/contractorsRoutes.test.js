@@ -504,4 +504,166 @@ describe('Given we have an "/api/contractors/:id" endpoint', () => {
       .expect(checkBody)
       .expect(400);
   });
+  it('When a PUT request is made and has an invalid "id" parameter, then a 400 response is returned', async () => {
+    const updateContractor = {
+      contractor: 'foodMill',
+      contact: 'phil',
+      email: 'phil@gmail.com',
+      phone: '+555 211 122',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid contractor');
+    };
+
+    await request(app)
+      .put(`/api/contractors/invalidID`)
+      .send(updateContractor)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+
+  it('When a PUT request is made and has an "id" parameter that does not exists, then a 400 response is returned', async () => {
+    const updateContractor = {
+      contractor: 'foodMill',
+      contact: 'phil',
+      email: 'phil@gmail.com',
+      phone: '+555 211 122',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Contractor not found');
+    };
+
+    await request(app)
+      .put(`/api/contractors/61a7c7537f56a812838f9820`)
+      .send(updateContractor)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
+  it('When a PUT request is made and the "contractor" property already exists, then a 409 response is returned', async () => {
+    await Contractor.create(createNewContractor('duplicate', 'foo', 'foo@gmail.com', '1122222'));
+    const contractor = await Contractor.findOne({ contractor: 'fooMill' });
+    const contractorId = contractor._id;
+
+    const updateContractor = {
+      contractor: 'duplicate',
+      contact: 'phil',
+      email: 'phil@gmail.com',
+      phone: '+555 211 122',
+    };
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Contractor already exists');
+    };
+
+    await request(app)
+      .put(`/api/contractors/${contractorId}`)
+      .send(updateContractor)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(409);
+  });
+  it('When a DELETE request is made and is valid and authorized, then a 200 response is returned', async () => {
+    const contractor = await Contractor.findOne({ contractor: 'fooMill' });
+    const contractorId = contractor._id;
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Contractor removed!');
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'delete:contractors',
+    });
+
+    await request(app)
+      .delete(`/api/contractors/${contractorId}`)
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a DELETE request is made and has an invalid token, then a 401 response is returned', async () => {
+    const contractor = await Contractor.findOne({ contractor: 'fooMill' });
+    const contractorId = contractor._id;
+
+    const checkBody = (res) => {
+      expect(res.body.code).toBe('invalid_token');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://{domain}/`,
+      sub: clientId,
+      permissions: 'delete:contractors',
+    });
+
+    await request(app)
+      .delete(`/api/contractors/${contractorId}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(401);
+  });
+  it('When a DELETE request is made and has insufficient permissions, then a 403 response is returned', async () => {
+    const contractor = await Contractor.findOne({ contractor: 'fooMill' });
+    const contractorId = contractor._id;
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBe('Forbidden');
+    };
+
+    const invalidToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+    });
+
+    await request(app)
+      .delete(`/api/contractors/${contractorId}`)
+      .set(`Authorization`, `Bearer ${invalidToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(403);
+  });
+  it('When a DELETE request is made and has an invalid "id" parameter, then a 400 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.errors[0].msg).toBe('Invalid contractor');
+    };
+
+    await request(app)
+      .delete(`/api/contractors/invalidid`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
+  });
+  it('When a DELETE request is made and has an "id" parameter that does not exist, then a 404 response is returned', async () => {
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Contractor not found');
+    };
+
+    await request(app)
+      .delete(`/api/contractors/507f191e810c19729de860ea`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(404);
+  });
 });
