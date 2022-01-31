@@ -36,18 +36,13 @@ const App = () => {
           <Route path="clients/edit/:id" element={<EditClientScreen />} />
           <Route path="clients/create" element={<CreateClientScreen />} />
           <Route path="jobs" element={<JobListScreen />} />
-
           <Route path="job/details/:id" element={<JobDetailsScreen />} />
           <Route path="jobs/create" element={<CreateJobScreen />} />
-
           <Route path="jobparts" element={<JobPartScreen />} />
-
           <Route path="jobparts/edit/:id" element={<EditJobPartScreen />} />
           <Route path="jobparts/create" element={<CreateJobPartScreen />} />
-
           <Route path="employees" element={<EmployeesScreen />} />
           <Route path="employees/edit/:id" element={<EditEmployeeScreen />} />
-
           <Route path="schedule" element={<ScheduleScreen />} />
           <Route path="profile" element={<Profile />} />
           <Route path="reports/timesheets" element={<TimeSheetReportScreen />} />

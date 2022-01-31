@@ -34,8 +34,6 @@ export const EmployeeSidebarData = [
   {
     title: 'Jobs',
     icon: <MdOutlineWorkOutline />,
-    iconClosed: <RiArrowDownSFill />,
-    iconOpened: <RiArrowUpSFill />,
     path: '/jobs',
   },
   {
@@ -67,9 +65,20 @@ export const AdminSidebarData = [
     icon: <MdOutlineEditCalendar />,
   },
   {
-    title: 'Clients',
-    path: '/clients',
+    title: 'Companies',
     icon: <MdBusiness />,
+    iconClosed: <RiArrowDownSFill />,
+    iconOpened: <RiArrowUpSFill />,
+    subNav: [
+      {
+        title: 'Clients',
+        path: '/clients',
+      },
+      {
+        title: 'Contractors',
+        path: '/contractors',
+      },
+    ],
   },
   {
     title: 'Jobs',
