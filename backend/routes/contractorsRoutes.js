@@ -4,8 +4,13 @@ const { readContractorsAuth, createContractorsAuth, updateContractorsAuth, delet
 const router = express.Router();
 
 const validation = require('../middleware/validatorMiddleware');
+const { contractorSchema, contractorParams } = require('../middleware/validators/contractorsValidation');
 
-router.route('/').get(readContractorsAuth, getContractors).post(createContractorsAuth, createContractors);
-router.route('/:id').get(readContractorsAuth, getContractor).put(updateContractorsAuth, updateContractor).delete(deleteContractorsAuth, deleteContractor);
+router.route('/').get(readContractorsAuth, getContractors).post(createContractorsAuth, contractorSchema, validation, createContractors);
+router
+  .route('/:id')
+  .get(readContractorsAuth, contractorParams, validation, getContractor)
+  .put(updateContractorsAuth, contractorParams, contractorSchema, validation, updateContractor)
+  .delete(deleteContractorsAuth, contractorParams, validation, deleteContractor);
 
 module.exports = router;
