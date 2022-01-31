@@ -17,6 +17,7 @@ import styles from './timesheet.module.css';
 
 const TimeSheetScreen = () => {
   const { getAccessTokenSilently, user } = useAuth0();
+  const domain = process.env.REACT_APP_CUSTOM_DOMAIN;
 
   const dispatch = useDispatch();
   const timeSheetEntries = useSelector((state) => state.timeSheet);
@@ -62,7 +63,7 @@ const TimeSheetScreen = () => {
     dispatch(handleSubmit(dayEntries, weekStart, endDate, token, user.sub));
   };
 
-  return user['http://www.dreamsbuilt.co.nz/roles'].includes('Employee') ? (
+  return user[`${domain}/roles`].includes('Employee') ? (
     <>
       <ToastContainer theme="colored" />
       {loading ? (
