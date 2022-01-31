@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { createUserEntry, getAllUsers, deleteArchive, getUserEntries, updateAUsersEntry, deleteAUsersEntry } = require('../controllers/timeSheetController');
-const { readTimesheetAuth, createTimesheetAuth, readAllUserTimesheetAuth, createAllUserTimesheetAuth, updateAllUserTimesheetAuth, deleteAllUserTimesheetAuth } = require('../middleware/authMiddleware');
+const { readTimesheetAuth, createTimesheetAuth, readAllUserTimesheetAuth, updateAllUserTimesheetAuth, deleteAllUserTimesheetAuth } = require('../middleware/authMiddleware');
 const validation = require('../middleware/validatorMiddleware');
 const { entryParams, timesheetSchema, userParams, weekStartQuery, patchTimesheetSchema } = require('../middleware/validators/timesheetValidation');
 

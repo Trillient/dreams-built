@@ -1,8 +1,8 @@
 const express = require('express');
-const { getContractors, createContractors, getContractor, updateContractor, deleteContractor } = require('../controllers/contractorsController');
-const { readContractorsAuth, createContractorsAuth, updateContractorsAuth, deleteContractorsAuth } = require('../middleware/authMiddleware');
 const router = express.Router();
 
+const { getContractors, createContractors, getContractor, updateContractor, deleteContractor } = require('../controllers/contractorsController');
+const { readContractorsAuth, createContractorsAuth, updateContractorsAuth, deleteContractorsAuth } = require('../middleware/authMiddleware');
 const validation = require('../middleware/validatorMiddleware');
 const { contractorSchema, contractorParams } = require('../middleware/validators/contractorsValidation');
 
