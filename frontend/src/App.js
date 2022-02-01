@@ -2,12 +2,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
 import './bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Layout from './components/layout/Layout';
 
 import HomeScreen from './screens/homeScreen/HomeScreen';
 import DashboardScreen from './screens/dashboardScreen/DashboardScreen';
-import TimeSheetScreen from './screens/timeSheetScreen/TimeSheetScreen';
+import TimesheetScreen from './screens/timesheetScreen/TimesheetScreen';
 import ScheduleScreen from './screens/scheduleScreen/scheduleScreen';
 import JobListScreen from './screens/jobListScreen/JobListScreen';
 import JobDetailsScreen from './screens/jobDetailsScreen/JobDetailsScreen';
@@ -31,7 +32,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={isAuthenticated ? <DashboardScreen /> : <HomeScreen />} />
           <Route path="dashboard" element={<DashboardScreen />} />
-          <Route path="timesheet" element={<TimeSheetScreen />} />
+          <Route path="timesheet" element={<TimesheetScreen />} />
           <Route path="clients" element={<ClientListScreen />} />
           <Route path="clients/edit/:id" element={<EditClientScreen />} />
           <Route path="clients/create" element={<CreateClientScreen />} />

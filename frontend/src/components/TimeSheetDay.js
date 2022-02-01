@@ -4,21 +4,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Card, Table } from 'react-bootstrap';
 import { FaTrash } from 'react-icons/fa';
 
-import { createEntry, deleteEntry } from '../actions/timeSheetActions';
+import { createEntry, deleteEntry } from '../actions/timesheetActions';
 import TimeSheetEntry from './TimeSheetEntry';
 
-import styles from '../screens/timeSheetScreen/timesheet.module.css';
+import styles from '../screens/timesheetScreen/timesheet.module.css';
 
-const TimeSheetDay = ({ day, date }) => {
+const TimeSheetDay = ({ day, date, ordinal, month }) => {
   const dispatch = useDispatch();
 
   const [inputList, setInputList] = useState([]);
 
-  const timeSheetEntries = useSelector((state) => state.timeSheet);
-  const { dayEntries } = timeSheetEntries;
+  const timesheetEntries = useSelector((state) => state.timesheet);
+  const { dayEntries } = timesheetEntries;
 
   useEffect(() => {
-    setInputList(dayEntries.filter((e) => e.day === day));
+    setInputList(dayEntries.filter((entry) => entry.day === day));
   }, [dayEntries, day]);
 
   const onAddBtnClick = () => {
@@ -31,16 +31,20 @@ const TimeSheetDay = ({ day, date }) => {
   const dailyTotal = inputList.filter(({ jobTime }) => jobTime).reduce((total, jobTime) => total + parseFloat(jobTime.jobTime), 0);
 
   return (
-    <Card className="mt-5 mb-5 shadow">
+    <Card className="mt-3 mb-3 shadow">
       <Card.Body>
-        <h2 className="text-center mb-4">
-          {day} - {date}
-        </h2>
-
-        {inputList.length === 0 ? (
-          []
-        ) : (
-          <Table hover bordered responsive className={(styles['timesheet-grid-container'], styles['table-sm'])}>
+        <div className={styles.header}>
+          <div className={styles['header-1']}></div>
+          <h2 className={styles['header-2']}>
+            {day} - {date}
+            <sup>{ordinal}</sup> {month}
+          </h2>
+          <Button className={styles['header-3']} onClick={() => onAddBtnClick()}>
+            +
+          </Button>
+        </div>
+        {inputList.length > 0 && (
+          <Table hover bordered responsive className={styles['timesheet-grid-container']}>
             <thead className="display-none_mobile table-dark">
               <tr>
                 <th>Start Time</th>
@@ -56,7 +60,7 @@ const TimeSheetDay = ({ day, date }) => {
               {inputList.map(({ entryId }) => (
                 <tr className={styles['timesheet-grid']} key={entryId}>
                   <TimeSheetEntry entryId={entryId} day={day} />
-                  <td>
+                  <td className={styles['table-coloumn-delete']}>
                     <Button className="btn-main" onClick={() => onDeleteClick(entryId)}>
                       <FaTrash />
                     </Button>
@@ -75,10 +79,6 @@ const TimeSheetDay = ({ day, date }) => {
             </tfoot>
           </Table>
         )}
-
-        <Button className="btn-add" onClick={() => onAddBtnClick()}>
-          +
-        </Button>
       </Card.Body>
     </Card>
   );

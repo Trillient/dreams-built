@@ -5,51 +5,67 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import { DateTime } from 'luxon';
 
-import { getTimeSheet, handleSubmit } from '../../actions/timeSheetActions';
+import { getTimesheet, handleSubmit } from '../../actions/timesheetActions';
 import { getJobList } from '../../actions/jobActions';
+
 import TimeSheetDay from '../../components/TimeSheetDay';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 import CustomMenu from '../../components/CustomMenu';
 
-import 'react-toastify/dist/ReactToastify.css';
 import styles from './timesheet.module.css';
 
-const TimeSheetScreen = () => {
+const TimesheetScreen = () => {
   const { getAccessTokenSilently, user } = useAuth0();
-  const domain = process.env.REACT_APP_CUSTOM_DOMAIN;
 
   const dispatch = useDispatch();
-  const timeSheetEntries = useSelector((state) => state.timeSheet);
-  const { loading, error, dayEntries } = timeSheetEntries;
 
-  const jobsList = useSelector((state) => state.jobsList);
-  const { jobList } = jobsList;
+  const timesheetEntries = useSelector((state) => state.timesheet);
+  const { loading, error, dayEntries } = timesheetEntries;
 
   const startWeekInit = DateTime.now().startOf('week');
-  const endWeekInit = DateTime.now().endOf('week');
+  const weekEndInit = DateTime.now().endOf('week');
 
   const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
-  const [endDate, setEndDate] = useState(endWeekInit.toFormat('dd/MM/yyyy'));
+  const [weekEnd, setWeekEnd] = useState(weekEndInit.toFormat('dd/MM/yyyy'));
 
-  let timeSheetPeriods = [{ weekStart: startWeekInit.toFormat('dd/MM/yyyy'), endDate: endWeekInit.toFormat('dd/MM/yyyy') }];
-  for (let i = 1; i < 5; i++) {
-    timeSheetPeriods.push({ weekStart: startWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy'), endDate: endWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy') });
+  let timesheetPeriods = [{ weekStart: startWeekInit.toFormat('dd/MM/yyyy'), weekEnd: weekEndInit.toFormat('dd/MM/yyyy') }];
+  for (let i = 1; i < 4; i++) {
+    timesheetPeriods = [
+      ...timesheetPeriods,
+      {
+        weekStart: startWeekInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy'),
+        weekEnd: weekEndInit.minus({ days: i * 7 }).toFormat('dd/MM/yyyy'),
+      },
+    ];
   }
+
+  const ordinal = (number) => {
+    const superScript = ['th', 'st', 'nd', 'rd'];
+    return superScript[(number - 20) % 10] || superScript[number] || superScript[0];
+  };
 
   let weekArray = [];
   for (let i = 0; i < 7; i++) {
-    weekArray.push({ day: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('EEEE'), date: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('d MMMM') });
+    const day = DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('d');
+
+    weekArray = [
+      ...weekArray,
+      {
+        day: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('EEEE'),
+        date: day,
+        ordinal: ordinal(day),
+        month: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('MMMM'),
+      },
+    ];
   }
 
   useEffect(() => {
     (async () => {
       try {
         const token = await getAccessTokenSilently();
-        if (jobList.length < 1) {
-          dispatch(getJobList(token));
-        }
-        dispatch(getTimeSheet(token, user.sub, weekStart));
+        dispatch(getJobList(token));
+        dispatch(getTimesheet(token, user.sub, weekStart));
       } catch (error) {
         console.error(error);
       }
@@ -60,10 +76,10 @@ const TimeSheetScreen = () => {
   const submitHandler = async (event) => {
     event.preventDefault();
     const token = await getAccessTokenSilently();
-    dispatch(handleSubmit(dayEntries, weekStart, endDate, token, user.sub));
+    dispatch(handleSubmit(dayEntries, weekStart, weekEnd, token, user.sub));
   };
 
-  return user[`${domain}/roles`].includes('Employee') ? (
+  return (
     <>
       <ToastContainer theme="colored" />
       {loading ? (
@@ -71,49 +87,44 @@ const TimeSheetScreen = () => {
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
-        <div className="background">
-          <Form onSubmit={submitHandler}>
-            <div className={styles['grid-2']}>
-              <Dropdown>
-                <Dropdown.Toggle id="dropdown-button" variant="secondary">
-                  Week: {weekStart} - {endDate}
-                </Dropdown.Toggle>
+        <Form onSubmit={submitHandler} className="container">
+          <div className={styles['grid-2']}>
+            <Dropdown>
+              <Dropdown.Toggle id="dropdown-button" variant="secondary">
+                Week: {weekStart} - {weekEnd}
+              </Dropdown.Toggle>
+              <Dropdown.Menu as={CustomMenu} style={{ boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' }}>
+                {timesheetPeriods.map((date) => (
+                  <Dropdown.Item
+                    eventKey={date.weekEnd}
+                    key={date.weekStart}
+                    onClick={() => {
+                      setWeekStart(date.weekStart);
+                      setWeekEnd(date.weekEnd);
+                    }}
+                  >
+                    {date.weekStart} - {date.weekEnd}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
 
-                <Dropdown.Menu as={CustomMenu}>
-                  {timeSheetPeriods.map((date) => (
-                    <Dropdown.Item
-                      eventKey={date.endDate}
-                      key={date.weekStart}
-                      onClick={() => {
-                        setWeekStart(date.weekStart);
-                        setEndDate(date.endDate);
-                      }}
-                    >
-                      {date.weekStart} - {date.endDate}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-
-              <Button variant="primary" type="submit" className={styles['btn-time-save']}>
-                Save
-              </Button>
-            </div>
-            {weekArray.map((day) => (
-              <TimeSheetDay key={day.date} day={day.day} date={day.date} />
-            ))}
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" className={styles['btn-time-save']}>
               Save
             </Button>
-          </Form>
-        </div>
+          </div>
+          {weekArray.map((day) => (
+            <TimeSheetDay key={day.date} day={day.day} date={day.date} ordinal={day.ordinal} month={day.month} />
+          ))}
+          <Button variant="primary" type="submit">
+            Save
+          </Button>
+        </Form>
       )}
     </>
-  ) : (
-    <Message variant="danger">You are not Authorized to view this page, please contact your administrator.</Message>
   );
 };
 
-export default withAuthenticationRequired(TimeSheetScreen, {
+export default withAuthenticationRequired(TimesheetScreen, {
   onRedirecting: () => <Loader />,
 });

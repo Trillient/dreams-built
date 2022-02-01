@@ -14,7 +14,7 @@ const InfoBlock = ({ icon, iconText, title, text, link }) => {
         <div className={styles['body-title']}>{title}</div>
         {text}
       </Card.Body>
-      <hr style={{ width: '0.5rem', color: 'gray', width: '100%' }} />
+      <hr style={{ color: 'gray', width: '100%' }} />
       <Card.Footer className={styles.footer}>
         <LinkContainer to={link.link}>
           <Button className={styles.button}>

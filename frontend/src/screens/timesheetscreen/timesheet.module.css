@@ -2,14 +2,66 @@
   margin: 1rem 0 -1.5rem auto;
 }
 
+.grid-2 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+.btn-time-save {
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+}
+.header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+  align-items: baseline;
+  align-content: stretch;
+}
+
+.header-1 {
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+}
+
+.header-2 {
+  display: block;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.header-3 {
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+  margin-right: 0.7rem;
+}
+
+.table-coloumn-delete {
+  max-width: 100%;
+}
+
 @media only screen and (min-width: 50rem) {
   .grid-2 {
-    display: grid;
     grid-template-columns: 1fr 1fr;
   }
-  .btn-time-save {
-    margin-top: 0rem;
-    margin-bottom: 0rem;
+  .heading-h2 {
+    font-size: 2rem;
   }
 }
 
@@ -17,12 +69,18 @@
   .timesheet-grid-container {
     display: grid;
     grid-template-columns: auto min-content;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .timesheet-grid {
     display: grid;
     grid-template-rows: repeat(4, auto);
-    margin: 1rem 0;
+    margin: 0.5rem 0;
+  }
+}
+
+@media only screen and (min-width: 61.9rem) {
+  .table-coloumn-delete {
+    width: 2rem;
   }
 }

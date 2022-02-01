@@ -1,8 +1,8 @@
-import * as actions from '../constants/timeSheetConstants';
+import * as actions from '../constants/timesheetConstants';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-export const getTimeSheet = (token, userId, weekStart) => async (dispatch) => {
+export const getTimesheet = (token, userId, weekStart) => async (dispatch) => {
   try {
     dispatch({
       type: actions.TIMESHEET_REQUEST,

@@ -26,20 +26,6 @@ body {
   box-shadow: none;
 }
 
-.btn-main {
-  width: 100%;
-}
-
-.btn-add {
-  display: block;
-  margin: 0.5rem auto 0.5rem;
-}
-
-.dropdown-menu {
-  max-height: 15rem;
-  overflow-y: auto;
-}
-
 .right-align {
   text-align: right;
 }
@@ -62,19 +48,5 @@ body {
     display: block;
     width: 100%;
     margin: auto;
-  }
-}
-
-@media only screen and (max-width: 50rem) {
-  .timesheet-grid-container {
-    display: grid;
-    grid-template-columns: auto min-content;
-    gap: 1rem;
-  }
-
-  .timesheet-grid {
-    display: grid;
-    grid-template-rows: repeat(4, auto);
-    margin: 1rem 0;
   }
 }

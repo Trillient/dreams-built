@@ -1,14 +1,14 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { entryArrayReducer, validateReducer } from './reducers/timeSheetReducer';
+import { entryArrayReducer, validateReducer } from './reducers/timesheetReducer';
 import { jobDueDatesReducer, getJobPartsReducer, getJobsReducer, jobPartReducer, jobReducer, getDueDatesReducer } from './reducers/jobReducer';
 import { clientReducer, getClientsReducer } from './reducers/clientReducer';
 import { getEmployeesReducer, userReducer } from './reducers/employeeReduer';
 import { reportReducer } from './reducers/reportsReducer';
 
 const reducer = combineReducers({
-  timeSheet: entryArrayReducer,
+  timesheet: entryArrayReducer,
   validatedTimesheet: validateReducer,
   jobsList: getJobsReducer,
   job: jobReducer,

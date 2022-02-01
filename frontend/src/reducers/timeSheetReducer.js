@@ -1,4 +1,4 @@
-import * as actions from '../constants/timeSheetConstants';
+import * as actions from '../constants/timesheetConstants';
 
 export const entryArrayReducer = (state = { dayEntries: [], error: false }, action) => {
   switch (action.type) {

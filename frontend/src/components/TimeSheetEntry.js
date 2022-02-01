@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { updateEntry } from '../actions/timeSheetActions';
+import { updateEntry } from '../actions/timesheetActions';
 
-import styles from '../screens/timeSheetScreen/timesheet.module.css';
+import styles from '../screens/timesheetScreen/timesheet.module.css';
 
 const TimeSheetEntry = ({ entryId, day }) => {
   const dispatch = useDispatch();
 
-  const timeSheetEntries = useSelector((state) => state.timeSheet);
-  const { dayEntries } = timeSheetEntries;
+  const timesheetEntries = useSelector((state) => state.timesheet);
+  const { dayEntries } = timesheetEntries;
   const jobsList = useSelector((state) => state.jobsList);
   const { jobList } = jobsList;
   const entry = dayEntries.filter((entry) => entry.entryId === entryId);
