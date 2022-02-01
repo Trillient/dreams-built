@@ -13,6 +13,7 @@ const TimesheetEntry = ({ entryId, day }) => {
   const { dayEntries } = timesheetEntries;
   const jobsList = useSelector((state) => state.jobsList);
   const { jobList } = jobsList;
+
   const entry = dayEntries.filter((entry) => entry.entryId === entryId);
 
   if (entry.length > 1) {

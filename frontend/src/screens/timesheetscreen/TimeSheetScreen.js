@@ -88,7 +88,7 @@ const TimesheetScreen = () => {
         <Message variant="danger">{error}</Message>
       ) : (
         <Form onSubmit={submitHandler} className="container">
-          <div className={styles['grid-2']}>
+          <div className={styles['grid-card-top']}>
             <Dropdown>
               <Dropdown.Toggle id="dropdown-button" variant="secondary">
                 Week: {weekStart} - {weekEnd}

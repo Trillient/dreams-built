@@ -32,21 +32,19 @@ const TimesheetDay = ({ day, date, ordinal, month }) => {
 
   return (
     <Card className="mt-3 mb-3 shadow">
-      <Card.Body>
+      <Card.Header>
         <div className={styles.header}>
-          <div className={styles['header-1']}></div>
-          <h2 className={styles['header-2']}>
-            {day}
-            <span className={styles.date}>
-              {' '}
-              - {date}
-              <sup>{ordinal}</sup> {month}
-            </span>
+          <div className={styles.block}></div>
+          <h2 className={styles.title}>
+            {day} - {date}
+            <sup>{ordinal}</sup> {month}
           </h2>
-          <Button className={styles['header-3']} onClick={() => onAddBtnClick()}>
+          <Button className={styles.controls} onClick={() => onAddBtnClick()}>
             +
           </Button>
         </div>
+      </Card.Header>
+      <Card.Body>
         {inputList.length > 0 && (
           <Table hover bordered responsive className={styles['timesheet-grid-container']}>
             <thead className="display-none_mobile table-dark">
@@ -72,8 +70,8 @@ const TimesheetDay = ({ day, date, ordinal, month }) => {
                 </tr>
               ))}
             </tbody>
-            <tfoot>
-              <tr className="display-none_mobile">
+            <tfoot className="display-none_mobile">
+              <tr>
                 <th colSpan="3" className="right-align">
                   Total
                 </th>
