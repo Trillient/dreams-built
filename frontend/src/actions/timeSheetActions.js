@@ -47,10 +47,10 @@ export const deleteEntry = (entryId) => (dispatch) => {
   });
 };
 
-export const updateEntry = (startTime, endTime, jobNumber, entryId, day, time) => (dispatch) => {
+export const updateEntry = (startTime, endTime, job, entryId, day, time) => (dispatch) => {
   dispatch({
     type: actions.TIMESHEET_UPDATE_ENTRY,
-    payload: { entryId: entryId, day: day, startTime: startTime, endTime: endTime, jobNumber: jobNumber, updated: Date().toLocaleString(), jobTime: time },
+    payload: { entryId: entryId, day: day, startTime: startTime, endTime: endTime, job: job, updated: Date().toLocaleString(), jobTime: time },
   });
 };
 
@@ -65,21 +65,21 @@ export const handleSubmit = (data, startDate, endDate, token, userId) => async (
     });
 
     data.map((e) => {
-      if (!e.startTime && !e.endTime && !e.jobNumber) {
+      if (!e.startTime && !e.endTime && !e.job) {
         return e;
       }
       if (e.jobTime <= 0 || isNaN(e.jobTime)) {
         toast.error(`Check the times entered on ${e.day}!`);
         throw new Error('Incorrect Time Entered!');
       }
-      if (!e.jobNumber || e.jobNumber < 21000) {
-        toast.error(`Check the Job Numers for ${e.day}!`);
-        throw new Error('Job Numer Required!');
+      if (!e.job) {
+        toast.error(`Check the Job Numbers for ${e.day}!`);
+        throw new Error('Job Number Required!');
       }
       return e;
     });
 
-    const finalisedData = data.filter((e) => e.startTime !== '' && e.endTime !== '' && e.jobNumber !== '');
+    const finalisedData = data.filter((e) => e.startTime !== '' && e.endTime !== '' && e.job !== '');
 
     const config = {
       headers: {

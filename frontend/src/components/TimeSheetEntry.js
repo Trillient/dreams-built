@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import Select from 'react-select';
 
 import { updateEntry } from '../actions/timesheetActions';
-
-import styles from '../screens/timesheetScreen/timesheet.module.css';
 
 const TimesheetEntry = ({ entryId, day }) => {
   const dispatch = useDispatch();
@@ -22,22 +21,19 @@ const TimesheetEntry = ({ entryId, day }) => {
 
   const initStartTime = entry.length === 1 ? entry[0].startTime : '';
   const initEndTime = entry.length === 1 ? entry[0].endTime : '';
-  const initjobNumber = entry.length === 1 ? entry[0].jobNumber : '';
+  const initjobNumber = entry.length === 1 ? entry[0].job : '';
 
   const [startTime, setStartTime] = useState(initStartTime || '');
   const [endTime, setEndTime] = useState(initEndTime || '');
-  const [jobNumber, setjobNumber] = useState(initjobNumber || '');
+  const [job, setJob] = useState(initjobNumber || '');
 
-  const initjobAddress = jobList ? jobList.filter((job) => job.jobNumber === jobNumber).map((job) => job.address) : '';
-  const [jobAddress, setJobAddress] = useState(initjobAddress || '');
+  const defaultLabel = job ? { label: `${job.jobNumber} - ${job.address}` } : '';
 
   useEffect(() => {
-    dispatch(updateEntry(startTime, endTime, jobNumber, entryId, day, time));
-    if (jobList) {
-      setJobAddress(jobList.filter((job) => job.jobNumber === parseInt(jobNumber)).map((job) => job.address));
-    }
+    dispatch(updateEntry(startTime, endTime, job, entryId, day, time));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startTime, endTime, jobNumber]);
+  }, [startTime, endTime, job]);
 
   let time;
   if (startTime && endTime) {
@@ -77,26 +73,18 @@ const TimesheetEntry = ({ entryId, day }) => {
       <td>
         <Form.Group controlId={`job - ${entryId}`}>
           <Form.Label className="display-none_lg-screen">Job Number: </Form.Label>
-          <Form.Control
-            className={styles.select}
-            as="select"
-            value={jobNumber}
-            onChange={(e) => {
-              setjobNumber(e.target.value);
-              setJobAddress(jobList.filter((job) => job.jobNumber === parseInt(e.target.value)).map((job) => job.address));
-            }}
-          >
-            <option value={jobNumber}>
-              {jobNumber} - {jobAddress}
-            </option>
-            <option disabled>------------------------</option>
-            {jobList &&
-              jobList.map((job) => (
-                <option value={job.jobNumber} key={job._id}>
-                  {job.jobNumber} - {job.address}
-                </option>
-              ))}
-          </Form.Control>
+          <Select
+            menuPosition={'fixed'}
+            isClearable="true"
+            defaultValue={defaultLabel}
+            onChange={setJob}
+            options={
+              jobList &&
+              jobList.map((option) => {
+                return { ...option, label: `${option.jobNumber} - ${option.address}`, value: option._id };
+              })
+            }
+          />
         </Form.Group>
       </td>
       <td className="right-align">

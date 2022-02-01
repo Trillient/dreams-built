@@ -30,7 +30,7 @@ const timesheetSchema = [
       value.split(':');
       return Boolean(24 > parseFloat(parseInt(value[0], 10) + parseInt(value[1], 10) / 60));
     }),
-  body('entries.*.jobNumber', 'Job number invalid, must be a positive integer').exists().isInt({ min: 0 }),
+  body('entries.*.job', 'Job number invalid').exists(),
   body('entries.*.jobTime', 'Job time invalid').exists().isFloat({ min: 0, max: 24 }),
   body('weekStart', 'Week Start value invalid (dd/MM/yyyy)')
     .exists()

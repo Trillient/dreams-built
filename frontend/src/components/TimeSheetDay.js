@@ -63,7 +63,7 @@ const TimesheetDay = ({ day, date, ordinal, month }) => {
                 <tr className={styles['timesheet-grid']} key={entryId}>
                   <TimesheetEntry entryId={entryId} day={day} />
                   <td className={styles['table-coloumn-delete']}>
-                    <Button className="btn-main" onClick={() => onDeleteClick(entryId)}>
+                    <Button variant="danger" className="btn-main" onClick={() => onDeleteClick(entryId)}>
                       <FaTrash />
                     </Button>
                   </td>

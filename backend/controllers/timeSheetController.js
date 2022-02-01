@@ -15,7 +15,7 @@ const getUserEntries = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ userId: user });
 
   if (userExists) {
-    const entries = await TimesheetEntry.find({ weekStart: weekStart, userId: user, isArchive: false });
+    const entries = await TimesheetEntry.find({ weekStart: weekStart, userId: user, isArchive: false }).populate('job');
 
     res.json({ weekStart: weekStart, entries: entries });
   } else {
@@ -33,6 +33,8 @@ const getUserEntries = asyncHandler(async (req, res) => {
 const createUserEntry = asyncHandler(async (req, res) => {
   const { weekStart, weekEnd, entries } = req.body;
 
+  console.log(entries);
+
   const user = await User.findOne({ userId: req.params.id });
 
   if (!user) {
@@ -49,13 +51,14 @@ const createUserEntry = asyncHandler(async (req, res) => {
   const data = await entries.map((entry) => {
     TimesheetEntry.create({
       user: user._id,
+      job: entry.job._id,
       userId: req.params.id,
       entryId: entry.entryId,
       day: entry.day,
       date: entry.date,
       startTime: entry.startTime,
       endTime: entry.endTime,
-      jobNumber: entry.jobNumber,
+      jobNumber: entry.job.jobNumber,
       jobTime: entry.jobTime,
       weekStart: weekStart,
       weekEnd: weekEnd,
@@ -82,7 +85,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
  * @Route PATCH /api/timesheet/admin/users/entry/:id
  * @Access Private - ("admin_update:timesheet", Admin)
  */
-
+//TODO - update to handle job model addition
 const updateAUsersEntry = asyncHandler(async (req, res) => {
   const { startTime, endTime, jobNumber, jobTime } = req.body;
 

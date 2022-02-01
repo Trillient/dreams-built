@@ -7,6 +7,11 @@ const timesheetEntrySchema = mongoose.Schema(
       required: true,
       ref: 'User',
     },
+    job: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'JobDetails',
+    },
     userId: { type: String, required: true },
     entryId: { type: String, required: true },
     day: { type: String, required: true },
