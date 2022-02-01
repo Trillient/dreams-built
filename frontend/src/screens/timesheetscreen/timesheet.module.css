@@ -43,7 +43,7 @@
 }
 
 .header-3 {
-  display: block;
+  display: none;
   flex-grow: 0;
   flex-shrink: 1;
   flex-basis: auto;
@@ -52,8 +52,23 @@
   margin-right: 0.7rem;
 }
 
+.btn-sml-screen-btm {
+  display: block;
+  margin: 0 auto;
+}
+
 .table-coloumn-delete {
   max-width: 100%;
+}
+
+.date {
+  display: none;
+}
+
+@media only screen and (min-width: 30rem) {
+  .date {
+    display: unset;
+  }
 }
 
 @media only screen and (min-width: 50rem) {
@@ -62,6 +77,12 @@
   }
   .heading-h2 {
     font-size: 2rem;
+  }
+  .header-3 {
+    display: block;
+  }
+  .btn-sml-screen-btm {
+    display: none;
   }
 }
 

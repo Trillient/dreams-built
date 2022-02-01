@@ -5,11 +5,11 @@ import { Button, Card, Table } from 'react-bootstrap';
 import { FaTrash } from 'react-icons/fa';
 
 import { createEntry, deleteEntry } from '../actions/timesheetActions';
-import TimeSheetEntry from './TimeSheetEntry';
+import TimesheetEntry from './TimesheetEntry';
 
 import styles from '../screens/timesheetScreen/timesheet.module.css';
 
-const TimeSheetDay = ({ day, date, ordinal, month }) => {
+const TimesheetDay = ({ day, date, ordinal, month }) => {
   const dispatch = useDispatch();
 
   const [inputList, setInputList] = useState([]);
@@ -36,8 +36,12 @@ const TimeSheetDay = ({ day, date, ordinal, month }) => {
         <div className={styles.header}>
           <div className={styles['header-1']}></div>
           <h2 className={styles['header-2']}>
-            {day} - {date}
-            <sup>{ordinal}</sup> {month}
+            {day}
+            <span className={styles.date}>
+              {' '}
+              - {date}
+              <sup>{ordinal}</sup> {month}
+            </span>
           </h2>
           <Button className={styles['header-3']} onClick={() => onAddBtnClick()}>
             +
@@ -59,7 +63,7 @@ const TimeSheetDay = ({ day, date, ordinal, month }) => {
             <tbody>
               {inputList.map(({ entryId }) => (
                 <tr className={styles['timesheet-grid']} key={entryId}>
-                  <TimeSheetEntry entryId={entryId} day={day} />
+                  <TimesheetEntry entryId={entryId} day={day} />
                   <td className={styles['table-coloumn-delete']}>
                     <Button className="btn-main" onClick={() => onDeleteClick(entryId)}>
                       <FaTrash />
@@ -79,9 +83,12 @@ const TimeSheetDay = ({ day, date, ordinal, month }) => {
             </tfoot>
           </Table>
         )}
+        <Button className={styles['btn-sml-screen-btm']} onClick={() => onAddBtnClick()}>
+          +
+        </Button>
       </Card.Body>
     </Card>
   );
 };
 
-export default TimeSheetDay;
+export default TimesheetDay;

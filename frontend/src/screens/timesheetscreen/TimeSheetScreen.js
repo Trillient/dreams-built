@@ -8,7 +8,7 @@ import { DateTime } from 'luxon';
 import { getTimesheet, handleSubmit } from '../../actions/timesheetActions';
 import { getJobList } from '../../actions/jobActions';
 
-import TimeSheetDay from '../../components/TimeSheetDay';
+import TimesheetDay from '../../components/TimesheetDay';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 import CustomMenu from '../../components/CustomMenu';
@@ -108,13 +108,12 @@ const TimesheetScreen = () => {
                 ))}
               </Dropdown.Menu>
             </Dropdown>
-
             <Button variant="primary" type="submit" className={styles['btn-time-save']}>
               Save
             </Button>
           </div>
           {weekArray.map((day) => (
-            <TimeSheetDay key={day.date} day={day.day} date={day.date} ordinal={day.ordinal} month={day.month} />
+            <TimesheetDay key={day.date} day={day.day} date={day.date} ordinal={day.ordinal} month={day.month} />
           ))}
           <Button variant="primary" type="submit">
             Save

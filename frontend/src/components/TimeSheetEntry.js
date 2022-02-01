@@ -6,7 +6,7 @@ import { updateEntry } from '../actions/timesheetActions';
 
 import styles from '../screens/timesheetScreen/timesheet.module.css';
 
-const TimeSheetEntry = ({ entryId, day }) => {
+const TimesheetEntry = ({ entryId, day }) => {
   const dispatch = useDispatch();
 
   const timesheetEntries = useSelector((state) => state.timesheet);
@@ -105,4 +105,4 @@ const TimeSheetEntry = ({ entryId, day }) => {
   );
 };
 
-export default TimeSheetEntry;
+export default TimesheetEntry;
