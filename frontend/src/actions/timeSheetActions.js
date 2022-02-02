@@ -54,7 +54,14 @@ export const updateEntry = (startTime, endTime, job, entryId, day, time) => (dis
   });
 };
 
-export const handleSubmit = (data, startDate, endDate, token, userId) => async (dispatch) => {
+export const updateComments = (day, comments) => (dispatch) => {
+  dispatch({
+    type: actions.TIMESHEET_UPDATE_COMMENTS,
+    payload: { day: day, comments: comments },
+  });
+};
+
+export const handleSubmit = (data, startDate, endDate, token, userId, comments) => async (dispatch) => {
   try {
     dispatch({
       type: actions.TIMESHEET_SUBMIT_REQUEST,
@@ -80,6 +87,7 @@ export const handleSubmit = (data, startDate, endDate, token, userId) => async (
     });
 
     const finalisedData = data.filter((e) => e.startTime !== '' && e.endTime !== '' && e.job !== '');
+    const finalisedComments = comments.filter((comment) => comment.comments !== '');
 
     const config = {
       headers: {
@@ -87,7 +95,7 @@ export const handleSubmit = (data, startDate, endDate, token, userId) => async (
         Authorization: `Bearer ${token}`,
       },
     };
-    await axios.post(`${process.env.REACT_APP_API_URL}/timesheet/user/${userId}`, { weekStart: startDate, weekEnd: endDate, entries: finalisedData }, config).catch(function (error) {
+    await axios.post(`${process.env.REACT_APP_API_URL}/timesheet/user/${userId}`, { weekStart: startDate, weekEnd: endDate, entries: finalisedData, comments: finalisedComments }, config).catch(function (error) {
       dispatch({
         type: actions.TIMESHEET_SUBMIT_FAIL,
         payload: error.response && error.response.data.message ? error.response.data.message : error.message,

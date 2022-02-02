@@ -2,20 +2,22 @@ import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Card, Table } from 'react-bootstrap';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaCommentDots } from 'react-icons/fa';
 
 import { createEntry, deleteEntry } from '../actions/timesheetActions';
 import TimesheetEntry from './TimesheetEntry';
 
 import styles from '../screens/timesheetScreen/timesheet.module.css';
+import TimesheetCommentModal from './modals/TimesheetCommentModal';
 
 const TimesheetDay = ({ day, date, ordinal, month }) => {
   const dispatch = useDispatch();
 
   const [inputList, setInputList] = useState([]);
+  const [modalShow, setModalShow] = useState(false);
 
   const timesheetEntries = useSelector((state) => state.timesheet);
-  const { dayEntries } = timesheetEntries;
+  const { dayEntries, comments } = timesheetEntries;
 
   useEffect(() => {
     setInputList(dayEntries.filter((entry) => entry.day === day));
@@ -29,12 +31,17 @@ const TimesheetDay = ({ day, date, ordinal, month }) => {
     dispatch(deleteEntry(entryId));
   };
   const dailyTotal = inputList.filter(({ jobTime }) => jobTime).reduce((total, jobTime) => total + parseFloat(jobTime.jobTime), 0);
+  const commentExists = comments.filter((comment) => comment.day === day && comment.comments !== '').length > 0;
 
   return (
     <Card className="mt-3 mb-3 shadow">
       <Card.Header>
         <div className={styles.header}>
-          <div className={styles.block}></div>
+          <div className={styles.block}>
+            <Button variant={commentExists ? 'success' : 'primary'} onClick={() => setModalShow(true)}>
+              <FaCommentDots />
+            </Button>
+          </div>
           <h2 className={styles.title}>
             {day} - {date}
             <sup>{ordinal}</sup> {month}
@@ -85,6 +92,7 @@ const TimesheetDay = ({ day, date, ordinal, month }) => {
           +
         </Button>
       </Card.Body>
+      <TimesheetCommentModal show={modalShow} day={day} date={date} ordinal={ordinal} month={month} setModalShow={setModalShow} onHide={() => setModalShow(false)} />
     </Card>
   );
 };

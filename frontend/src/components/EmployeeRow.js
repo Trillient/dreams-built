@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { FiEdit } from 'react-icons/fi';
-import CenteredModal from './CenteredModal';
+import TimesheetEntryModal from './modals/TimesheetEntryModal';
 
 const EmployeeRow = ({ entry }) => {
   const [modalShow, setModalShow] = useState(false);
@@ -18,7 +18,7 @@ const EmployeeRow = ({ entry }) => {
           </Button>
         </td>
       </tr>
-      <CenteredModal show={modalShow} entry={entry} setModalShow={setModalShow} onHide={() => setModalShow(false)} />
+      <TimesheetEntryModal show={modalShow} entry={entry} setModalShow={setModalShow} onHide={() => setModalShow(false)} />
     </>
   );
 };

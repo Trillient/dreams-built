@@ -33,8 +33,6 @@ const getUserEntries = asyncHandler(async (req, res) => {
 const createUserEntry = asyncHandler(async (req, res) => {
   const { weekStart, weekEnd, entries } = req.body;
 
-  console.log(entries);
-
   const user = await User.findOne({ userId: req.params.id });
 
   if (!user) {
@@ -42,11 +40,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
     throw new Error('Invalid user');
   }
 
-  const archive = await TimesheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: false });
-
-  const totalEntriesArchieved = await TimesheetEntry.find({ weekStart: weekStart, userId: req.params.id, isArchive: true });
-
-  await TimesheetEntry.updateMany({ weekStart: weekStart, userId: req.params.id }, { $set: { isArchive: true } });
+  await TimesheetEntry.deleteMany({ weekStart: weekStart, userId: req.params.id });
 
   const data = await entries.map((entry) => {
     TimesheetEntry.create({
@@ -65,7 +59,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
     });
   });
 
-  res.status(201).json({ entriesCreated: data.length, entriesArchived: archive.length, totalArchived: totalEntriesArchieved.length + archive.length });
+  res.status(201).json({ entriesCreated: data.length });
 });
 
 /**

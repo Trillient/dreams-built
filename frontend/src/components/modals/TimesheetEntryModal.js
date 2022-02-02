@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 
-const CenteredModal = ({ setModalShow, entry, ...rest }) => {
+const TimesheetEntryModal = ({ setModalShow, entry, ...rest }) => {
   const [startTime, setStartTime] = useState(entry.startTime);
   const [endTime, setEndTime] = useState(entry.endTime);
   const [jobNumber, setJobNumber] = useState(entry.jobNumber);
@@ -50,4 +50,4 @@ const CenteredModal = ({ setModalShow, entry, ...rest }) => {
   );
 };
 
-export default CenteredModal;
+export default TimesheetEntryModal;

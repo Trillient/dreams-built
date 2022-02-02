@@ -21,7 +21,7 @@ const TimesheetScreen = () => {
   const dispatch = useDispatch();
 
   const timesheetEntries = useSelector((state) => state.timesheet);
-  const { loading, error, dayEntries } = timesheetEntries;
+  const { loading, error, dayEntries, comments } = timesheetEntries;
 
   const startWeekInit = DateTime.now().startOf('week');
   const weekEndInit = DateTime.now().endOf('week');
@@ -47,15 +47,16 @@ const TimesheetScreen = () => {
 
   let weekArray = [];
   for (let i = 0; i < 7; i++) {
-    const day = DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('d');
+    const dateFormat = DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i });
+    const day = dateFormat.toFormat('d');
 
     weekArray = [
       ...weekArray,
       {
-        day: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('EEEE'),
+        day: dateFormat.toFormat('EEEE'),
         date: day,
         ordinal: ordinal(day),
-        month: DateTime.fromFormat(weekStart, 'dd/MM/yyyy').plus({ days: i }).toFormat('MMMM'),
+        month: dateFormat.toFormat('MMMM'),
       },
     ];
   }
@@ -76,7 +77,7 @@ const TimesheetScreen = () => {
   const submitHandler = async (event) => {
     event.preventDefault();
     const token = await getAccessTokenSilently();
-    dispatch(handleSubmit(dayEntries, weekStart, weekEnd, token, user.sub));
+    dispatch(handleSubmit(dayEntries, weekStart, weekEnd, token, user.sub, comments));
   };
 
   return (
@@ -90,7 +91,7 @@ const TimesheetScreen = () => {
         <Form onSubmit={submitHandler} className="container">
           <div className={styles['grid-card-top']}>
             <Dropdown>
-              <Dropdown.Toggle id="dropdown-button" variant="secondary">
+              <Dropdown.Toggle id="dropdown-button" variant="primary">
                 Week: {weekStart} - {weekEnd}
               </Dropdown.Toggle>
               <Dropdown.Menu as={CustomMenu} style={{ boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' }}>

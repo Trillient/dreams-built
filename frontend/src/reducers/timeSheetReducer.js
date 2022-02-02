@@ -1,6 +1,6 @@
 import * as actions from '../constants/timesheetConstants';
 
-export const entryArrayReducer = (state = { dayEntries: [], error: false }, action) => {
+export const entryArrayReducer = (state = { dayEntries: [], comments: [], error: false }, action) => {
   switch (action.type) {
     case actions.TIMESHEET_REQUEST:
       return { ...state, loading: true };
@@ -12,6 +12,8 @@ export const entryArrayReducer = (state = { dayEntries: [], error: false }, acti
       return { ...state, dayEntries: state.dayEntries.filter((entry) => entry.entryId !== action.payload) };
     case actions.TIMESHEET_UPDATE_ENTRY:
       return { ...state, dayEntries: state.dayEntries.map((entry) => (entry.entryId === action.payload.entryId ? action.payload : entry)) };
+    case actions.TIMESHEET_UPDATE_COMMENTS:
+      return { ...state, comments: [...state.comments.filter((comment) => comment.day !== action.payload.day), action.payload] };
     case actions.TIMESHEET_SUCCESS:
       return { ...state, loading: false };
     case actions.TIMESHEET_FAIL:
