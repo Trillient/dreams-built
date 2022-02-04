@@ -33,13 +33,9 @@ const CreateJobScreen = () => {
   useEffect(() => {
     if (!jobList || jobList.length < 1) {
       (async () => {
-        try {
-          const token = await getAccessTokenSilently();
-          dispatch(getJobList(token));
-          dispatch(getClients(token));
-        } catch (error) {
-          console.error(error);
-        }
+        const token = await getAccessTokenSilently();
+        dispatch(getJobList(token));
+        dispatch(getClients(token));
       })();
     } else {
       setJobNumber(jobList[0].jobNumber + 1);

@@ -2,6 +2,11 @@
   margin: 1rem 0 -1.5rem auto;
 }
 
+.users {
+  max-width: 17.1rem;
+  margin-bottom: 1rem;
+}
+
 .grid-card-top {
   display: grid;
   grid-template-columns: 2fr 1fr;

@@ -3,13 +3,13 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { ToastContainer } from 'react-toastify';
 import { FiEdit } from 'react-icons/fi';
 import fontColorContrast from 'font-color-contrast';
 
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 import { getClients } from '../../actions/clientActions';
-import { ToastContainer } from 'react-toastify';
 
 const ClientListScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -17,11 +17,10 @@ const ClientListScreen = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    let token;
-    const getToken = async () => {
-      token = await getAccessTokenSilently();
-    };
-    getToken().then(() => dispatch(getClients(token)));
+    (async () => {
+      const token = await getAccessTokenSilently();
+      dispatch(getClients(token));
+    })();
   }, [dispatch, getAccessTokenSilently]);
 
   const clients = useSelector((state) => state.clients);
@@ -31,40 +30,41 @@ const ClientListScreen = () => {
     <>
       <ToastContainer theme="colored" />
       <h1>Clients</h1>
-      <LinkContainer to={`/clients/create`}>
-        <Button>+</Button>
-      </LinkContainer>
-
       <section>
         {loading ? (
           <Loader />
         ) : error ? (
           <Message variant="danger">{error}</Message>
         ) : (
-          <Table hover responsive>
-            <thead>
-              <tr>
-                <th style={{ width: '5%' }}>No.</th>
-                <th>Client</th>
-                <th style={{ width: '5%' }}>Edit</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clientList.map((client, index) => (
-                <tr key={client._id}>
-                  <td>{index + 1}</td>
-                  <td style={{ backgroundColor: client.color, color: fontColorContrast(client.color) }}>{client.clientName}</td>
-                  <td>
-                    <LinkContainer to={`/clients/edit/${client._id}`}>
-                      <Button className="btn-sm">
-                        <FiEdit />
-                      </Button>
-                    </LinkContainer>
-                  </td>
+          <>
+            <LinkContainer to={`/clients/create`}>
+              <Button>+</Button>
+            </LinkContainer>
+            <Table hover responsive>
+              <thead>
+                <tr>
+                  <th style={{ width: '5%' }}>No.</th>
+                  <th>Client</th>
+                  <th style={{ width: '5%' }}>Edit</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {clientList.map((client, index) => (
+                  <tr key={client._id}>
+                    <td>{index + 1}</td>
+                    <td style={{ backgroundColor: client.color, color: fontColorContrast(client.color) }}>{client.clientName}</td>
+                    <td>
+                      <LinkContainer to={`/clients/edit/${client._id}`}>
+                        <Button className="btn-sm">
+                          <FiEdit />
+                        </Button>
+                      </LinkContainer>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </>
         )}
       </section>
     </>

@@ -14,20 +14,25 @@ import Message from '../../components/Message';
 import CustomMenu from '../../components/CustomMenu';
 
 import styles from './timesheet.module.css';
+import { getEmployees } from '../../actions/employeeActions';
+import Select from 'react-select';
 
 const TimesheetScreen = () => {
   const { getAccessTokenSilently, user } = useAuth0();
+  const domain = process.env.REACT_APP_CUSTOM_DOMAIN;
 
   const dispatch = useDispatch();
 
   const timesheetEntries = useSelector((state) => state.timesheet);
   const { loading, error, dayEntries, comments } = timesheetEntries;
+  const employeeList = useSelector((state) => state.employees);
 
   const startWeekInit = DateTime.now().startOf('week');
   const weekEndInit = DateTime.now().endOf('week');
 
   const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
   const [weekEnd, setWeekEnd] = useState(weekEndInit.toFormat('dd/MM/yyyy'));
+  const [selectedUser, setSelectedUser] = useState({ label: user.given_name, value: user.sub });
 
   let timesheetPeriods = [{ weekStart: startWeekInit.toFormat('dd/MM/yyyy'), weekEnd: weekEndInit.toFormat('dd/MM/yyyy') }];
   for (let i = 1; i < 4; i++) {
@@ -66,18 +71,23 @@ const TimesheetScreen = () => {
       try {
         const token = await getAccessTokenSilently();
         dispatch(getJobList(token));
-        dispatch(getTimesheet(token, user.sub, weekStart));
+        if (user[`${domain}/roles`].includes('Admin')) {
+          dispatch(getEmployees(token));
+          dispatch(getTimesheet(token, selectedUser.value, weekStart));
+        } else {
+          dispatch(getTimesheet(token, user.sub, weekStart));
+        }
       } catch (error) {
         console.error(error);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, getAccessTokenSilently, user, weekStart]);
+  }, [dispatch, getAccessTokenSilently, user, weekStart, selectedUser]);
 
   const submitHandler = async (event) => {
     event.preventDefault();
     const token = await getAccessTokenSilently();
-    dispatch(handleSubmit(dayEntries, weekStart, weekEnd, token, user.sub, comments));
+    user[`${domain}/roles`].includes('Admin') ? dispatch(handleSubmit(dayEntries, weekStart, weekEnd, token, selectedUser.value, comments)) : dispatch(handleSubmit(dayEntries, weekStart, weekEnd, token, user.sub, comments));
   };
 
   return (
@@ -89,6 +99,22 @@ const TimesheetScreen = () => {
         <Message variant="danger">{error}</Message>
       ) : (
         <Form onSubmit={submitHandler} className="container">
+          {user[`${domain}/roles`].includes('Admin') ? (
+            <div className={styles.users}>
+              <Select
+                menuPosition={'fixed'}
+                isClearable="true"
+                defaultValue={selectedUser}
+                onChange={setSelectedUser}
+                options={
+                  employeeList.employeeList &&
+                  employeeList.employeeList.map((option) => {
+                    return { label: `${option.firstName} ${option.lastName}`, value: option.userId };
+                  })
+                }
+              />
+            </div>
+          ) : null}
           <div className={styles['grid-card-top']}>
             <Dropdown>
               <Dropdown.Toggle id="dropdown-button" variant="primary">
