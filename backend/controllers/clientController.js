@@ -8,8 +8,22 @@ const Client = require('../models/clientModel');
  */
 
 const getClients = asyncHandler(async (req, res) => {
-  const clientList = await Client.find();
-  res.json(clientList);
+  const pageSize = +req.query.limit || 20;
+  const page = +req.query.page || 1;
+
+  const keyword = req.query.keyword
+    ? {
+        clientName: {
+          $regex: req.query.keyword,
+          $options: 'i',
+        },
+      }
+    : {};
+  const count = await Client.countDocuments({ ...keyword });
+  const clientList = await Client.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+  res.json({ clientList, pages: Math.ceil(count / pageSize) });
 });
 
 /**

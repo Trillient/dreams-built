@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 
 import * as actions from '../constants/clientConstants';
 
-export const getClients = (token) => async (dispatch) => {
+export const getClients = (token, limit, page) => async (dispatch) => {
   try {
     dispatch({
       type: actions.CLIENTLIST_FETCH_REQUEST,
@@ -15,7 +15,7 @@ export const getClients = (token) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/clients`, config);
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/clients?limit=${limit}&page=${page}`, config);
 
     dispatch({
       type: actions.CLIENTLIST_FETCH_SUCCESS,

@@ -5,7 +5,7 @@ export const getClientsReducer = (state = { clientList: [] }, action) => {
     case actions.CLIENTLIST_FETCH_REQUEST:
       return { loading: true };
     case actions.CLIENTLIST_FETCH_SUCCESS:
-      return { loading: false, clientList: action.payload };
+      return { loading: false, clientList: action.payload.clientList, pages: action.payload.pages };
     case actions.CLIENTLIST_FETCH_FAIL:
       return { loading: false, error: action.payload };
     default:
