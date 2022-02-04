@@ -15,7 +15,7 @@ export const entryArrayReducer = (state = { dayEntries: [], comments: [], error:
     case actions.TIMESHEET_UPDATE_COMMENTS:
       return { ...state, comments: [...state.comments.filter((comment) => comment.day !== action.payload.day), action.payload] };
     case actions.TIMESHEET_SUCCESS:
-      return { ...state, loading: false };
+      return { ...state, loading: false, dayEntries: action.payload.entries, comments: action.payload.comments };
     case actions.TIMESHEET_FAIL:
       return { loading: false, error: action.payload };
     default:

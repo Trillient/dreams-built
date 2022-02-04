@@ -18,12 +18,7 @@ export const getTimesheet = (token, userId, weekStart) => async (dispatch) => {
 
     dispatch({
       type: actions.TIMESHEET_SUCCESS,
-      payload: data.entries,
-    });
-
-    dispatch({
-      type: actions.TIMESHEET_POPULATE,
-      payload: data.entries,
+      payload: { entries: data.entries, comments: data.comments },
     });
   } catch (error) {
     dispatch({

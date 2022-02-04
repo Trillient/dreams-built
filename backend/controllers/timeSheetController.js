@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const TimesheetComment = require('../models/timesheetCommentModel');
 const TimesheetEntry = require('../models/timesheetEntryModel');
 const User = require('../models/userModel');
 
@@ -10,14 +11,15 @@ const User = require('../models/userModel');
 
 const getUserEntries = asyncHandler(async (req, res) => {
   const weekStart = req.query.weekstart;
-  const user = req.params.id;
+  const userId = req.params.id;
 
-  const userExists = await User.findOne({ userId: user });
+  const user = await User.findOne({ userId: userId });
 
-  if (userExists) {
-    const entries = await TimesheetEntry.find({ weekStart: weekStart, userId: user, isArchive: false }).populate('job');
+  if (user) {
+    const entries = await TimesheetEntry.find({ weekStart: weekStart, userId: userId }).populate('job');
+    const comments = await TimesheetComment.find({ weekStart: weekStart, user: user._id });
 
-    res.json({ weekStart: weekStart, entries: entries });
+    res.json({ weekStart: weekStart, entries: entries, comments: comments });
   } else {
     res.status(404);
     throw new Error('User does not exist');
@@ -31,7 +33,7 @@ const getUserEntries = asyncHandler(async (req, res) => {
  */
 
 const createUserEntry = asyncHandler(async (req, res) => {
-  const { weekStart, weekEnd, entries } = req.body;
+  const { weekStart, weekEnd, entries, comments } = req.body;
 
   const user = await User.findOne({ userId: req.params.id });
 
@@ -39,10 +41,19 @@ const createUserEntry = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Invalid user');
   }
-
+  await TimesheetComment.deleteMany({ weekStart: weekStart, user: user._id });
   await TimesheetEntry.deleteMany({ weekStart: weekStart, userId: req.params.id });
 
-  const data = await entries.map((entry) => {
+  const commentsResult = await comments.map((comment) => {
+    TimesheetComment.create({
+      user: user._id,
+      day: comment.day,
+      weekStart: weekStart,
+      comments: comment.comments,
+    });
+  });
+
+  const entriesResult = await entries.map((entry) => {
     TimesheetEntry.create({
       user: user._id,
       job: entry.job._id,
@@ -59,7 +70,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
     });
   });
 
-  res.status(201).json({ entriesCreated: data.length });
+  res.status(201).json({ entriesCreated: entriesResult.length, commentsCreated: commentsResult.length });
 });
 
 /**
@@ -69,7 +80,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
  */
 
 const getAllUsers = asyncHandler(async (req, res) => {
-  const result = await TimesheetEntry.find({ weekStart: req.query.weekstart, isArchive: false }).populate('user');
+  const result = await TimesheetEntry.find({ weekStart: req.query.weekstart }).populate('user');
 
   res.json(result);
 });
