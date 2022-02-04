@@ -45,7 +45,7 @@ export const deleteEntry = (entryId) => (dispatch) => {
 export const updateEntry = (startTime, endTime, job, entryId, day, time) => (dispatch) => {
   dispatch({
     type: actions.TIMESHEET_UPDATE_ENTRY,
-    payload: { entryId: entryId, day: day, startTime: startTime, endTime: endTime, job: job, updated: Date().toLocaleString(), jobTime: time },
+    payload: { entryId: entryId, day: day, startTime: startTime, endTime: endTime, job: job, jobTime: time },
   });
 };
 
@@ -61,28 +61,38 @@ export const handleSubmit = (data, startDate, endDate, token, userId, comments) 
     dispatch({
       type: actions.TIMESHEET_SUBMIT_REQUEST,
     });
-
-    dispatch({
-      type: actions.TIMESHEET_SUBMIT_VALIDATE,
-    });
-
+    let errors = [];
     data.map((e) => {
       if (!e.startTime && !e.endTime && !e.job) {
         return e;
       }
+
       if (e.jobTime <= 0 || isNaN(e.jobTime)) {
-        toast.error(`Check the times entered on ${e.day}!`);
-        throw new Error('Incorrect Time Entered!');
+        errors = [...errors, { message: `${e.day} Times Not Valid`, entryId: e.entryId, error: 'time' }];
       }
+
       if (!e.job) {
-        toast.error(`Check the Job Numbers for ${e.day}!`);
-        throw new Error('Job Number Required!');
+        errors = [...errors, { message: `${e.day} Job Numbers Not Entered`, entryId: e.entryId, error: 'job' }];
       }
+
       return e;
     });
 
+    if (errors.length > 0) {
+      errors.map((err) => toast.error(err.message));
+      dispatch({
+        type: actions.TIMESHEET_VALIDATION_FAIL,
+        payload: errors,
+      });
+      throw new Error('Validation Errors');
+    }
+
     const finalisedData = data.filter((e) => e.startTime !== '' && e.endTime !== '' && e.job !== '');
     const finalisedComments = comments.filter((comment) => comment.comments !== '');
+
+    dispatch({
+      type: actions.TIMESHEET_SUBMIT_VALIDATED,
+    });
 
     const config = {
       headers: {
@@ -90,22 +100,20 @@ export const handleSubmit = (data, startDate, endDate, token, userId, comments) 
         Authorization: `Bearer ${token}`,
       },
     };
-    await axios.post(`${process.env.REACT_APP_API_URL}/timesheet/user/${userId}`, { weekStart: startDate, weekEnd: endDate, entries: finalisedData, comments: finalisedComments }, config).catch(function (error) {
+    await axios.post(`${process.env.REACT_APP_API_URL}/timesheet/user/${userId}`, { weekStart: startDate, weekEnd: endDate, entries: finalisedData, comments: finalisedComments }, config).catch((error) => {
       dispatch({
         type: actions.TIMESHEET_SUBMIT_FAIL,
         payload: error.response && error.response.data.message ? error.response.data.message : error.message,
       });
     });
-
     toast.success('Saved!');
     dispatch({
       type: actions.TIMESHEET_SUBMIT_SUCCESS,
-      payload: { startDate: startDate, endDate: endDate, entries: finalisedData },
     });
   } catch (error) {
     dispatch({
       type: actions.TIMESHEET_SUBMIT_FAIL,
-      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
+      payload: { error: error.response && error.response.data.message ? error.response.data.message : error.message },
     });
   }
 };

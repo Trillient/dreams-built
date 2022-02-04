@@ -6,14 +6,29 @@ import Select from 'react-select';
 import { updateEntry } from '../actions/timesheetActions';
 
 const TimesheetEntry = ({ entryId, day }) => {
+  const customStyles = {
+    control: (base, state) => ({
+      ...base,
+      // state.isFocused can display different borderColor if you need it
+      borderColor: state.isFocused ? '#ddd' : !jobError ? '#ddd' : 'red',
+      // overwrittes hover style
+      '&:hover': {
+        borderColor: state.isFocused ? '#ddd' : !jobError ? '#ddd' : 'red',
+      },
+    }),
+  };
+
   const dispatch = useDispatch();
 
   const timesheetEntries = useSelector((state) => state.timesheet);
   const { dayEntries } = timesheetEntries;
+  const timesheetErrors = useSelector((state) => state.validatedTimesheet);
+  const { clientValidationErrors } = timesheetErrors;
   const jobsList = useSelector((state) => state.jobsList);
   const { jobList } = jobsList;
 
   const entry = dayEntries.filter((entry) => entry.entryId === entryId);
+  const validationError = clientValidationErrors && clientValidationErrors.filter((entry) => entry.entryId === entryId);
 
   if (entry.length > 1) {
     throw new Error('Duplicate entries, contact support');
@@ -26,14 +41,29 @@ const TimesheetEntry = ({ entryId, day }) => {
   const [startTime, setStartTime] = useState(initStartTime || '');
   const [endTime, setEndTime] = useState(initEndTime || '');
   const [job, setJob] = useState(initjobNumber || '');
+  const [jobError, setJobError] = useState(false);
+  const [timeError, setTimeError] = useState(false);
 
   const defaultLabel = job ? { label: `${job.jobNumber} - ${job.address}` } : '';
 
   useEffect(() => {
     dispatch(updateEntry(startTime, endTime, job, entryId, day, time));
 
+    if (validationError) {
+      if (startTime && endTime && time > 0) {
+        setTimeError(false);
+      } else {
+        validationError.filter((entry) => entry.error === 'time')[0] ? setTimeError(true) : setTimeError(false);
+      }
+
+      if (job) {
+        setJobError(false);
+      } else {
+        validationError.filter((entry) => entry.error === 'job')[0] ? setJobError(true) : setJobError(false);
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startTime, endTime, job]);
+  }, [startTime, endTime, job, clientValidationErrors, entryId, day]);
 
   let time;
   if (startTime && endTime) {
@@ -55,6 +85,7 @@ const TimesheetEntry = ({ entryId, day }) => {
             onChange={(e) => {
               setStartTime(e.target.value);
             }}
+            isInvalid={timeError}
           />
         </Form.Group>
       </td>
@@ -67,6 +98,7 @@ const TimesheetEntry = ({ entryId, day }) => {
             onChange={(e) => {
               setEndTime(e.target.value);
             }}
+            isInvalid={timeError}
           />
         </Form.Group>
       </td>
@@ -74,6 +106,7 @@ const TimesheetEntry = ({ entryId, day }) => {
         <Form.Group controlId={`job - ${entryId}`}>
           <Form.Label className="display-none_lg-screen">Job Number: </Form.Label>
           <Select
+            styles={customStyles}
             menuPosition={'fixed'}
             isClearable="true"
             defaultValue={defaultLabel}
@@ -81,7 +114,7 @@ const TimesheetEntry = ({ entryId, day }) => {
             options={
               jobList &&
               jobList.map((option) => {
-                return { ...option, label: `${option.jobNumber} - ${option.address}`, value: option._id };
+                return { ...option, label: `${option.jobNumber} - ${option.address}, ${option.city}`, value: option._id };
               })
             }
           />

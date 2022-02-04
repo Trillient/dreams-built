@@ -1,11 +1,9 @@
 import * as actions from '../constants/timesheetConstants';
 
-export const entryArrayReducer = (state = { dayEntries: [], comments: [], error: false }, action) => {
+export const entryArrayReducer = (state = { dayEntries: [], comments: [], loading: false, error: false }, action) => {
   switch (action.type) {
     case actions.TIMESHEET_REQUEST:
       return { ...state, loading: true };
-    case actions.TIMESHEET_POPULATE:
-      return { ...state, dayEntries: action.payload };
     case actions.TIMESHEET_CREATE_ENTRY:
       return { ...state, dayEntries: [...state.dayEntries, action.payload] };
     case actions.TIMESHEET_DELETE_ENTRY:
@@ -23,16 +21,18 @@ export const entryArrayReducer = (state = { dayEntries: [], comments: [], error:
   }
 };
 
-export const validateReducer = (state = { validatedEntries: [], loading: true, error: false }, action) => {
+export const validateReducer = (state = { validatedEntries: [], loading: true, error: false, success: null }, action) => {
   switch (action.type) {
     case actions.TIMESHEET_SUBMIT_REQUEST:
-      return { loading: true, error: false };
-    case actions.TIMESHEET_SUBMIT_VALIDATE:
-      return { loading: true, error: false };
+      return { loading: true, clientValidationErrors: [] };
+    case actions.TIMESHEET_SUBMIT_VALIDATED:
+      return { loading: true };
+    case actions.TIMESHEET_VALIDATION_FAIL:
+      return { loading: true, clientValidationErrors: action.payload };
     case actions.TIMESHEET_SUBMIT_SUCCESS:
-      return { loading: false, validatedEntries: action.payload, error: false };
+      return { ...state, loading: false, success: true, error: false };
     case actions.TIMESHEET_SUBMIT_FAIL:
-      return { loading: false, error: action.payload };
+      return { ...state, loading: false, error: action.payload.error };
     default:
       return state;
   }
