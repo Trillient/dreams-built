@@ -82,7 +82,9 @@ const TimesheetDay = ({ day, date, ordinal, month }) => {
                 <th colSpan="3" className="right-align">
                   Total
                 </th>
-                <td className="right-align">{dailyTotal.toFixed(2)}</td>
+                <td className="right-align" style={{ color: dailyTotal >= 24 ? 'red' : 'black' }}>
+                  {dailyTotal.toFixed(2)}
+                </td>
                 <td></td>
               </tr>
             </tfoot>

@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,9 +10,7 @@ const TimesheetEntry = ({ entryId, day }) => {
   const customStyles = {
     control: (base, state) => ({
       ...base,
-      // state.isFocused can display different borderColor if you need it
       borderColor: state.isFocused ? '#ddd' : !jobError ? '#ddd' : 'red',
-      // overwrittes hover style
       '&:hover': {
         borderColor: state.isFocused ? '#ddd' : !jobError ? '#ddd' : 'red',
       },
@@ -42,7 +41,8 @@ const TimesheetEntry = ({ entryId, day }) => {
   const [endTime, setEndTime] = useState(initEndTime || '');
   const [job, setJob] = useState(initjobNumber || '');
   const [jobError, setJobError] = useState(false);
-  const [timeError, setTimeError] = useState(false);
+  const [startTimeError, setStartTimeError] = useState(false);
+  const [endTimeError, setEndTimeError] = useState(false);
 
   const defaultLabel = job ? { label: `${job.jobNumber} - ${job.address}` } : '';
 
@@ -51,15 +51,23 @@ const TimesheetEntry = ({ entryId, day }) => {
 
     if (validationError) {
       if (startTime && endTime && time > 0) {
-        setTimeError(false);
+        setStartTimeError(false);
+        setEndTimeError(false);
       } else {
-        validationError.filter((entry) => entry.error === 'time')[0] ? setTimeError(true) : setTimeError(false);
+        if (validationError.filter((entry) => entry.error === 'startTime')[0]) {
+          setStartTimeError(true);
+        } else if (validationError.filter((entry) => entry.error === 'endTime')[0]) {
+          setEndTimeError(true);
+        } else if (validationError.filter((entry) => entry.error === 'time')[0]) {
+          setStartTimeError(true);
+          setEndTimeError(true);
+        }
       }
 
       if (job) {
         setJobError(false);
       } else {
-        validationError.filter((entry) => entry.error === 'job')[0] ? setJobError(true) : setJobError(false);
+        validationError.filter((entry) => entry.error === 'job')[0] && setJobError(true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,11 +75,7 @@ const TimesheetEntry = ({ entryId, day }) => {
 
   let time;
   if (startTime && endTime) {
-    const a = endTime.split(':');
-    const timeA = +a[0] + +a[1] / 60;
-    const b = startTime.split(':');
-    const timeB = +b[0] + +b[1] / 60;
-    time = (timeA - timeB).toFixed(2);
+    time = (DateTime.fromFormat(endTime, 'hh:mm').diff(DateTime.fromFormat(startTime, 'hh:mm'), 'seconds', 'minutes').toFormat('mm') / 60).toFixed(2);
   }
 
   return (
@@ -85,7 +89,7 @@ const TimesheetEntry = ({ entryId, day }) => {
             onChange={(e) => {
               setStartTime(e.target.value);
             }}
-            isInvalid={timeError}
+            isInvalid={startTimeError}
           />
         </Form.Group>
       </td>
@@ -98,7 +102,7 @@ const TimesheetEntry = ({ entryId, day }) => {
             onChange={(e) => {
               setEndTime(e.target.value);
             }}
-            isInvalid={timeError}
+            isInvalid={endTimeError}
           />
         </Form.Group>
       </td>
@@ -121,7 +125,7 @@ const TimesheetEntry = ({ entryId, day }) => {
         </Form.Group>
       </td>
       <td className="right-align">
-        <strong className="display-none_lg-screen">Total:</strong> {time > 0 ? time : 0} <span className="display-none_lg-screen">hours</span>
+        <strong className="display-none_lg-screen">Total:</strong> {time} <span className="display-none_lg-screen">hours</span>
       </td>
     </>
   );

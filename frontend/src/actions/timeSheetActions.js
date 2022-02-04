@@ -67,6 +67,14 @@ export const handleSubmit = (data, startDate, endDate, token, userId, comments) 
         return e;
       }
 
+      if (!e.startTime && e.endTime) {
+        errors = [...errors, { message: `${e.day} Times Not Valid`, entryId: e.entryId, error: 'startTime' }];
+      }
+
+      if (!e.endTime && e.startTime) {
+        errors = [...errors, { message: `${e.day} Times Not Valid`, entryId: e.entryId, error: 'endTime' }];
+      }
+
       if (e.jobTime <= 0 || isNaN(e.jobTime)) {
         errors = [...errors, { message: `${e.day} Times Not Valid`, entryId: e.entryId, error: 'time' }];
       }
@@ -79,7 +87,8 @@ export const handleSubmit = (data, startDate, endDate, token, userId, comments) 
     });
 
     if (errors.length > 0) {
-      errors.map((err) => toast.error(err.message));
+      const duplicateReduction = [...new Set(errors.map((err) => err.message))];
+      duplicateReduction.map((err) => toast.error(err));
       dispatch({
         type: actions.TIMESHEET_VALIDATION_FAIL,
         payload: errors,
