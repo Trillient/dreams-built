@@ -126,22 +126,4 @@ const deleteAUsersEntry = asyncHandler(async (req, res) => {
   }
 });
 
-/**
- * @Desc Delete user archive timesheet entries
- * @Route POST /api/timesheet/admin/archive
- * @Access Private - ("admin_delete:timesheet", Admin)
- */
-
-const deleteArchive = asyncHandler(async (req, res) => {
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 14);
-
-  const fields = { isArchive: true, updatedAt: { $lt: cutoff } };
-  const entries = await TimesheetEntry.find(fields);
-
-  await TimesheetEntry.deleteMany(fields);
-
-  res.json({ message: 'Success', cutOffDate: cutoff, deletedEntries: entries.length });
-});
-
-module.exports = { getUserEntries, createUserEntry, getAllUsers, updateAUsersEntry, deleteAUsersEntry, deleteArchive };
+module.exports = { getUserEntries, createUserEntry, getAllUsers, updateAUsersEntry, deleteAUsersEntry };
