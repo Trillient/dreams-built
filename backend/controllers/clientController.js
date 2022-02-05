@@ -8,7 +8,7 @@ const Client = require('../models/clientModel');
  */
 
 const getClients = asyncHandler(async (req, res) => {
-  const pageSize = +req.query.limit || 20;
+  const pageSize = +req.query.limit || 25;
   const page = +req.query.page || 1;
 
   const keyword = req.query.keyword

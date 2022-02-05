@@ -1,0 +1,23 @@
+.parent {
+  max-width: 20rem;
+  display: grid;
+  grid-template-columns: 10fr 1fr;
+  margin: 1rem auto;
+}
+
+.input {
+  border: 3px solid var(--info);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+}
+
+.input:focus {
+  border-color: var(--info);
+  box-shadow: 0 0 0 0rem var(--info);
+}
+
+.btn {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}

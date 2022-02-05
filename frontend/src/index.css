@@ -1,10 +1,15 @@
 :root {
   --main-background: #0c0f19;
   --seconday-background: #dddcda;
+  --info: #3498db;
 }
 
 body {
   background-color: #dddcda;
+}
+
+.parent-container {
+  padding: 1rem 3rem;
 }
 
 .navbar-toggler {

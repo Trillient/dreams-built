@@ -12,9 +12,11 @@ const DashboardScreen = () => {
   return isLoading ? (
     <Loader />
   ) : error ? (
-    <Message variant="danger">{error}</Message>
+    <Message className="parent-container" variant="danger">
+      {error}
+    </Message>
   ) : user[`${domain}/roles`].includes('Admin') ? (
-    <>
+    <div className="parent-container">
       <Message variant="success">You're an admin</Message>
       <div className={styles.grid}>
         <InfoBlock
@@ -46,9 +48,9 @@ const DashboardScreen = () => {
           link={{ title: 'Help Center', link: '/help' }}
         />
       </div>
-    </>
+    </div>
   ) : user[`${domain}/roles`].includes('Employee') ? (
-    <>
+    <div className="parent-container">
       <Message variant="success">You're in the employee portal</Message>
       <div className={styles.grid}>
         <InfoBlock
@@ -80,9 +82,9 @@ const DashboardScreen = () => {
           link={{ title: 'Help Center', link: '/help' }}
         />
       </div>
-    </>
+    </div>
   ) : (
-    <>
+    <div className="parent-container">
       <Message variant="info">You have not been added to the employee list yet, please logout and log back in, in 24 hours</Message>
       <InfoBlock
         icon={<HiOutlineInformationCircle />}
@@ -91,7 +93,7 @@ const DashboardScreen = () => {
         text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         link={{ title: 'Help Center', link: '/help' }}
       />
-    </>
+    </div>
   );
 };
 

@@ -20,8 +20,11 @@ const ClientListScreen = () => {
 
   const dispatch = useDispatch();
 
+  const clients = useSelector((state) => state.clients);
+  const { loading, error, clientList, pages } = clients;
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(1);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -30,12 +33,11 @@ const ClientListScreen = () => {
       dispatch(getClients(token, limit, currentPage, search));
     })();
   }, [currentPage, limit, search, dispatch, getAccessTokenSilently]);
-
-  const clients = useSelector((state) => state.clients);
-  const { loading, error, clientList, pages } = clients;
-
+  if (currentPage > pages) {
+    setCurrentPage(1);
+  }
   return (
-    <>
+    <div className={styles.parent}>
       <ToastContainer theme="colored" />
       {loading ? (
         <Loader />
@@ -44,29 +46,32 @@ const ClientListScreen = () => {
       ) : (
         <section className="container">
           <div className={styles.card}>
-            <h1>Clients</h1>
+            <h1 style={{ textAlign: 'center' }}>Clients</h1>
+            <SearchBox setSearch={setSearch} />
             <LinkContainer to={`/clients/create`}>
               <Button className={styles.btn}>+</Button>
             </LinkContainer>
-            <Table hover responsive bordered>
+            <Table hover responsive="sm" bordered>
               <thead>
                 <tr>
-                  <th style={{ width: '5%' }}>Color</th>
+                  <th className={styles.responsive} style={{ width: '5%' }}>
+                    Color
+                  </th>
                   <th>Client</th>
-                  <th>Contact</th>
-                  <th>Email</th>
+                  <th className={styles.responsive}>Contact</th>
+                  <th className={styles.responsive}>Email</th>
                   <th style={{ width: '5%' }}>Edit</th>
                 </tr>
               </thead>
               <tbody>
                 {clientList.map((client) => (
                   <tr key={client._id}>
-                    <td>
+                    <td className={styles.responsive}>
                       <div className={styles.color} style={{ backgroundColor: client.color }}></div>
                     </td>
                     <td className={styles.client}>{client.clientName}</td>
-                    <td>{client.contact && client.contact.name ? client.contact.name : null}</td>
-                    <td>{client.contact && client.contact.email ? client.contact.email : null}</td>
+                    <td className={styles.responsive}>{client.contact && client.contact.name ? client.contact.name : null}</td>
+                    <td className={styles.responsive}>{client.contact && client.contact.email ? client.contact.email : null}</td>
                     <td>
                       <LinkContainer to={`/clients/edit/${client._id}`}>
                         <Button className="btn-sm">
@@ -78,13 +83,13 @@ const ClientListScreen = () => {
                 ))}
               </tbody>
             </Table>
-            <SearchBox setSearch={setSearch} />
+
             <Limit setLimit={setLimit} limit={limit} />
             <Paginate setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={pages} />
           </div>
         </section>
       )}
-    </>
+    </div>
   );
 };
 
