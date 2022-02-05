@@ -24,7 +24,7 @@ const ClientListScreen = () => {
   const { loading, error, clientList, pages } = clients;
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(1);
+  const [limit, setLimit] = useState(25);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -46,16 +46,22 @@ const ClientListScreen = () => {
       ) : (
         <section className="container">
           <div className={styles.card}>
-            <h1 style={{ textAlign: 'center' }}>Clients</h1>
-            <SearchBox setSearch={setSearch} />
-            <LinkContainer to={`/clients/create`}>
-              <Button className={styles.btn}>+</Button>
-            </LinkContainer>
+            <div className={styles.header}>
+              <h1 className={styles.title}>Clients</h1>
+              <div className={styles.add}>
+                <LinkContainer to={`/clients/create`}>
+                  <Button className={styles.btn}>+</Button>
+                </LinkContainer>
+              </div>
+              <div className={styles.search}>
+                <SearchBox setSearch={setSearch} />
+              </div>
+            </div>
             <Table hover responsive="sm" bordered>
               <thead>
                 <tr>
                   <th className={styles.responsive} style={{ width: '5%' }}>
-                    Color
+                    Colour
                   </th>
                   <th>Client</th>
                   <th className={styles.responsive}>Contact</th>
@@ -65,7 +71,7 @@ const ClientListScreen = () => {
               </thead>
               <tbody>
                 {clientList.map((client) => (
-                  <tr key={client._id}>
+                  <tr key={client._id} className={styles.data}>
                     <td className={styles.responsive}>
                       <div className={styles.color} style={{ backgroundColor: client.color }}></div>
                     </td>
@@ -83,9 +89,16 @@ const ClientListScreen = () => {
                 ))}
               </tbody>
             </Table>
-
-            <Limit setLimit={setLimit} limit={limit} />
-            <Paginate setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={pages} />
+            {pages > 1 && (
+              <div className={styles.controls}>
+                <div>
+                  <Paginate setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={pages} />
+                </div>
+                <div className={styles.limit}>
+                  <Limit setLimit={setLimit} limit={limit} />
+                </div>
+              </div>
+            )}
           </div>
         </section>
       )}

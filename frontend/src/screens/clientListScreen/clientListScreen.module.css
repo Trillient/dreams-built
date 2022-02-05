@@ -6,7 +6,7 @@
 }
 
 .parent {
-  padding: unset;
+  margin-top: 2rem;
 }
 
 .card {
@@ -17,8 +17,8 @@
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
-.client {
-  font-weight: bold;
+.data {
+  color: rgb(36, 36, 36);
 }
 
 .btn {
@@ -29,8 +29,71 @@
   display: none;
 }
 
+.controls {
+  max-height: 50rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0rem;
+  justify-items: center;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 5fr 2fr;
+  grid-template-rows: min-content 1fr;
+  grid-template-areas: 'title addBtn' 'search search';
+}
+
+.title {
+  grid-area: title;
+  margin-bottom: 0;
+}
+
+.add {
+  grid-area: addBtn;
+  margin-bottom: 0;
+  justify-self: right;
+}
+
+.search {
+  grid-area: search;
+}
+
+@media only screen and (min-width: 26rem) {
+  .controls {
+    grid-template-columns: 5fr 4fr;
+    grid-template-rows: 1fr;
+    justify-items: unset;
+  }
+  .limit {
+    justify-self: right;
+  }
+  .header {
+    grid-template-areas: 'title title' 'search addBtn';
+  }
+  .add {
+    align-self: center;
+  }
+
+  .search {
+    justify-self: left;
+    max-width: 15rem;
+  }
+
+  .title {
+    text-align: center;
+  }
+}
+
 @media only screen and (min-width: 40rem) {
   .responsive {
     display: table-cell;
+  }
+}
+
+@media only screen and (min-width: 55rem) {
+  .controls {
+    grid-template-columns: 7fr 2fr;
   }
 }

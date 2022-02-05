@@ -16,7 +16,7 @@ const SearchBox = ({ setSearch }) => {
     <Form onSubmit={submitHandler}>
       <div className={styles.parent}>
         <Form.Control type="text" name="q" onChange={(e) => setKeyword(e.target.value)} placeholder="Search..." className={styles.input}></Form.Control>
-        <Button type="submit" variant="info" className={styles.btn}>
+        <Button type="submit" variant="primary" className={styles.btn}>
           <FaSearch />
         </Button>
       </div>

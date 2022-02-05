@@ -1,10 +1,18 @@
+import { Form } from 'react-bootstrap';
+
+import styles from './limit.module.css';
+
 const Limit = ({ setLimit, limit }) => {
   return (
-    <select className="form-select form-select-sm mb-3" aria-label=".form-select-lg" defaultValue={limit} onChange={(e) => setLimit(e.target.value)}>
-      <option value="25">25</option>
-      <option value="50">50</option>
-      <option value="100">100</option>
-    </select>
+    <Form className={styles.select}>
+      <Form.Group controlId={`limit`}>
+        <Form.Control as="select" style={{ color: 'gray' }} className="form-select form-select-md" defaultValue={limit} onChange={(e) => setLimit(e.target.value)}>
+          <option value="25">25 per page</option>
+          <option value="50">50 per page</option>
+          <option value="75">75 per page</option>
+        </Form.Control>
+      </Form.Group>
+    </Form>
   );
 };
 
