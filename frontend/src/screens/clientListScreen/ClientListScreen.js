@@ -8,12 +8,13 @@ import { FiEdit } from 'react-icons/fi';
 
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import { getClients } from '../../actions/clientActions';
-
-import styles from './clientListScreen.module.css';
 import Paginate from '../../components/Paginate';
 import Limit from '../../components/Limit';
 import SearchBox from '../../components/SearchBox';
+
+import { getClients } from '../../actions/clientActions';
+
+import styles from './clientListScreen.module.css';
 
 const ClientListScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
