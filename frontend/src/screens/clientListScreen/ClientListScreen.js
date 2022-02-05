@@ -13,6 +13,7 @@ import { getClients } from '../../actions/clientActions';
 import styles from './clientListScreen.module.css';
 import Paginate from '../../components/Paginate';
 import Limit from '../../components/Limit';
+import SearchBox from '../../components/SearchBox';
 
 const ClientListScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -20,15 +21,15 @@ const ClientListScreen = () => {
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(1);
-  console.log(limit);
+  const [limit, setLimit] = useState(20);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     (async () => {
       const token = await getAccessTokenSilently();
-      dispatch(getClients(token, limit, currentPage));
+      dispatch(getClients(token, limit, currentPage, search));
     })();
-  }, [currentPage, limit, dispatch, getAccessTokenSilently]);
+  }, [currentPage, limit, search, dispatch, getAccessTokenSilently]);
 
   const clients = useSelector((state) => state.clients);
   const { loading, error, clientList, pages } = clients;
@@ -77,6 +78,7 @@ const ClientListScreen = () => {
                 ))}
               </tbody>
             </Table>
+            <SearchBox setSearch={setSearch} />
             <Limit setLimit={setLimit} limit={limit} />
             <Paginate setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={pages} />
           </div>

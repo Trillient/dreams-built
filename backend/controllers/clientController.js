@@ -13,16 +13,38 @@ const getClients = asyncHandler(async (req, res) => {
 
   const keyword = req.query.keyword
     ? {
-        clientName: {
-          $regex: req.query.keyword,
-          $options: 'i',
-        },
+        $and: [
+          {
+            $or: [
+              {
+                clientName: {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+              {
+                'contact.name': {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+              {
+                'contact.email': {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+            ],
+          },
+        ],
       }
     : {};
+
   const count = await Client.countDocuments({ ...keyword });
   const clientList = await Client.find({ ...keyword })
     .limit(pageSize)
     .skip(pageSize * (page - 1));
+
   res.json({ clientList, pages: Math.ceil(count / pageSize) });
 });
 
