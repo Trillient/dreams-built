@@ -1,0 +1,48 @@
+.button-update {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.button-delete {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.color {
+  margin-bottom: 1rem;
+  grid-area: color;
+}
+
+.contractor {
+  margin-bottom: 1rem;
+  grid-area: contractor;
+}
+
+@media only screen and (min-width: 31.25rem) {
+  .form {
+    margin: 2rem auto 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 0.4fr 2.2fr;
+    gap: 0rem;
+    grid-template-areas: 'contractor contractor' 'contact contact' 'update delete';
+  }
+  .button-update {
+    grid-area: update;
+    width: min-content;
+  }
+
+  .button-delete {
+    grid-area: delete;
+    width: min-content;
+    justify-self: right;
+  }
+
+  .contact {
+    grid-area: contact;
+    border: 1px solid gainsboro;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-top: 1.5rem;
+  }
+}

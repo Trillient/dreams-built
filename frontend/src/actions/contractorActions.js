@@ -115,8 +115,12 @@ export const updateContractor =
         payload: data,
       });
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-      toast.error(message);
+      const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+      if (message.length > 0) {
+        message.map((err) => toast.error(err.msg));
+      } else {
+        toast.error(message);
+      }
       dispatch({
         type: actions.CONTRACTOR_UPDATE_FAIL,
         payload: message,

@@ -105,7 +105,7 @@ const updateContractor = asyncHandler(async (req, res) => {
   if (contractorExists) {
     const contractorNameExists = await Contractor.findOne({ contractor: contractor });
 
-    if (contractorNameExists && contractorExists._id !== req.params.id) {
+    if (contractorNameExists && String(contractorExists._id) !== req.params.id) {
       res.status(409);
       throw new Error('Contractor already exists');
     }

@@ -74,7 +74,7 @@ const EditClientScreen = () => {
       <ToastContainer theme="colored" />
       {loading ? (
         <Loader />
-      ) : error ? (
+      ) : error && error.length < 1 ? (
         <Message variant="danger">{error}</Message>
       ) : (
         <AdminGroup>

@@ -35,6 +35,7 @@
   .button-delete {
     grid-area: delete;
     width: min-content;
+    justify-self: right;
   }
 
   .client {
