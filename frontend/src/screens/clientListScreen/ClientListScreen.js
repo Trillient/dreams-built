@@ -24,7 +24,7 @@ const ClientListScreen = () => {
   const { loading, error, clientList, pages } = clients;
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(1);
+  const [limit, setLimit] = useState(25);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const ClientListScreen = () => {
       ) : (
         <section className="container">
           <div className={styles.card}>
-            <HeaderSearchGroup title="Clients" setSearch={setSearch} link="/client/create" />
+            <HeaderSearchGroup title="Clients" setSearch={setSearch} link="/clients/create" />
             <Table hover responsive="sm" bordered>
               <thead>
                 <tr>

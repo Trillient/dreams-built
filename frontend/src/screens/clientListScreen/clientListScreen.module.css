@@ -29,34 +29,8 @@
   display: none;
 }
 
-.controls {
-  max-height: 50rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 1rem;
-  justify-items: center;
-}
-
-@media only screen and (min-width: 26rem) {
-  .controls {
-    grid-template-columns: 5fr 4fr;
-    grid-template-rows: 1fr;
-    justify-items: unset;
-  }
-  .limit {
-    justify-self: right;
-  }
-}
-
 @media only screen and (min-width: 40rem) {
   .responsive {
     display: table-cell;
-  }
-}
-
-@media only screen and (min-width: 55rem) {
-  .controls {
-    grid-template-columns: 7fr 2fr;
   }
 }
