@@ -17,7 +17,7 @@ const getContractors = asyncHandler(async (req, res) => {
           {
             $or: [
               {
-                clientName: {
+                contractor: {
                   $regex: req.query.keyword,
                   $options: 'i',
                 },
@@ -50,7 +50,6 @@ const getContractors = asyncHandler(async (req, res) => {
   const contractorList = await Contractor.find({ ...keyword })
     .limit(pageSize)
     .skip(pageSize * (page - 1));
-
   res.json({ contractorList, pages: Math.ceil(count / pageSize) });
 });
 

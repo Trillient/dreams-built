@@ -82,7 +82,7 @@ export const createClient =
     } catch (error) {
       const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
-      if (message.length > 0) {
+      if (error.response.data.errors && message.length > 0) {
         message.map((err) => toast.error(err.msg));
       } else {
         toast.error(message);
@@ -117,7 +117,7 @@ export const updateClient =
       });
     } catch (error) {
       const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
-      if (message.length > 0) {
+      if (error.response.data.errors && message.length > 0) {
         message.map((err) => toast.error(err.msg));
       } else {
         toast.error(message);
@@ -150,7 +150,7 @@ export const deleteClient = (token, clientId) => async (dispatch) => {
   } catch (error) {
     const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
-    if (message.length > 0) {
+    if (error.response.data.errors && message.length > 0) {
       message.map((err) => toast.error(err.msg));
     } else {
       toast.error(message);
