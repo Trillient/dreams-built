@@ -20,8 +20,8 @@ const ContractorListScreen = () => {
 
   const dispatch = useDispatch();
 
-  const clients = useSelector((state) => state.clients);
-  const { loading, error, clientList, pages } = clients;
+  const contractors = useSelector((state) => state.contractors);
+  const { loading, error, contractorList, pages } = contractors;
 
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(25);
@@ -57,30 +57,26 @@ const ContractorListScreen = () => {
         ) : (
           <section className="container">
             <div className={styles.card}>
-              <HeaderSearchGroup title="Clients" setSearch={setSearch} link="/clients/create" />
+              <HeaderSearchGroup title="Contractors" setSearch={setSearch} link="/contractors/create" />
               <Table hover responsive="sm" bordered>
                 <thead>
                   <tr>
-                    <th className={styles.responsive} style={{ width: '5%' }}>
-                      Colour
-                    </th>
-                    <th>Client</th>
+                    <th>Contractor</th>
                     <th className={styles.responsive}>Contact</th>
                     <th className={styles.responsive}>Email</th>
+                    <th className={styles.responsive}>Phone</th>
                     <th style={{ width: '5%' }}>Edit</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {clientList.map((client) => (
-                    <tr key={client._id} className={styles.data}>
-                      <td className={styles.responsive}>
-                        <div className={styles.color} style={{ backgroundColor: client.color }}></div>
-                      </td>
-                      <td className={styles.client}>{client.clientName}</td>
-                      <td className={styles.responsive}>{client.contact && client.contact.name ? client.contact.name : null}</td>
-                      <td className={styles.responsive}>{client.contact && client.contact.email ? client.contact.email : null}</td>
+                  {contractorList.map((contractor) => (
+                    <tr key={contractor._id} className={styles.data}>
+                      <td>{contractor.contractor}</td>
+                      <td className={styles.responsive}>{contractor.contact}</td>
+                      <td className={styles.responsive}>{contractor.email}</td>
+                      <td className={styles.responsive}>{contractor.phone}</td>
                       <td>
-                        <LinkContainer to={`/clients/edit/${client._id}`}>
+                        <LinkContainer to={`/contractors/edit/${contractor._id}`}>
                           <Button className="btn-sm">
                             <FiEdit />
                           </Button>
