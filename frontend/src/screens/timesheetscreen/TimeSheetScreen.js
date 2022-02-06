@@ -104,6 +104,7 @@ const TimesheetScreen = () => {
               <Select
                 menuPosition={'fixed'}
                 isClearable="true"
+                placeholder="Select Employee..."
                 defaultValue={selectedUser}
                 onChange={setSelectedUser}
                 options={

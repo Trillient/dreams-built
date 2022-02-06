@@ -80,8 +80,14 @@ export const createClient =
         payload: data,
       });
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-      toast.error(message);
+      const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+      if (message.length > 0) {
+        message.map((err) => toast.error(err.msg));
+      } else {
+        toast.error(message);
+      }
+
       dispatch({
         type: actions.CLIENT_CREATE_FAIL,
         payload: message,
@@ -138,8 +144,13 @@ export const deleteClient = (token, clientId) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-    toast.error(message);
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
     dispatch({
       type: actions.CLIENT_DELETE_FAIL,
       payload: message,
