@@ -23,6 +23,9 @@ import EditJobPartScreen from './screens/editJobPartScreen/EditJobPartScreen';
 import EmployeesScreen from './screens/employeesScreen/EmployeesScreen';
 import EditEmployeeScreen from './screens/editEmployeeScreen/EditEmployeeScreen';
 import TimeSheetReportScreen from './screens/timesheetReportScreen/TimeSheetReportScreen';
+import ContractorListScreen from './screens/contractorListScreen/ContractorListScreen';
+import EditContractorScreen from './screens/editContractorScreen/EditContractorScreen';
+import CreateContractorScreen from './screens/createContractorScreen/CreateContractorScreen';
 
 const App = () => {
   const { isAuthenticated } = useAuth0();
@@ -36,6 +39,9 @@ const App = () => {
           <Route path="clients" element={<ClientListScreen />} />
           <Route path="clients/edit/:id" element={<EditClientScreen />} />
           <Route path="clients/create" element={<CreateClientScreen />} />
+          <Route path="contractors" element={<ContractorListScreen />} />
+          <Route path="contractors/edit/:id" element={<EditContractorScreen />} />
+          <Route path="contractors/create" element={<CreateContractorScreen />} />
           <Route path="jobs" element={<JobListScreen />} />
           <Route path="job/details/:id" element={<JobDetailsScreen />} />
           <Route path="jobs/create" element={<CreateJobScreen />} />

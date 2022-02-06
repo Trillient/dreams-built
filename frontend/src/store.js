@@ -6,6 +6,7 @@ import { jobDueDatesReducer, getJobPartsReducer, getJobsReducer, jobPartReducer,
 import { clientReducer, getClientsReducer } from './reducers/clientReducer';
 import { getEmployeesReducer, userReducer } from './reducers/employeeReduer';
 import { reportReducer } from './reducers/reportsReducer';
+import { contractorReducer, getContractorsReducer } from './reducers/contractorReducer';
 
 const reducer = combineReducers({
   timesheet: entryArrayReducer,
@@ -16,6 +17,8 @@ const reducer = combineReducers({
   jobPart: jobPartReducer,
   clients: getClientsReducer,
   client: clientReducer,
+  contractors: getContractorsReducer,
+  contractor: contractorReducer,
   employees: getEmployeesReducer,
   employee: userReducer,
   jobDueDates: jobDueDatesReducer,

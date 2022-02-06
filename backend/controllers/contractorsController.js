@@ -8,8 +8,50 @@ const Contractor = require('../models/contractorModel');
  */
 
 const getContractors = asyncHandler(async (req, res) => {
-  const contractorList = await Contractor.find();
-  res.json(contractorList);
+  const pageSize = +req.query.limit || 25;
+  const page = +req.query.page || 1;
+
+  const keyword = req.query.keyword
+    ? {
+        $and: [
+          {
+            $or: [
+              {
+                clientName: {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+              {
+                contact: {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+              {
+                email: {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+              {
+                phone: {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+            ],
+          },
+        ],
+      }
+    : {};
+
+  const count = await Contractor.countDocuments({ ...keyword });
+  const contractorList = await Contractor.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+
+  res.json({ contractorList, pages: Math.ceil(count / pageSize) });
 });
 
 /**
