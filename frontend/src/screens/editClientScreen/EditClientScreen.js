@@ -6,11 +6,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import { deleteClient, getClient, resetClientRedirect, updateClient } from '../../actions/clientActions';
+
 import AdminGroup from '../../components/groups/AdminGroup';
 import DetailsGroup from '../../components/groups/DetailsGroup';
 
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
+import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
 
 import styles from './editClientScreen.module.css';
 
@@ -25,6 +27,7 @@ const EditClientScreen = () => {
   const client = useSelector((state) => state.client);
   const { loading, error, clientDetails, redirect } = client;
 
+  const [modalShow, setModalShow] = useState(false);
   const [clientName, setClientName] = useState('');
   const [color, setColor] = useState('#563d7c');
   const [contactName, setContactName] = useState('');
@@ -40,17 +43,13 @@ const EditClientScreen = () => {
           try {
             const token = await getAccessTokenSilently();
             dispatch(getClient(token, clientId));
-            setClientName(clientDetails.clientName);
-            setColor(clientDetails.color);
-            setContactName(clientDetails.contact && clientDetails.contact.name ? clientDetails.contact.name : '');
-            setContactEmail(clientDetails.contact && clientDetails.contact.email ? clientDetails.contact.email : '');
           } catch (err) {
             console.error(err);
           }
         })();
       } else {
-        setClientName(clientDetails.clientName);
-        setColor(clientDetails.color);
+        setClientName(clientDetails.clientName ? clientDetails.clientName : '');
+        setColor(clientDetails.color ? clientDetails.color : '');
         setContactName(clientDetails.contact && clientDetails.contact.name ? clientDetails.contact.name : '');
         setContactEmail(clientDetails.contact && clientDetails.contact.email ? clientDetails.contact.email : '');
       }
@@ -64,10 +63,10 @@ const EditClientScreen = () => {
     dispatch(updateClient({ token: token, clientId: clientId, client: { clientName: clientName, color: color, contact: { name: contactName, email: contactEmail } } }));
   };
 
-  const deleteHandler = async (e) => {
-    e.preventDefault();
+  const handleDeleteTrue = async () => {
     const token = await getAccessTokenSilently();
     dispatch(deleteClient(token, clientId));
+    setModalShow(false);
   };
 
   return (
@@ -99,13 +98,14 @@ const EditClientScreen = () => {
                   <Form.Control type="text" placeholder="john@gmail.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)}></Form.Control>
                 </Form.Group>
               </div>
-              <Button className={styles['button-update']} type="submit" variant="success">
+              <Button className={styles['button-update']} disabled={!clientName} type="submit" variant="success">
                 Save
               </Button>
-              <Button className={styles['button-delete']} onClick={deleteHandler} variant="danger">
+              <Button className={styles['button-delete']} onClick={setModalShow} variant="danger">
                 Delete
               </Button>
             </Form>
+            <DeleteConfirmationModal title={clientName} show={modalShow} setModalShow={setModalShow} onHide={() => setModalShow(false)} handleDeleteTrue={handleDeleteTrue} />
           </DetailsGroup>
         </AdminGroup>
       )}
