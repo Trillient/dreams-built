@@ -6,11 +6,10 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import { FiEdit } from 'react-icons/fi';
 
+import HeaderSearchGroup from '../../components/groups/HeaderSearchGroup';
+import PaginationGroup from '../../components/groups/PaginationGroup';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import Paginate from '../../components/Paginate';
-import Limit from '../../components/Limit';
-import SearchBox from '../../components/SearchBox';
 
 import { getClients } from '../../actions/clientActions';
 
@@ -25,7 +24,7 @@ const ClientListScreen = () => {
   const { loading, error, clientList, pages } = clients;
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(25);
+  const [limit, setLimit] = useState(1);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -34,9 +33,19 @@ const ClientListScreen = () => {
       dispatch(getClients(token, limit, currentPage, search));
     })();
   }, [currentPage, limit, search, dispatch, getAccessTokenSilently]);
-  if (currentPage > pages) {
+
+  if (currentPage === 0 && pages > 0) {
     setCurrentPage(1);
   }
+
+  if (currentPage > pages) {
+    if (pages === 0) {
+      setCurrentPage(0);
+    } else {
+      setCurrentPage(1);
+    }
+  }
+
   return (
     <div className={styles.parent}>
       <ToastContainer theme="colored" />
@@ -47,17 +56,7 @@ const ClientListScreen = () => {
       ) : (
         <section className="container">
           <div className={styles.card}>
-            <div className={styles.header}>
-              <h1 className={styles.title}>Clients</h1>
-              <div className={styles.add}>
-                <LinkContainer to={`/clients/create`}>
-                  <Button className={styles.btn}>+</Button>
-                </LinkContainer>
-              </div>
-              <div className={styles.search}>
-                <SearchBox setSearch={setSearch} />
-              </div>
-            </div>
+            <HeaderSearchGroup title="Clients" setSearch={setSearch} link="/client/create" />
             <Table hover responsive="sm" bordered>
               <thead>
                 <tr>
@@ -90,16 +89,7 @@ const ClientListScreen = () => {
                 ))}
               </tbody>
             </Table>
-            {pages > 1 && (
-              <div className={styles.controls}>
-                <div>
-                  <Paginate setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={pages} />
-                </div>
-                <div className={styles.limit}>
-                  <Limit setLimit={setLimit} limit={limit} />
-                </div>
-              </div>
-            )}
+            <PaginationGroup pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} limit={limit} setLimit={setLimit} />
           </div>
         </section>
       )}

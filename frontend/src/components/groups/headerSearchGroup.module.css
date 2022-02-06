@@ -1,0 +1,39 @@
+.header {
+  display: grid;
+  grid-template-columns: 5fr 2fr;
+  grid-template-rows: min-content 1fr;
+  grid-template-areas: 'title addBtn' 'search search';
+}
+
+.title {
+  grid-area: title;
+  margin-bottom: 0;
+}
+
+.add {
+  grid-area: addBtn;
+  margin-bottom: 0;
+  justify-self: right;
+}
+
+.search {
+  grid-area: search;
+}
+
+@media only screen and (min-width: 26rem) {
+  .header {
+    grid-template-areas: 'title title' 'search addBtn';
+  }
+  .add {
+    align-self: center;
+  }
+
+  .search {
+    justify-self: left;
+    max-width: 15rem;
+  }
+
+  .title {
+    text-align: center;
+  }
+}
