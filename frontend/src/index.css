@@ -29,6 +29,16 @@ body {
   display: none;
 }
 
+@media only screen and (min-width: 35.9rem) {
+  .main-card {
+    background-color: whitesmoke;
+    padding: 2rem;
+    margin: 1rem auto;
+    border-radius: 0.5rem;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+}
+
 @media only screen and (max-width: 50rem) {
   .display-none_lg-screen {
     display: inline-block;

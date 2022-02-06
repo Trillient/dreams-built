@@ -74,7 +74,7 @@ export const createClient =
       };
 
       const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/clients`, client, config);
-      toast.success('Saved!');
+
       dispatch({
         type: actions.CLIENT_CREATE_SUCCESS,
         payload: data,
