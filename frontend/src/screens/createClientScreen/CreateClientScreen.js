@@ -50,8 +50,8 @@ const CreateClientScreen = () => {
               <Form.Control type="text" placeholder="Company..." value={clientName} onChange={(e) => setClientName(e.target.value)}></Form.Control>
             </Form.Group>
             <Form.Group className={styles.color} controlId="color">
-              <Form.Label htmlFor="ColorInput">Colour</Form.Label>
-              <Form.Control type="color" style={{ width: '100%' }} id="ColorInput" value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
+              <Form.Label>Colour</Form.Label>
+              <Form.Control type="color" style={{ width: '100%' }} value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
             </Form.Group>
             <div className={styles.contact}>
               <Form.Group className="mb-2" controlId="contact.name">

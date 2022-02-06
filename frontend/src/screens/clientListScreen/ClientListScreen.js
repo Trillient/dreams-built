@@ -47,53 +47,55 @@ const ClientListScreen = () => {
   }
 
   return (
-    <div className={styles.parent}>
+    <>
       <ToastContainer theme="colored" />
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <section className="container">
-          <div className={styles.card}>
-            <HeaderSearchGroup title="Clients" setSearch={setSearch} link="/clients/create" />
-            <Table hover responsive="sm" bordered>
-              <thead>
-                <tr>
-                  <th className={styles.responsive} style={{ width: '5%' }}>
-                    Colour
-                  </th>
-                  <th>Client</th>
-                  <th className={styles.responsive}>Contact</th>
-                  <th className={styles.responsive}>Email</th>
-                  <th style={{ width: '5%' }}>Edit</th>
-                </tr>
-              </thead>
-              <tbody>
-                {clientList.map((client) => (
-                  <tr key={client._id} className={styles.data}>
-                    <td className={styles.responsive}>
-                      <div className={styles.color} style={{ backgroundColor: client.color }}></div>
-                    </td>
-                    <td className={styles.client}>{client.clientName}</td>
-                    <td className={styles.responsive}>{client.contact && client.contact.name ? client.contact.name : null}</td>
-                    <td className={styles.responsive}>{client.contact && client.contact.email ? client.contact.email : null}</td>
-                    <td>
-                      <LinkContainer to={`/clients/edit/${client._id}`}>
-                        <Button className="btn-sm">
-                          <FiEdit />
-                        </Button>
-                      </LinkContainer>
-                    </td>
+      <div className={styles.parent}>
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Message variant="danger">{error}</Message>
+        ) : (
+          <section className="container">
+            <div className={styles.card}>
+              <HeaderSearchGroup title="Clients" setSearch={setSearch} link="/clients/create" />
+              <Table hover responsive="sm" bordered>
+                <thead>
+                  <tr>
+                    <th className={styles.responsive} style={{ width: '5%' }}>
+                      Colour
+                    </th>
+                    <th>Client</th>
+                    <th className={styles.responsive}>Contact</th>
+                    <th className={styles.responsive}>Email</th>
+                    <th style={{ width: '5%' }}>Edit</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-            <PaginationGroup pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} limit={limit} setLimit={setLimit} />
-          </div>
-        </section>
-      )}
-    </div>
+                </thead>
+                <tbody>
+                  {clientList.map((client) => (
+                    <tr key={client._id} className={styles.data}>
+                      <td className={styles.responsive}>
+                        <div className={styles.color} style={{ backgroundColor: client.color }}></div>
+                      </td>
+                      <td className={styles.client}>{client.clientName}</td>
+                      <td className={styles.responsive}>{client.contact && client.contact.name ? client.contact.name : null}</td>
+                      <td className={styles.responsive}>{client.contact && client.contact.email ? client.contact.email : null}</td>
+                      <td>
+                        <LinkContainer to={`/clients/edit/${client._id}`}>
+                          <Button className="btn-sm">
+                            <FiEdit />
+                          </Button>
+                        </LinkContainer>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+              <PaginationGroup pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} limit={limit} setLimit={setLimit} />
+            </div>
+          </section>
+        )}
+      </div>
+    </>
   );
 };
 

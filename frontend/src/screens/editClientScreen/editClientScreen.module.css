@@ -1,4 +1,9 @@
-.button {
+.button-update {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.button-delete {
   width: 100%;
   margin-top: 1.5rem;
 }
@@ -20,10 +25,15 @@
     grid-template-columns: 8fr 1fr;
     grid-template-rows: 1fr 2.2fr;
     gap: 0rem;
-    grid-template-areas: 'client color' 'contact contact' 'button button';
+    grid-template-areas: 'client color' 'contact contact' 'update delete';
   }
-  .button {
-    grid-area: button;
+  .button-update {
+    grid-area: update;
+    width: min-content;
+  }
+
+  .button-delete {
+    grid-area: delete;
     width: min-content;
   }
 
