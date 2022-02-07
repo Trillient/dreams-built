@@ -23,7 +23,7 @@ const JobListScreen = () => {
   const { loading, error, jobList, pages } = jobsList;
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(2);
+  const [limit, setLimit] = useState(25);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -61,12 +61,12 @@ const JobListScreen = () => {
                 <thead className={styles['table-head']}>
                   <tr>
                     <th>Job Number</th>
-                    <th>Company</th>
+                    <th className={styles.sm}>Company</th>
                     <th>Address</th>
-                    <th>City</th>
-                    <th>Client</th>
-                    <th>m&sup2;</th>
-                    <th>Invoiced</th>
+                    <th className={styles.md}>City</th>
+                    <th className={styles.md}>Client</th>
+                    <th className={styles.md}>m&sup2;</th>
+                    <th className={styles.md}>Invoiced</th>
                     <th>Edit</th>
                   </tr>
                 </thead>
@@ -77,17 +77,17 @@ const JobListScreen = () => {
                         <strong>{job.jobNumber}</strong>
                       </td>
                       {job.client === null ? (
-                        <td>Client Deleted</td>
+                        <td className={styles.sm}>Client Deleted</td>
                       ) : (
-                        <td className={styles.company} style={{ backgroundColor: job.client.color, color: fontColorContrast(job.client.color) }}>
+                        <td className={(styles.company, styles.sm)} style={{ backgroundColor: job.client.color, color: fontColorContrast(job.client.color) }}>
                           {job.client.clientName}
                         </td>
                       )}
                       <td>{job.address}</td>
-                      <td>{job.city}</td>
-                      <td>{job.endClient}</td>
-                      <td>{job.squareMeters}</td>
-                      <td>{job.isInvoiced}</td>
+                      <td className={styles.md}>{job.city}</td>
+                      <td className={styles.md}>{job.endClient}</td>
+                      <td className={styles.md}>{job.squareMeters}</td>
+                      <td className={styles.md}>{job.isInvoiced}</td>
                       <td>
                         <LinkContainer to={`/job/details/${job._id}`}>
                           <Button className="btn-sm">

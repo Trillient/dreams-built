@@ -91,16 +91,8 @@ export const AdminSidebarData = [
         path: '/jobs',
       },
       {
-        title: 'Create Job',
-        path: '/jobs/create',
-      },
-      {
         title: 'Job Parts',
         path: '/jobparts',
-      },
-      {
-        title: 'Create Job Part',
-        path: '/jobparts/create',
       },
     ],
   },

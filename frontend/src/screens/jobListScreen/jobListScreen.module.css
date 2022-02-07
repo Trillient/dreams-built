@@ -2,6 +2,7 @@
   padding: 2rem;
   border-radius: 0.5rem;
   background-color: white;
+  overflow-x: scroll;
 }
 
 .table-head th {
@@ -17,4 +18,36 @@
 .company {
   font-weight: bold;
   letter-spacing: 0.05rem;
+}
+
+.parent {
+  margin-top: 2rem;
+}
+
+.card {
+  background-color: white;
+  padding: 2rem;
+  margin: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.sm {
+  display: none;
+}
+
+.md {
+  display: none;
+}
+
+@media only screen and (min-width: 28.75rem) {
+  .sm {
+    display: table-cell;
+  }
+}
+
+@media only screen and (min-width: 70rem) {
+  .md {
+    display: table-cell;
+  }
 }
