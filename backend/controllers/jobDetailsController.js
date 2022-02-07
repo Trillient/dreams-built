@@ -40,11 +40,11 @@ const getJobs = asyncHandler(async (req, res) => {
         ],
       }
     : {};
-
+  const count = await JobDetails.aggregate([{ $addFields: { jobs: { $toString: '$jobNumber' } } }, { $match: { ...keyword } }]);
   const jobs = await JobDetails.aggregate([{ $addFields: { jobs: { $toString: '$jobNumber' } } }, { $sort: { jobNumber: -1 } }, { $match: { ...keyword } }, { $skip: pageSize * (page - 1) }, { $limit: pageSize }]);
-  const count = jobs.length;
+
   const jobList = await JobDetails.populate(jobs, { path: 'client' });
-  res.json({ jobList, pages: Math.ceil(count / pageSize) });
+  res.json({ jobList, pages: Math.ceil(count.length / pageSize) });
 });
 
 /**
