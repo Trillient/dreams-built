@@ -23,7 +23,7 @@ const JobListScreen = () => {
   const { loading, error, jobList, pages } = jobsList;
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(25);
+  const [limit, setLimit] = useState(2);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
