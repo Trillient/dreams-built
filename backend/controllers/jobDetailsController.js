@@ -9,8 +9,42 @@ const JobDetails = require('../models/jobModel');
  */
 
 const getJobs = asyncHandler(async (req, res) => {
-  const jobList = await JobDetails.find().populate('client', 'clientName color');
-  res.json(jobList);
+  const pageSize = +req.query.limit || 25;
+  const page = +req.query.page || 1;
+
+  const keyword = req.query.keyword
+    ? {
+        $and: [
+          {
+            $or: [
+              {
+                jobs: {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+              {
+                address: {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+              {
+                city: {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+            ],
+          },
+        ],
+      }
+    : {};
+
+  const count = await JobDetails.countDocuments({ ...keyword });
+  const jobs = await JobDetails.aggregate([{ $addFields: { jobs: { $toString: '$jobNumber' } } }, { $match: { ...keyword } }, { $limit: pageSize }, { $skip: pageSize * (page - 1) }]);
+  const jobList = await JobDetails.populate(jobs, { path: 'client' });
+  res.json({ jobList, pages: Math.ceil(count / pageSize) });
 });
 
 /**

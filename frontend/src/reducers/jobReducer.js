@@ -3,9 +3,9 @@ import * as actions from '../constants/jobConstants';
 export const getJobsReducer = (state = { jobList: [] }, action) => {
   switch (action.type) {
     case actions.JOBLIST_FETCH_REQUEST:
-      return { loading: true };
+      return { ...state, loading: true };
     case actions.JOBLIST_FETCH_SUCCESS:
-      return { loading: false, jobList: action.payload };
+      return { ...state, loading: false, jobList: action.payload.jobs, pages: action.payload.pages };
     case actions.JOBLIST_FETCH_FAIL:
       return { loading: false, error: action.payload };
     default:

@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 
 import * as actions from '../constants/jobConstants';
 
-export const getJobList = (token) => async (dispatch) => {
+export const getJobList = (token, limit, page, search) => async (dispatch) => {
   try {
     dispatch({
       type: actions.JOBLIST_FETCH_REQUEST,
@@ -15,13 +15,13 @@ export const getJobList = (token) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/details`, config);
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/details?limit=${limit}&page=${page}&keyword=${search}`, config);
 
-    const sortedData = data.sort((a, b) => b.jobNumber - a.jobNumber);
+    const sortedData = data.jobList.sort((a, b) => b.jobNumber - a.jobNumber);
 
     dispatch({
       type: actions.JOBLIST_FETCH_SUCCESS,
-      payload: sortedData,
+      payload: { jobs: sortedData, pages: data.pages },
     });
   } catch (error) {
     const message = error.response && error.response.data.message ? error.response.data.message : error.message;

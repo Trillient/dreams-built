@@ -1,9 +1,9 @@
 import React from 'react';
 import { Alert } from 'react-bootstrap';
 
-const Message = ({ variant, children }) => {
+const Message = ({ variant, children, margin = '2rem' }) => {
   return (
-    <Alert style={{ margin: '2rem' }} variant={variant}>
+    <Alert style={{ margin: margin }} variant={variant}>
       {children}
     </Alert>
   );

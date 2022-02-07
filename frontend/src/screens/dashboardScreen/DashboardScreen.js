@@ -12,12 +12,12 @@ const DashboardScreen = () => {
   return isLoading ? (
     <Loader />
   ) : error ? (
-    <Message className="parent-container" variant="danger">
-      {error}
-    </Message>
+    <Message variant="danger">{error}</Message>
   ) : user[`${domain}/roles`].includes('Admin') ? (
     <div className="parent-container">
-      <Message variant="success">You're an admin</Message>
+      <Message margin={'0'} variant="success">
+        You're an admin
+      </Message>
       <div className={styles.grid}>
         <InfoBlock
           icon={<HiOutlineInformationCircle />}
@@ -51,7 +51,9 @@ const DashboardScreen = () => {
     </div>
   ) : user[`${domain}/roles`].includes('Employee') ? (
     <div className="parent-container">
-      <Message variant="success">You're in the employee portal</Message>
+      <Message margin={'0'} variant="success">
+        You're in the employee portal
+      </Message>
       <div className={styles.grid}>
         <InfoBlock
           icon={<HiOutlineInformationCircle />}
@@ -85,7 +87,9 @@ const DashboardScreen = () => {
     </div>
   ) : (
     <div className="parent-container">
-      <Message variant="info">You have not been added to the employee list yet, please logout and log back in, in 24 hours</Message>
+      <Message margin={'0'} variant="info">
+        You have not been added to the employee list yet, please logout and log back in, in 24 hours
+      </Message>
       <InfoBlock
         icon={<HiOutlineInformationCircle />}
         iconText="Help Center"
