@@ -4,7 +4,9 @@
 
 ## Aim
 
-The aim of this project was to built a website that enables small to medium sized businesses the ability provide an online timesheet to employees and then display the timesheet information in user and job reports that automates the administration duties of payroll and job labour costing. The project is also able to be utilised for job planning and scheduling on a weekly calendar with each job being able to be broken in to subparts and easily customised by the end user.
+The aim of this project was to build a website that enables small to medium sized businesses the ability to provide an online timesheet to employees and then display the timesheet information in user and job reports which automates the administration duties of payroll and job labour costing.
+
+The project is also able to be utilised for job planning and scheduling on a weekly calendar with each job being able to be broken into subparts and easily customised by the business.
 
 ## Technology
 
