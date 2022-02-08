@@ -1,16 +1,32 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, ButtonGroup, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import Select from 'react-select';
+
 import { getClients } from '../../actions/clientActions';
 import { deleteJob, getJob, getJobDueDates, getJobPartsList, resetJobRedirect, updateJob } from '../../actions/jobActions';
+
+import AdminGroup from '../../components/groups/AdminGroup';
+import DetailsGroup from '../../components/groups/DetailsGroup';
 import JobPartDueDates from '../../components/JobPartDueDates';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
+import styles from './jobDetailsScreen.module.css';
+
 const JobDetailsScreen = () => {
+  const customStyles = {
+    control: (base, state) => ({
+      ...base,
+      borderColor: state.isFocused ? '#ddd' : client || !clientError ? '#ddd' : 'red',
+      '&:hover': {
+        borderColor: state.isFocused ? '#ddd' : client || !clientError ? '#ddd' : 'red',
+      },
+    }),
+  };
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,15 +45,22 @@ const JobDetailsScreen = () => {
   const dueDates = useSelector((state) => state.jobDueDates);
   const { dueDateUpdated } = dueDates;
 
-  const [display, setDisplay] = useState(false);
+  const [display, setDisplay] = useState(0);
+
+  const [jobNumberError, setJobNumberError] = useState(false);
+  const [addressError, setAddressError] = useState(false);
+  const [clientError, setClientError] = useState(false);
 
   const [jobNumber, setJobNumber] = useState('');
   const [client, setClient] = useState('');
-  const [clientName, setClientName] = useState('');
+  const [endClient, setEndClient] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [color, setColor] = useState('#00ccb4');
-  const [area, setArea] = useState(0);
+  const [area, setArea] = useState('');
+  const [invoiced, setInvoiced] = useState(false);
+
+  const defaultLabel = job && job.client ? { label: `${job.client.clientName}` } : '';
 
   useEffect(() => {
     if (redirect) {
@@ -58,15 +81,14 @@ const JobDetailsScreen = () => {
         }
       })();
     } else {
-      if (job.client) {
-        setClient(job.client._id);
-        setClientName(job.client.clientName);
-      }
-      setJobNumber(job.jobNumber);
-      setAddress(job.address);
-      setCity(job.city);
-      setColor(job.color);
-      setArea(job.area || 0);
+      setClient({ value: job.client._id } || '');
+      setJobNumber(job.jobNumber || '');
+      setAddress(job.address || '');
+      setCity(job.city || '');
+      setColor(job.color || '');
+      setArea(job.area || '');
+      setEndClient(job.endClient || '');
+      setInvoiced(job.isInvoiced || false);
     }
 
     if (dueDateUpdated) {
@@ -79,23 +101,43 @@ const JobDetailsScreen = () => {
         }
       })();
     }
-  }, [dispatch, getAccessTokenSilently, job, jobId, redirect, dueDateUpdated]);
+  }, [dispatch, navigate, getAccessTokenSilently, job, jobId, redirect, dueDateUpdated]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     const token = await getAccessTokenSilently();
+    if (!jobNumber || parseInt(jobNumber) < 0) {
+      setJobNumberError(true);
+    } else {
+      setJobNumberError(false);
+    }
+
+    if (!address) {
+      setAddressError(true);
+    } else {
+      setAddressError(false);
+    }
+
+    if (!client) {
+      setClient('');
+      setClientError(true);
+    } else {
+      setClientError(false);
+    }
 
     dispatch(
       updateJob({
         token: token,
         jobId: jobId,
         job: {
-          jobNumber,
-          client,
-          address,
-          city,
-          area,
-          color,
+          jobNumber: jobNumber,
+          client: client && client.value ? client.value : '',
+          address: address,
+          city: city,
+          area: area,
+          color: color,
+          endClient: endClient,
+          isInvoiced: invoiced,
         },
       })
     );
@@ -109,95 +151,90 @@ const JobDetailsScreen = () => {
   return (
     <>
       <ToastContainer theme="colored" />
-      <Link to="/jobs" className="btn btn-light my-3">
-        {'<< Job List'}
-      </Link>
-
-      <h1>Edit Job</h1>
-
       {loading ? (
         <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
+      ) : error && error.length < 1 ? (
+        <Message variant="danger">'test'</Message>
       ) : (
-        <>
-          <Button
-            id="tbg-btn-1"
-            onClick={() => {
-              setDisplay(false);
-            }}
-          >
-            Details
-          </Button>
-          <Button
-            id="tbg-btn-2"
-            onClick={() => {
-              setDisplay(true);
-            }}
-          >
-            Scheduling
-          </Button>
-
-          {!display ? (
-            <>
-              <Button variant="danger" onClick={handleDelete}>
-                Delete
+        <AdminGroup>
+          <DetailsGroup title="Edit Job" link="/jobs" linkName="Jobs">
+            <ButtonGroup aria-label="Basic example" style={{ display: 'block', textAlign: 'center', margin: '1rem' }}>
+              <Button onClick={() => setDisplay(0)} variant={display === 0 ? 'success' : 'primary'}>
+                Job Details
               </Button>
-              <Form onSubmit={submitHandler}>
-                <Form.Group controlId="jobNumber">
-                  <Form.Label>Job Number</Form.Label>
-                  <Form.Control type="jobNumber" placeholder="eg 22001" value={jobNumber} onChange={(e) => setJobNumber(e.target.value)}></Form.Control>
+              <Button onClick={() => setDisplay(1)} variant={display === 1 ? 'success' : 'primary'}>
+                Scheduling
+              </Button>
+            </ButtonGroup>
+
+            {display === 0 && (
+              <Form className={styles.form} onSubmit={submitHandler}>
+                <Form.Group className={styles.job} controlId="jobNumber">
+                  <Form.Label>Job Number *</Form.Label>
+                  <Form.Control isInvalid={jobNumberError} type="number" placeholder="eg 22001" value={jobNumber} onChange={(e) => setJobNumber(e.target.value)}></Form.Control>
                 </Form.Group>
-                <Form.Group controlId="company">
-                  <Form.Label>Company</Form.Label>
-                  <Form.Control
-                    as="select"
-                    value={client}
-                    onChange={(e) => {
-                      setClient(e.target.value);
-                      setClientName(clientList.filter((client) => client._id === e.target.value)[0].clientName);
-                    }}
-                  >
-                    {client && <option value={client}>{clientName}</option>}
-                    <option disabled>------------------------</option>
-                    {clientList &&
-                      clientList.map((customer) => (
-                        <option key={customer._id} value={customer._id}>
-                          {customer.clientName}
-                        </option>
-                      ))}
-                  </Form.Control>
+                <Form.Group className={styles.color} controlId="color">
+                  <Form.Label>Colour *</Form.Label>
+                  <Form.Control style={{ width: '100%' }} type="color" defaultValue="#563d7c" onChange={(e) => setColor(e.target.value)} title="Choose your color" />
                 </Form.Group>
-                <Form.Group controlId="address">
-                  <Form.Label>Address</Form.Label>
-                  <Form.Control type="address" placeholder="11 Sharp Place" value={address} onChange={(e) => setAddress(e.target.value)}></Form.Control>
+                <Form.Group className={styles.client} controlId="company">
+                  <Form.Label>Client *</Form.Label>
+                  <Select
+                    styles={customStyles}
+                    menuPosition={'fixed'}
+                    isClearable="true"
+                    placeholder="Select Company..."
+                    defaultValue={defaultLabel}
+                    onChange={setClient}
+                    options={
+                      clientList &&
+                      clientList.map((option) => {
+                        return { label: `${option.clientName}`, value: option._id };
+                      })
+                    }
+                  />
                 </Form.Group>
-                <Form.Group controlId="city">
+                <Form.Group className={styles.address} controlId="address">
+                  <Form.Label>Address *</Form.Label>
+                  <Form.Control isInvalid={addressError} type="text" placeholder="11 Sharp Place" value={address} onChange={(e) => setAddress(e.target.value)}></Form.Control>
+                </Form.Group>
+                <Form.Group className={styles.city} controlId="city">
                   <Form.Label>City</Form.Label>
-                  <Form.Control type="city" placeholder="Hamilton" value={city} onChange={(e) => setCity(e.target.value)}></Form.Control>
+                  <Form.Control type="text" placeholder="Hamilton" value={city} onChange={(e) => setCity(e.target.value)}></Form.Control>
                 </Form.Group>
-                <Form.Group controlId="area">
+                <Form.Group className={styles.area} controlId="area">
                   <Form.Label>Area</Form.Label>
-                  <Form.Control type="area" value={area} onChange={(e) => setArea(e.target.value)}></Form.Control>
+                  <Form.Control type="number" placeholder="100.0" value={area} onChange={(e) => setArea(e.target.value)}></Form.Control>
                 </Form.Group>
-                <Form.Label htmlFor="exampleColorInput">Color picker</Form.Label>
-                <Form.Control type="color" id="exampleColorInput" value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
-                <Button type="submit" variant="primary">
+                <Form.Group className={styles.customer} controlId="city">
+                  <Form.Label>Customer</Form.Label>
+                  <Form.Control type="text" placeholder="John Doe" value={endClient} onChange={(e) => setEndClient(e.target.value)}></Form.Control>
+                </Form.Group>
+                <Form.Group className={styles.invoiced} controlId="city">
+                  <Form.Check type={'checkbox'} label={'Invoiced'} defaultChecked={invoiced} onChange={() => setInvoiced(!invoiced)} />
+                </Form.Group>
+                <Button type="submit" className={styles.button} variant="success" disabled={!jobNumber}>
                   Save
                 </Button>
+                <Button variant="danger" className={styles.delete} onClick={handleDelete}>
+                  Delete
+                </Button>
               </Form>
-            </>
-          ) : (
-            <>
-              {jobParts.map((jobPart) => (
-                <JobPartDueDates key={jobPart._id} jobId={jobId} jobPart={jobPart} />
-              ))}
-            </>
-          )}
-        </>
+            )}
+            {display === 1 && (
+              <>
+                {jobParts.map((jobPart) => (
+                  <JobPartDueDates key={jobPart._id} jobId={jobId} jobPart={jobPart} />
+                ))}
+              </>
+            )}
+          </DetailsGroup>
+        </AdminGroup>
       )}
     </>
   );
 };
 
-export default JobDetailsScreen;
+export default withAuthenticationRequired(JobDetailsScreen, {
+  onRedirecting: () => <Loader />,
+});

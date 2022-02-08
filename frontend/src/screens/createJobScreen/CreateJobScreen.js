@@ -148,7 +148,6 @@ const CreateJobScreen = () => {
                 <Form.Label>Customer</Form.Label>
                 <Form.Control type="text" placeholder="John Doe" value={endClient} onChange={(e) => setEndClient(e.target.value)}></Form.Control>
               </Form.Group>
-
               <Button type="submit" className={styles.button} variant="success" disabled={!jobNumber}>
                 Save
               </Button>
