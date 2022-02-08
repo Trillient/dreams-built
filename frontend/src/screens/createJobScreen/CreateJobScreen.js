@@ -16,6 +16,16 @@ import Message from '../../components/Message';
 import styles from './createJobScreen.module.css';
 
 const CreateJobScreen = () => {
+  const customStyles = {
+    control: (base, state) => ({
+      ...base,
+      borderColor: state.isFocused ? '#ddd' : client || !clientError ? '#ddd' : 'red',
+      '&:hover': {
+        borderColor: state.isFocused ? '#ddd' : client || !clientError ? '#ddd' : 'red',
+      },
+    }),
+  };
+
   const { getAccessTokenSilently } = useAuth0();
 
   const dispatch = useDispatch();
@@ -26,11 +36,16 @@ const CreateJobScreen = () => {
   const clients = useSelector((state) => state.clients);
   const { loading, error, clientList } = clients;
 
-  const [jobNumber, setJobNumber] = useState(jobList[0].jobNumber + 1 || 0);
+  const [jobNumberError, setJobNumberError] = useState(false);
+  const [addressError, setAddressError] = useState(false);
+  const [clientError, setClientError] = useState(false);
+
+  const [jobNumber, setJobNumber] = useState((jobList[0] && jobList[0].jobNumber + 1) || '');
   const [client, setClient] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
-  const [area, setArea] = useState(null);
+  const [area, setArea] = useState('');
+  const [endClient, setEndClient] = useState('');
   const [color, setColor] = useState('#563d7c');
 
   useEffect(() => {
@@ -46,16 +61,36 @@ const CreateJobScreen = () => {
     e.preventDefault();
     const token = await getAccessTokenSilently();
 
+    if (!jobNumber || parseInt(jobNumber) < 0) {
+      setJobNumberError(true);
+    } else {
+      setJobNumberError(false);
+    }
+
+    if (!address) {
+      setAddressError(true);
+    } else {
+      setAddressError(false);
+    }
+
+    if (!client) {
+      setClient('');
+      setClientError(true);
+    } else {
+      setClientError(false);
+    }
+
     dispatch(
       createJob({
         token: token,
         job: {
-          jobNumber,
+          jobNumber: jobNumber,
           client: client.value,
-          address,
-          city,
-          area,
-          color,
+          address: address,
+          city: city,
+          area: area,
+          color: color,
+          endClient: endClient,
         },
       })
     );
@@ -71,14 +106,19 @@ const CreateJobScreen = () => {
       ) : (
         <AdminGroup>
           <DetailsGroup title="Create Job" link="/jobs" linkName="Jobs">
-            <Form onSubmit={submitHandler}>
-              <Form.Group controlId="jobNumber">
-                <Form.Label>Job Number</Form.Label>
-                <Form.Control type="number" placeholder="eg 22001" value={jobNumber} onChange={(e) => setJobNumber(e.target.value)}></Form.Control>
+            <Form className={styles.form} onSubmit={submitHandler}>
+              <Form.Group className={styles.job} controlId="jobNumber">
+                <Form.Label>Job Number *</Form.Label>
+                <Form.Control isInvalid={jobNumberError} type="number" placeholder="eg 22001" value={jobNumber} onChange={(e) => setJobNumber(e.target.value)}></Form.Control>
               </Form.Group>
-              <Form.Group controlId="company">
-                <Form.Label>Company</Form.Label>
+              <Form.Group className={styles.color} controlId="color">
+                <Form.Label>Colour *</Form.Label>
+                <Form.Control style={{ width: '100%' }} type="color" defaultValue="#563d7c" onChange={(e) => setColor(e.target.value)} title="Choose your color" />
+              </Form.Group>
+              <Form.Group className={styles.client} controlId="company">
+                <Form.Label>Client *</Form.Label>
                 <Select
+                  styles={customStyles}
                   menuPosition={'fixed'}
                   isClearable="true"
                   placeholder="Select Company..."
@@ -92,21 +132,24 @@ const CreateJobScreen = () => {
                   }
                 />
               </Form.Group>
-              <Form.Group controlId="address">
-                <Form.Label>Address</Form.Label>
-                <Form.Control type="text" placeholder="11 Sharp Place" value={address} onChange={(e) => setAddress(e.target.value)}></Form.Control>
+              <Form.Group className={styles.address} controlId="address">
+                <Form.Label>Address *</Form.Label>
+                <Form.Control isInvalid={addressError} type="text" placeholder="11 Sharp Place" value={address} onChange={(e) => setAddress(e.target.value)}></Form.Control>
               </Form.Group>
-              <Form.Group controlId="city">
+              <Form.Group className={styles.city} controlId="city">
                 <Form.Label>City</Form.Label>
                 <Form.Control type="text" placeholder="Hamilton" value={city} onChange={(e) => setCity(e.target.value)}></Form.Control>
               </Form.Group>
-              <Form.Group controlId="area">
+              <Form.Group className={styles.area} controlId="area">
                 <Form.Label>Area</Form.Label>
                 <Form.Control type="number" placeholder="100.0" value={area} onChange={(e) => setArea(e.target.value)}></Form.Control>
               </Form.Group>
-              <Form.Label htmlFor="exampleColorInput">Color picker</Form.Label>
-              <Form.Control type="color" id="exampleColorInput" defaultValue="#563d7c" onChange={(e) => setColor(e.target.value)} title="Choose your color" />
-              <Button type="submit" variant="success" disabled={!jobNumber}>
+              <Form.Group className={styles.customer} controlId="city">
+                <Form.Label>Customer</Form.Label>
+                <Form.Control type="text" placeholder="John Doe" value={endClient} onChange={(e) => setEndClient(e.target.value)}></Form.Control>
+              </Form.Group>
+
+              <Button type="submit" className={styles.button} variant="success" disabled={!jobNumber}>
                 Save
               </Button>
             </Form>

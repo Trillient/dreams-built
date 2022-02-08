@@ -44,6 +44,11 @@
   top: 2rem;
 }
 
+.checked {
+  text-align: center;
+  color: green;
+}
+
 @media only screen and (min-width: 1rem) {
   .edit {
     display: table-cell;

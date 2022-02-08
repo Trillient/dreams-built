@@ -1,0 +1,54 @@
+.button {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.form {
+  margin: 1rem auto;
+  display: grid;
+  grid-template-rows: min-content;
+  gap: 0.7rem;
+}
+
+@media only screen and (min-width: 31.25rem) {
+  .form {
+    margin: 2rem auto 2.5rem;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: repeat(4, min-content);
+    grid-template-areas: 'address city city' 'client customer customer' 'job color area' 'button . .';
+    gap: 1rem;
+  }
+
+  .address {
+    grid-area: address;
+  }
+
+  .city {
+    grid-area: city;
+  }
+
+  .client {
+    grid-area: client;
+  }
+
+  .customer {
+    grid-area: customer;
+  }
+
+  .job {
+    grid-area: job;
+  }
+
+  .color {
+    grid-area: color;
+  }
+
+  .area {
+    grid-area: area;
+  }
+
+  .button {
+    grid-area: button;
+    width: min-content;
+  }
+}

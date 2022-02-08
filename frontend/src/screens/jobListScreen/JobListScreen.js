@@ -8,6 +8,7 @@ import fontColorContrast from 'font-color-contrast';
 import ReactToPrint from 'react-to-print';
 import { ToastContainer } from 'react-toastify';
 import { BsFillPrinterFill } from 'react-icons/bs';
+import { TiTick } from 'react-icons/ti';
 
 import { getJobList } from '../../actions/jobActions';
 
@@ -81,10 +82,10 @@ const JobListScreen = () => {
                     <thead className={styles['table-head']}>
                       <tr>
                         <th>Job Number</th>
-                        <th className={styles.sm}>Company</th>
+                        <th className={styles.sm}>Client</th>
                         <th>Address</th>
                         <th className={styles.md}>City</th>
-                        <th className={`${styles.md} ${styles.edit}`}>Client</th>
+                        <th className={`${styles.md} ${styles.edit}`}>Customer</th>
                         <th className={`${styles.md} ${styles.edit}`}>m&sup2;</th>
                         <th className={styles.md} style={{ width: '4%' }}>
                           Invoiced
@@ -110,8 +111,8 @@ const JobListScreen = () => {
                           <td>{job.address}</td>
                           <td className={styles.md}>{job.city}</td>
                           <td className={`${styles.md} ${styles.edit}`}>{job.endClient}</td>
-                          <td className={`${styles.md} ${styles.edit}`}>{job.squareMeters}</td>
-                          <td className={styles.md}>{job.isInvoiced}</td>
+                          <td className={`${styles.md} ${styles.edit}`}>{job.area}</td>
+                          <td className={`${styles.md} ${styles.checked}`}>{job.isInvoiced ? <TiTick /> : null}</td>
                           <td className={styles.edit}>
                             <LinkContainer to={`/job/details/${job._id}`}>
                               <Button className="btn-sm">
