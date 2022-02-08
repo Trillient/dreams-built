@@ -3,33 +3,35 @@ import { toast } from 'react-toastify';
 
 import * as actions from '../constants/jobConstants';
 
-export const getJobList = (token, limit, page, search) => async (dispatch) => {
-  try {
-    dispatch({
-      type: actions.JOBLIST_FETCH_REQUEST,
-    });
+export const getJobList =
+  (token, limit = '', page = '', search = '') =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: actions.JOBLIST_FETCH_REQUEST,
+      });
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/details?limit=${limit}&page=${page}&keyword=${search}`, config);
+      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/details?limit=${limit}&page=${page}&keyword=${search}`, config);
 
-    dispatch({
-      type: actions.JOBLIST_FETCH_SUCCESS,
-      payload: { jobs: data.jobList, pages: data.pages },
-    });
-  } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+      dispatch({
+        type: actions.JOBLIST_FETCH_SUCCESS,
+        payload: { jobs: data.jobList, pages: data.pages },
+      });
+    } catch (error) {
+      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
 
-    dispatch({
-      type: actions.JOBLIST_FETCH_FAIL,
-      payload: message,
-    });
-  }
-};
+      dispatch({
+        type: actions.JOBLIST_FETCH_FAIL,
+        payload: message,
+      });
+    }
+  };
 
 export const getJob = (token, jobId) => async (dispatch) => {
   try {
