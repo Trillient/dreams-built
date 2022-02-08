@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import fontColorContrast from 'font-color-contrast';
 
-import styles from './Calendar.module.css';
+import styles from './calendar.module.css';
 
 const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
   const [actionItem, setActionItem] = useState('');

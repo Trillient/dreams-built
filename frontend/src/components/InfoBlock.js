@@ -1,7 +1,8 @@
 import { Button, Card } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import styles from './InfoBlock.module.css';
 import { FiArrowRight } from 'react-icons/fi';
+
+import styles from './infoBlock.module.css';
 
 const InfoBlock = ({ icon, iconText, title, text, link }) => {
   return (
