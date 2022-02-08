@@ -21,9 +21,9 @@ const JobDetailsScreen = () => {
   const customStyles = {
     control: (base, state) => ({
       ...base,
-      borderColor: state.isFocused ? '#ddd' : client || !clientError ? '#ddd' : 'red',
+      borderColor: state.isFocused ? '#ddd' : !clientError ? '#ddd' : 'red',
       '&:hover': {
-        borderColor: state.isFocused ? '#ddd' : client || !clientError ? '#ddd' : 'red',
+        borderColor: state.isFocused ? '#ddd' : !clientError ? '#ddd' : 'red',
       },
     }),
   };
@@ -185,7 +185,10 @@ const JobDetailsScreen = () => {
                     isClearable="true"
                     placeholder="Select Company..."
                     defaultValue={defaultLabel}
-                    onChange={setClient}
+                    onChange={(e) => {
+                      setClient(e);
+                      setClientError(false);
+                    }}
                     options={
                       clientList &&
                       clientList.map((option) => {
