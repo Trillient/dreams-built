@@ -83,8 +83,13 @@ export const createJob =
         payload: data,
       });
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+      const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
+      if (error.response.data.errors && message.length > 0) {
+        message.map((err) => toast.error(err.msg));
+      } else {
+        toast.error(message);
+      }
       dispatch({
         type: actions.JOB_CREATE_FAIL,
         payload: message,
@@ -114,8 +119,13 @@ export const updateJob =
         payload: data,
       });
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+      const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
+      if (error.response.data.errors && message.length > 0) {
+        message.map((err) => toast.error(err.msg));
+      } else {
+        toast.error(message);
+      }
       dispatch({
         type: actions.JOB_UPDATE_FAIL,
         payload: message,
@@ -136,14 +146,16 @@ export const deleteJob = (token, jobId) => async (dispatch) => {
     };
 
     const { data } = await axios.delete(`${process.env.REACT_APP_API_URL}/job/details/${jobId}`, config);
-    toast.success('Deleted!');
+
     dispatch({
       type: actions.JOB_DELETE_SUCCESS,
       payload: data,
     });
+
+    toast.success('Deleted!');
   } catch (error) {
     const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-    toast.error(message);
+
     dispatch({
       type: actions.JOB_DELETE_FAIL,
       payload: message,
@@ -209,8 +221,13 @@ export const createJobPart =
         payload: data,
       });
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+      const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
+      if (error.response.data.errors && message.length > 0) {
+        message.map((err) => toast.error(err.msg));
+      } else {
+        toast.error(message);
+      }
       dispatch({
         type: actions.JOBPART_CREATE_FAIL,
         payload: message,
@@ -274,8 +291,13 @@ export const updateJobPart =
         payload: data,
       });
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+      const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
+      if (error.response.data.errors && message.length > 0) {
+        message.map((err) => toast.error(err.msg));
+      } else {
+        toast.error(message);
+      }
       dispatch({
         type: actions.JOBPART_UPDATE_FAIL,
         payload: message,
@@ -331,7 +353,7 @@ export const getJobDueDates = (token, jobId) => async (dispatch) => {
     });
   } catch (error) {
     const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-    toast.error(message);
+
     dispatch({
       type: actions.JOBPART_DUEDATELIST_FETCH_FAIL,
       payload: message,
@@ -361,8 +383,13 @@ export const createJobPartDueDate = (token, jobId, jobPart, dueDate, startDate) 
       payload: data,
     });
   } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-    toast.error(message);
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
     dispatch({
       type: actions.JOBPART_DUEDATE_CREATE_FAIL,
       payload: message,
@@ -392,8 +419,13 @@ export const updateJobPartDueDate = (token, dueId, dueDate, startDate) => async 
       payload: data,
     });
   } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-    toast.error(message);
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
     dispatch({
       type: actions.JOBPART_DUEDATE_UPDATE_FAIL,
       payload: message,
@@ -422,7 +454,7 @@ export const deleteJobPartDueDate = (token, dueId) => async (dispatch) => {
     });
   } catch (error) {
     const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-    toast.error(message);
+
     dispatch({
       type: actions.JOBPART_DUEDATE_UPDATE_FAIL,
       payload: message,
@@ -449,7 +481,7 @@ export const getDueDates = (token, weekStart, weekEnd) => async (dispatch) => {
     });
   } catch (error) {
     const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-    toast.error(message);
+
     dispatch({
       type: actions.DUEDATELIST_FETCH_FAIL,
       payload: message,

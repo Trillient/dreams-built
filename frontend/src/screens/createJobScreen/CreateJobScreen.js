@@ -26,25 +26,21 @@ const CreateJobScreen = () => {
   const clients = useSelector((state) => state.clients);
   const { loading, error, clientList } = clients;
 
-  const [jobNumber, setJobNumber] = useState(0);
+  const [jobNumber, setJobNumber] = useState(jobList[0].jobNumber + 1 || 0);
   const [client, setClient] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
-  const [area, setArea] = useState('');
+  const [area, setArea] = useState(null);
   const [color, setColor] = useState('#563d7c');
 
   useEffect(() => {
-    if (!jobList || jobList.length < 1) {
-      (async () => {
-        const token = await getAccessTokenSilently();
-        dispatch(getJobList(token));
-        dispatch(getClients(token));
-      })();
-    } else {
-      setJobNumber(jobList[0].jobNumber + 1);
-    }
+    (async () => {
+      const token = await getAccessTokenSilently();
+      dispatch(getJobList(token));
+      dispatch(getClients(token));
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobList]);
+  }, []);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -98,15 +94,15 @@ const CreateJobScreen = () => {
               </Form.Group>
               <Form.Group controlId="address">
                 <Form.Label>Address</Form.Label>
-                <Form.Control type="address" placeholder="11 Sharp Place" value={address} onChange={(e) => setAddress(e.target.value)}></Form.Control>
+                <Form.Control type="text" placeholder="11 Sharp Place" value={address} onChange={(e) => setAddress(e.target.value)}></Form.Control>
               </Form.Group>
               <Form.Group controlId="city">
                 <Form.Label>City</Form.Label>
-                <Form.Control type="city" placeholder="Hamilton" value={city} onChange={(e) => setCity(e.target.value)}></Form.Control>
+                <Form.Control type="text" placeholder="Hamilton" value={city} onChange={(e) => setCity(e.target.value)}></Form.Control>
               </Form.Group>
               <Form.Group controlId="area">
                 <Form.Label>Area</Form.Label>
-                <Form.Control type="area" placeholder="" value={area} onChange={(e) => setArea(e.target.value)}></Form.Control>
+                <Form.Control type="number" placeholder="100.0" value={area} onChange={(e) => setArea(e.target.value)}></Form.Control>
               </Form.Group>
               <Form.Label htmlFor="exampleColorInput">Color picker</Form.Label>
               <Form.Control type="color" id="exampleColorInput" defaultValue="#563d7c" onChange={(e) => setColor(e.target.value)} title="Choose your color" />
