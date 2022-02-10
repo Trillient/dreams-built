@@ -198,7 +198,7 @@ const JobDetailsScreen = () => {
                   />
                 </Form.Group>
                 <Form.Group className={styles.address} controlId="address">
-                  <Form.Label>Address *</Form.Label>
+                  <Form.Label>Address</Form.Label>
                   <Form.Control isInvalid={addressError} type="text" placeholder="11 Sharp Place" value={address} onChange={(e) => setAddress(e.target.value)}></Form.Control>
                 </Form.Group>
                 <Form.Group className={styles.city} controlId="city">
