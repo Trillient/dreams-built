@@ -16,6 +16,7 @@ import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
 import styles from './jobDetailsScreen.module.css';
+import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
 
 const JobDetailsScreen = () => {
   const customStyles = {
@@ -51,6 +52,7 @@ const JobDetailsScreen = () => {
   const [addressError, setAddressError] = useState(false);
   const [clientError, setClientError] = useState(false);
 
+  const [modalShow, setModalShow] = useState(false);
   const [jobNumber, setJobNumber] = useState('');
   const [client, setClient] = useState('');
   const [endClient, setEndClient] = useState('');
@@ -146,6 +148,7 @@ const JobDetailsScreen = () => {
   const handleDelete = async () => {
     const token = await getAccessTokenSilently();
     dispatch(deleteJob(token, jobId));
+    setModalShow(false);
   };
 
   return (
@@ -219,9 +222,10 @@ const JobDetailsScreen = () => {
                 <Button type="submit" className={styles.button} variant="success" disabled={!jobNumber}>
                   Save
                 </Button>
-                <Button variant="danger" className={styles.delete} onClick={handleDelete}>
+                <Button variant="danger" className={styles.delete} onClick={setModalShow}>
                   Delete
                 </Button>
+                <DeleteConfirmationModal title={jobNumber} show={modalShow} setModalShow={setModalShow} onHide={() => setModalShow(false)} handleDeleteTrue={handleDelete} />
               </Form>
             )}
             {display === 1 && (
