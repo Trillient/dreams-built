@@ -1,8 +1,10 @@
 .form {
   border-radius: 0.3rem;
   padding: 1rem;
-  background-color: white;
+  background-color: whitesmoke;
   display: grid;
+  grid-template-rows: auto;
+  margin: 1.5rem 0;
   gap: 1rem;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
@@ -10,6 +12,12 @@
 .title {
   font-size: 1.2rem;
   text-align: center;
+}
+
+@media only screen and (min-width: 47.94rem) {
+  .form {
+    margin: 0;
+  }
 }
 
 @media only screen and (min-width: 75rem) {

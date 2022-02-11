@@ -7,7 +7,7 @@ import { ToastContainer } from 'react-toastify';
 import Select from 'react-select';
 
 import { getClients } from '../../actions/clientActions';
-import { deleteJob, getJob, getJobDueDates, getJobPartsList, resetJobRedirect, updateJob } from '../../actions/jobActions';
+import { deleteJob, getJob, getJobDueDates, getJobPartsList, resetJobRedirect, updateJob, updateJobPartAllDueDate } from '../../actions/jobActions';
 
 import AdminGroup from '../../components/groups/AdminGroup';
 import DetailsGroup from '../../components/groups/DetailsGroup';
@@ -61,6 +61,8 @@ const JobDetailsScreen = () => {
   const [color, setColor] = useState('#00ccb4');
   const [area, setArea] = useState('');
   const [invoiced, setInvoiced] = useState(false);
+
+  const [shift, setShift] = useState(0);
 
   const defaultLabel = job && job.client ? { label: `${job.client.clientName}` } : '';
 
@@ -145,6 +147,12 @@ const JobDetailsScreen = () => {
     );
   };
 
+  const submitShiftHandler = async (e) => {
+    e.preventDefault();
+    const token = await getAccessTokenSilently();
+    dispatch(updateJobPartAllDueDate(token, jobId, shift));
+  };
+
   const handleDelete = async () => {
     const token = await getAccessTokenSilently();
     dispatch(deleteJob(token, jobId));
@@ -160,13 +168,16 @@ const JobDetailsScreen = () => {
         <Message variant="danger">'test'</Message>
       ) : (
         <AdminGroup>
-          <DetailsGroup title="Edit Job" link="/jobs" width={display === 0 ? 'screenDefault' : 'large'} linkName="Jobs">
+          <DetailsGroup title="Edit Job" link="/jobs" width={display !== 1 ? 'screenDefault' : 'large'} linkName="Jobs">
             <ButtonGroup style={{ display: 'block', textAlign: 'center', margin: '1rem' }}>
               <Button onClick={() => setDisplay(0)} variant={display === 0 ? 'success' : 'primary'}>
                 Job Details
               </Button>
               <Button onClick={() => setDisplay(1)} variant={display === 1 ? 'success' : 'primary'}>
                 Scheduling
+              </Button>
+              <Button onClick={() => setDisplay(2)} variant={display === 2 ? 'success' : 'primary'}>
+                Schedule Shift
               </Button>
             </ButtonGroup>
 
@@ -234,6 +245,17 @@ const JobDetailsScreen = () => {
                   <JobPartDueDates key={jobPart._id} jobId={jobId} jobPart={jobPart} />
                 ))}
               </div>
+            )}
+            {display === 2 && (
+              <Form onSubmit={submitShiftHandler} style={{ maxWidth: '20rem', margin: '2rem auto' }}>
+                <Form.Group controlId="shift">
+                  <Form.Label>Shift</Form.Label>
+                  <Form.Control type="number" placeholder="+/- 1..." value={shift} onChange={(e) => setShift(e.target.value)}></Form.Control>
+                </Form.Group>
+                <Button type="submit" className={styles.button} variant="success" disabled={!shift}>
+                  Save
+                </Button>
+              </Form>
             )}
           </DetailsGroup>
         </AdminGroup>

@@ -106,6 +106,12 @@ export const jobDueDatesReducer = (state = { jobDueDates: [], dueDateUpdated: fa
       return { loading: false, jobDueDate: action.payload, dueDateUpdated: true };
     case actions.JOBPART_DUEDATE_UPDATE_FAIL:
       return { loading: false, error: action.payload };
+    case actions.JOBPART_DUEDATES_UPDATE_REQUEST:
+      return { loading: true };
+    case actions.JOBPART_DUEDATES_UPDATE_SUCCESS:
+      return { loading: false, jobDueDate: action.payload, dueDateUpdated: true };
+    case actions.JOBPART_DUEDATES_UPDATE_FAIL:
+      return { loading: false, error: action.payload };
     case actions.JOBPART_DUEDATE_CREATE_REQUEST:
       return { loading: true };
     case actions.JOBPART_DUEDATE_CREATE_SUCCESS:

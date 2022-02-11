@@ -433,6 +433,40 @@ export const updateJobPartDueDate = (token, dueId, dueDate, startDate) => async 
   }
 };
 
+export const updateJobPartAllDueDate = (token, jobId, shift) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPART_DUEDATES_UPDATE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.patch(`${process.env.REACT_APP_API_URL}/job/duedates/parts/${jobId}`, { scheduleShift: shift }, config);
+
+    toast.success(data.message);
+    dispatch({
+      type: actions.JOBPART_DUEDATES_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
+    dispatch({
+      type: actions.JOBPART_DUEDATES_UPDATE_FAIL,
+      payload: message,
+    });
+  }
+};
+
 export const deleteJobPartDueDate = (token, dueId) => async (dispatch) => {
   try {
     dispatch({

@@ -6,7 +6,7 @@ const JobPart = require('../models/jobPartModel');
 
 /**
  * @Desc Get a list of all due dates for every job
- * @Route /api/job/duedates/parts
+ * @Route GET /api/job/duedates/parts
  * @Access Private ("read:due_dates", employee, admin)
  */
 
@@ -18,7 +18,7 @@ const getAllJobDueDates = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Get a list of all due dates for a job
- * @Route /api/job/duedates/parts/:jobid
+ * @Route GET /api/job/duedates/parts/:jobid
  * @Access Private ("read:due_dates", employee, admin)
  */
 
@@ -38,7 +38,7 @@ const getJobPartDueDates = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Create a job's part duedates
- * @Route /api/job/duedates/parts/:jobid
+ * @Route POST /api/job/duedates/parts/:jobid
  * @Access Private ("create:due_dates", admin)
  */
 
@@ -89,7 +89,7 @@ const createJobPartDueDate = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Update due dates of all due dates for a job
- * @Route /api/job/duedates/parts/:jobid
+ * @Route PATCH /api/job/duedates/parts/:jobid
  * @Access Private ("update:due_dates" admin)
  */
 
@@ -142,7 +142,7 @@ const patchJobPartDueDates = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Delete all of a job's duedates
- * @Route /api/job/duedates/parts/:jobid
+ * @Route DELETE /api/job/duedates/parts/:jobid
  * @Access Private ("delete:due_dates", admin)
  */
 
@@ -162,12 +162,12 @@ const deleteJobPartDueDates = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Update a job's part's duedate all fields
- * @Route /api/job/duedates/job/part/:id
+ * @Route PUT /api/job/duedates/job/part/:id
  * @Access Private ("update:due_dates", admin)
  */
 
 const updateJobPartDueDate = asyncHandler(async (req, res) => {
-  const { dueDate, startDate, dueDateRange, contractors } = req.body;
+  const { dueDate, startDate, contractors } = req.body;
   const jobPartDueDateItem = await JobDueDate.findById(req.params.id);
 
   if (jobPartDueDateItem) {
@@ -201,7 +201,7 @@ const updateJobPartDueDate = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Update a job's part's duedate field only
- * @Route /api/job/duedates/job/part/:id
+ * @Route PATCH /api/job/duedates/job/part/:id
  * @Access Private ('update:due_dates', admin)
  */
 
@@ -240,7 +240,7 @@ const patchJobPartDueDate = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Delete a job's part's duedate
- * @Route /api/job/
+ * @Route DELETE /api/job/
  * @Access Private ('delete:due_dates', admin)
  */
 
