@@ -160,8 +160,8 @@ const JobDetailsScreen = () => {
         <Message variant="danger">'test'</Message>
       ) : (
         <AdminGroup>
-          <DetailsGroup title="Edit Job" link="/jobs" linkName="Jobs">
-            <ButtonGroup aria-label="Basic example" style={{ display: 'block', textAlign: 'center', margin: '1rem' }}>
+          <DetailsGroup title="Edit Job" link="/jobs" width={display === 0 ? 'screenDefault' : 'large'} linkName="Jobs">
+            <ButtonGroup style={{ display: 'block', textAlign: 'center', margin: '1rem' }}>
               <Button onClick={() => setDisplay(0)} variant={display === 0 ? 'success' : 'primary'}>
                 Job Details
               </Button>
@@ -229,11 +229,11 @@ const JobDetailsScreen = () => {
               </Form>
             )}
             {display === 1 && (
-              <>
+              <div className={styles.schedule}>
                 {jobParts.map((jobPart) => (
                   <JobPartDueDates key={jobPart._id} jobId={jobId} jobPart={jobPart} />
                 ))}
-              </>
+              </div>
             )}
           </DetailsGroup>
         </AdminGroup>

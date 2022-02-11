@@ -1,0 +1,44 @@
+.form {
+  border-radius: 0.3rem;
+  padding: 1rem;
+  background-color: white;
+  display: grid;
+  gap: 1rem;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.title {
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+@media only screen and (min-width: 75rem) {
+  .form {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'title title' 'start end' 'save delete';
+  }
+
+  .title {
+    grid-area: title;
+    font-size: 1.5rem;
+  }
+
+  .start {
+    grid-area: start;
+  }
+
+  .end {
+    grid-area: end;
+  }
+
+  .save {
+    grid-area: save;
+    width: min-content;
+  }
+
+  .delete {
+    grid-area: delete;
+    justify-self: right;
+    width: min-content;
+  }
+}

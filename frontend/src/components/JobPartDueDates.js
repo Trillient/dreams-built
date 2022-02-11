@@ -1,10 +1,12 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
+
 import { createJobPartDueDate, deleteJobPartDueDate, updateJobPartDueDate } from '../actions/jobActions';
+
+import styles from './jobPartDueDates.module.css';
 
 const JobPartDueDates = ({ jobPart, jobId }) => {
   const { getAccessTokenSilently } = useAuth0();
@@ -47,26 +49,23 @@ const JobPartDueDates = ({ jobPart, jobId }) => {
     }
   };
   return (
-    <>
-      <ToastContainer theme="colored" />
-      <Form onSubmit={submitHandler}>
-        <h3>{jobPart.jobPartTitle}</h3>
-        <Form.Group controlId={jobPart.jobPartTitle.startDate}>
-          <Form.Label>Start Date</Form.Label>
-          <Form.Control type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}></Form.Control>
-        </Form.Group>
-        <Form.Group controlId={jobPart.jobPartTitle.dueDate}>
-          <Form.Label>Due Date</Form.Label>
-          <Form.Control type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}></Form.Control>
-        </Form.Group>
-        <Button type="submit" variant="primary">
-          Save
-        </Button>
-        <Button variant="danger" onClick={handleDelete}>
-          Delete
-        </Button>
-      </Form>
-    </>
+    <Form className={styles.form} onSubmit={submitHandler}>
+      <h2 className={styles.title}>{jobPart.jobPartTitle}</h2>
+      <Form.Group className={styles.start} controlId={jobPart.jobPartTitle.startDate}>
+        <Form.Label>Start Date</Form.Label>
+        <Form.Control type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}></Form.Control>
+      </Form.Group>
+      <Form.Group className={styles.end} controlId={jobPart.jobPartTitle.dueDate}>
+        <Form.Label>Due Date</Form.Label>
+        <Form.Control type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}></Form.Control>
+      </Form.Group>
+      <Button className={styles.save} type="submit" variant="success">
+        Save
+      </Button>
+      <Button className={styles.delete} variant="danger" onClick={handleDelete}>
+        Delete
+      </Button>
+    </Form>
   );
 };
 

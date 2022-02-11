@@ -68,3 +68,15 @@
     justify-self: right;
   }
 }
+
+.schedule {
+  margin: 1rem 0;
+}
+
+@media only screen and (min-width: 47.94rem) {
+  .schedule {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
