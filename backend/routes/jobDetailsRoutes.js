@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { getJobs, getJob, createJob, updateJob, deleteJob } = require('../controllers/jobDetailsController');
-const { getJobParts, createJobPart, getJobPart, updateJobPart, deleteJobPart } = require('../controllers/jobPartsController');
+const { getJobParts, createJobPart, getJobPart, updateJobPart, deleteJobPart, updateJobParts } = require('../controllers/jobPartsController');
 const { getAllJobDueDates, getJobPartDueDates, deleteJobPartDueDates, createJobPartDueDate, updateJobPartDueDate, deleteJobPartDueDate, patchJobPartDueDates, patchJobPartDueDate } = require('../controllers/jobDueDatesController');
 
 const {
@@ -29,7 +29,8 @@ router.route('/details').get(readJobDetailsAuth, getJobs).post(createJobDetailsA
 router.route('/details/:id').get(readJobDetailsAuth, jobIdParams, validation, getJob).put(updateJobDetailsAuth, jobIdParams, jobDetailsSchema, validation, updateJob).delete(deleteJobDetailsAuth, jobIdParams, validation, deleteJob);
 
 // Job parts
-router.route('/parts').get(readJobPartsAuth, getJobParts).post(createJobPartsAuth, jobPartsSchema, validation, createJobPart);
+//TODO - patch update validations
+router.route('/parts').get(readJobPartsAuth, getJobParts).post(createJobPartsAuth, jobPartsSchema, validation, createJobPart).patch(updateJobPartsAuth, updateJobParts);
 router.route('/parts/:id').get(readJobPartsAuth, jobPartParams, validation, getJobPart).put(updateJobPartsAuth, jobPartParams, jobPartsSchema, validation, updateJobPart).delete(deleteJobPartsAuth, jobPartParams, validation, deleteJobPart);
 
 // Job due dates

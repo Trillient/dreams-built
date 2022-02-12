@@ -8,8 +8,24 @@ const JobPart = require('../models/jobPartModel');
  */
 
 const getJobParts = asyncHandler(async (req, res) => {
-  const jobParts = await JobPart.find();
-  res.json(jobParts);
+  const pageSize = +req.query.limit || 25;
+  const page = +req.query.page || 1;
+
+  const keyword = req.query.keyword
+    ? {
+        jobPartTitle: {
+          $regex: req.query.keyword,
+          $options: 'i',
+        },
+      }
+    : {};
+
+  const count = await JobPart.countDocuments({ ...keyword });
+  const jobParts = await JobPart.find({ ...keyword })
+    .sort({ jobOrder: 1 })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+  res.json({ jobParts, pages: Math.ceil(count / pageSize) });
 });
 
 /**
@@ -39,6 +55,37 @@ const createJobPart = asyncHandler(async (req, res) => {
   });
 
   res.status(201).json(createdJobPart);
+});
+
+/**
+ * @Desc Update all job part's order
+ * @Route PATCH /api/job/parts
+ * @Access Private ("update:job_parts", admin)
+ */
+
+const updateJobParts = asyncHandler(async (req, res) => {
+  const jobPartList = req.body;
+
+  let errors = [];
+
+  for (const jobPart of jobPartList) {
+    const jobPartData = await JobPart.findById(jobPart._id);
+
+    if (jobPartData) {
+      jobPartData.jobOrder = jobPart.jobOrder;
+      await jobPartData.save();
+    } else {
+      errors.push({ msg: `${jobPart._id} - Not Found` });
+    }
+  }
+
+  if (errors.length > 0) {
+    res.status(400);
+    res.json({ errors: errors });
+  } else {
+    const jobParts = await JobPart.find().sort({ jobOrder: 1 });
+    res.json(jobParts);
+  }
 });
 
 /**
@@ -99,4 +146,4 @@ const deleteJobPart = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getJobParts, createJobPart, getJobPart, updateJobPart, deleteJobPart };
+module.exports = { getJobParts, createJobPart, updateJobParts, getJobPart, updateJobPart, deleteJobPart };
