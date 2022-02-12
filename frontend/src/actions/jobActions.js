@@ -169,7 +169,7 @@ export const resetJobRedirect = () => async (dispatch) => {
   });
 };
 
-export const getJobPartsList = (token) => async (dispatch) => {
+export const getJobPartsList = (token, limit, page, search) => async (dispatch) => {
   try {
     dispatch({
       type: actions.JOBPARTLIST_FETCH_REQUEST,
@@ -181,7 +181,7 @@ export const getJobPartsList = (token) => async (dispatch) => {
       },
     };
 
-    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/parts`, config);
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/parts?limit=${limit}&page=${page}&keyword=${search}`, config);
 
     dispatch({
       type: actions.JOBPARTLIST_FETCH_SUCCESS,
