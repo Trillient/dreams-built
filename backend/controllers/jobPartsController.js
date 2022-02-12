@@ -112,13 +112,12 @@ const getJobPart = asyncHandler(async (req, res) => {
  */
 
 const updateJobPart = asyncHandler(async (req, res) => {
-  const { jobPartTitle, jobDescription, jobOrder } = req.body;
+  const { jobPartTitle, jobDescription } = req.body;
 
   const jobPartData = await JobPart.findById(req.params.id);
 
   if (jobPartData) {
     jobPartData.jobPartTitle = jobPartTitle;
-    jobPartData.jobOrder = jobOrder || jobPartData.jobOrder;
     jobPartData.jobDescription = jobDescription;
 
     const updatedJobPart = await jobPartData.save();

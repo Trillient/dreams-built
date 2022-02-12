@@ -1,0 +1,40 @@
+.button-update {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.button-delete {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+@media only screen and (min-width: 31.25rem) {
+  .form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto max-content;
+    margin: 1rem 0;
+    grid-template-areas: 'jobPart jobPart' 'description description' 'update delete';
+  }
+
+  .part {
+    grid-area: jobPart;
+    margin: 0.5rem 0;
+  }
+
+  .description {
+    grid-area: description;
+    margin: 0.5rem 0;
+  }
+
+  .button-update {
+    width: min-content;
+    grid-area: update;
+  }
+
+  .button-delete {
+    width: min-content;
+    grid-area: delete;
+    justify-self: right;
+  }
+}
