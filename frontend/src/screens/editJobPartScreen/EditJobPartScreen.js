@@ -1,10 +1,12 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+
 import { deleteJobPart, getJobPart, resetJobPartRedirect, updateJobPart } from '../../actions/jobActions';
+
 import AdminGroup from '../../components/groups/AdminGroup';
 import DetailsGroup from '../../components/groups/DetailsGroup';
 import Loader from '../../components/Loader';
@@ -96,4 +98,6 @@ const EditJobPartScreen = () => {
   );
 };
 
-export default EditJobPartScreen;
+export default withAuthenticationRequired(EditJobPartScreen, {
+  onRedirecting: () => <Loader />,
+});
