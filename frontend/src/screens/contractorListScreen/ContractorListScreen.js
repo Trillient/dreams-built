@@ -69,21 +69,22 @@ const ContractorListScreen = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {contractorList.map((contractor) => (
-                    <tr key={contractor._id} className={styles.data}>
-                      <td>{contractor.contractor}</td>
-                      <td className={styles.responsive}>{contractor.contact}</td>
-                      <td className={styles.responsive}>{contractor.email}</td>
-                      <td className={styles.responsive}>{contractor.phone}</td>
-                      <td>
-                        <LinkContainer to={`/contractors/edit/${contractor._id}`}>
-                          <Button className="btn-sm">
-                            <FiEdit />
-                          </Button>
-                        </LinkContainer>
-                      </td>
-                    </tr>
-                  ))}
+                  {contractorList &&
+                    contractorList.map((contractor) => (
+                      <tr key={contractor._id} className={styles.data}>
+                        <td>{contractor.contractor}</td>
+                        <td className={styles.responsive}>{contractor.contact}</td>
+                        <td className={styles.responsive}>{contractor.email}</td>
+                        <td className={styles.responsive}>{contractor.phone}</td>
+                        <td>
+                          <LinkContainer to={`/contractors/edit/${contractor._id}`}>
+                            <Button className="btn-sm">
+                              <FiEdit />
+                            </Button>
+                          </LinkContainer>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </Table>
               <PaginationGroup pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} limit={limit} setLimit={setLimit} />

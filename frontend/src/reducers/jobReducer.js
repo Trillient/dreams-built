@@ -49,10 +49,16 @@ export const jobReducer = (state = { job: {} }, action) => {
 export const getJobPartsReducer = (state = { jobParts: [] }, action) => {
   switch (action.type) {
     case actions.JOBPARTLIST_FETCH_REQUEST:
-      return { loading: true };
+      return { ...state, loading: true, error: false };
     case actions.JOBPARTLIST_FETCH_SUCCESS:
-      return { loading: false, jobParts: action.payload };
+      return { ...state, loading: false, jobParts: action.payload.jobParts, pages: action.payload.pages, error: false };
     case actions.JOBPARTLIST_FETCH_FAIL:
+      return { loading: false, error: action.payload };
+    case actions.JOBPARTLIST_UPDATE_REQUEST:
+      return { ...state, loading: true, error: false };
+    case actions.JOBPARTLIST_UPDATE_SUCCESS:
+      return { ...state, loading: false, jobParts: action.payload, error: false };
+    case actions.JOBPARTLIST_UPDATE_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

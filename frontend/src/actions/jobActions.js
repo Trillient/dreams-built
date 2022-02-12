@@ -183,17 +183,50 @@ export const getJobPartsList = (token) => async (dispatch) => {
 
     const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/parts`, config);
 
-    const sortedData = data.sort((a, b) => a.jobOrder - b.jobOrder);
-
     dispatch({
       type: actions.JOBPARTLIST_FETCH_SUCCESS,
-      payload: sortedData,
+      payload: data,
     });
   } catch (error) {
     const message = error.response && error.response.data.message ? error.response.data.message : error.message;
 
     dispatch({
       type: actions.JOBPARTLIST_FETCH_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const updateJobPartOrder = (token, list) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPARTLIST_UPDATE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.patch(`${process.env.REACT_APP_API_URL}/job/parts`, list, config);
+
+    dispatch({
+      type: actions.JOBPARTLIST_UPDATE_SUCCESS,
+      payload: data,
+    });
+
+    toast.success('Saved!');
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
+    dispatch({
+      type: actions.JOBPARTLIST_UPDATE_FAIL,
       payload: message,
     });
   }
