@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import * as actions from '../constants/employeeConstants';
 
 export const getEmployees =
-  (token, limit = '', page = '', search = '') =>
+  (token, limit = '25', page = '1', search = '') =>
   async (dispatch) => {
     try {
       dispatch({

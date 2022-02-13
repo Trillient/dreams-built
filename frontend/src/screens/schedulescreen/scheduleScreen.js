@@ -5,7 +5,7 @@ import Calendar from '../../components/Calendar';
 import styles from './scheduleScreen.module.css';
 
 import CustomMenu from '../../components/CustomMenu';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDueDates, getJobPartsList } from '../../actions/jobActions';
 import { useEffect, useState } from 'react';
@@ -87,4 +87,6 @@ const ScheduleScreen = () => {
   );
 };
 
-export default ScheduleScreen;
+export default withAuthenticationRequired(ScheduleScreen, {
+  onRedirecting: () => <Loader />,
+});
