@@ -65,7 +65,7 @@ const ScheduleScreen = () => {
         <p>Pagination</p>
         <Button className={styles.button}>+</Button>
       </div>
-      <Table responsive bordered className={styles.table}>
+      <Table responsive="sm" bordered className={styles.table}>
         <thead>
           <tr>
             <th className={styles['first-coloumn']}>#</th>

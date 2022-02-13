@@ -30,6 +30,7 @@
 
 .table {
   min-height: 70vh;
+  overflow-x: scroll;
 }
 
 .first-coloumn {
