@@ -5,7 +5,7 @@ export const getEmployeesReducer = (state = { employeeList: [] }, action) => {
     case actions.EMPLOYEELIST_FETCH_REQUEST:
       return { loading: true };
     case actions.EMPLOYEELIST_FETCH_SUCCESS:
-      return { loading: false, employeeList: action.payload };
+      return { loading: false, employeeList: action.payload.users, pages: action.payload.pages };
     case actions.EMPLOYEELIST_FETCH_FAIL:
       return { loading: false, error: action.payload };
     default:
@@ -26,7 +26,7 @@ export const userReducer = (state = { user: [] }, action) => {
     case actions.USER_FETCH_REQUEST:
       return { loading: true };
     case actions.USER_FETCH_SUCCESS:
-      return { loading: false, user: action.payload };
+      return { loading: false, user: action.payload.user, roles: action.payload.roles };
     case actions.USER_FETCH_FAIL:
       return { loading: false, error: action.payload };
     case actions.USER_UPDATE_REQUEST:

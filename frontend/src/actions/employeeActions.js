@@ -3,33 +3,40 @@ import { toast } from 'react-toastify';
 
 import * as actions from '../constants/employeeConstants';
 
-export const getEmployees = (token) => async (dispatch) => {
-  try {
-    dispatch({
-      type: actions.EMPLOYEELIST_FETCH_REQUEST,
-    });
+export const getEmployees =
+  (token, limit = '', page = '', search = '') =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: actions.EMPLOYEELIST_FETCH_REQUEST,
+      });
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/users`, config);
+      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/users?limit=${limit}&page=${page}&keyword=${search}`, config);
 
-    dispatch({
-      type: actions.EMPLOYEELIST_FETCH_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+      dispatch({
+        type: actions.EMPLOYEELIST_FETCH_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
-    dispatch({
-      type: actions.EMPLOYEELIST_FETCH_FAIL,
-      payload: message,
-    });
-  }
-};
+      if (error.response.data.errors && message.length > 0) {
+        message.map((err) => toast.error(err.msg));
+      } else {
+        toast.error(message);
+      }
+      dispatch({
+        type: actions.EMPLOYEELIST_FETCH_FAIL,
+        payload: message,
+      });
+    }
+  };
 
 export const getUser = (token, userId) => async (dispatch) => {
   try {
@@ -50,8 +57,13 @@ export const getUser = (token, userId) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
     dispatch({
       type: actions.USER_FETCH_FAIL,
       payload: message,
@@ -80,8 +92,13 @@ export const updateUser =
         payload: data,
       });
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-      toast.error(message);
+      const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+      if (error.response.data.errors && message.length > 0) {
+        message.map((err) => toast.error(err.msg));
+      } else {
+        toast.error(message);
+      }
       dispatch({
         type: actions.USER_UPDATE_FAIL,
         payload: message,

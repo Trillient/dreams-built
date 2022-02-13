@@ -24,8 +24,13 @@ export const getJobList =
         payload: { jobs: data.jobList, pages: data.pages },
       });
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+      const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
+      if (error.response.data.errors && message.length > 0) {
+        message.map((err) => toast.error(err.msg));
+      } else {
+        toast.error(message);
+      }
       dispatch({
         type: actions.JOBLIST_FETCH_FAIL,
         payload: message,
@@ -52,8 +57,13 @@ export const getJob = (token, jobId) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
     dispatch({
       type: actions.JOB_FETCH_FAIL,
       payload: message,

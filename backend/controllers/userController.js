@@ -10,6 +10,9 @@ const { domain, auth0ClientId, auth0ClientSecret } = require('../config/env');
  */
 
 const getUsers = asyncHandler(async (req, res) => {
+  const pageSize = req.query.limit || '25';
+  const page = req.query.page - 1 || '0';
+
   const userListMongo = await User.find();
   const body = { client_id: auth0ClientId, client_secret: auth0ClientSecret, audience: `https://${domain}/api/v2/`, grant_type: 'client_credentials' };
 
@@ -23,11 +26,11 @@ const getUsers = asyncHandler(async (req, res) => {
   const config = {
     headers: { Authorization: `Bearer ${token.data.access_token}` },
   };
-  const { data } = await axios.get(`https://${domain}/api/v2/users`, config);
+  const { data } = await axios.get(`https://${domain}/api/v2/users?per_page=${pageSize}&include_totals=true&search_engine=v3&page=${page}&q=${req.query.keyword}`, config);
 
-  const mergedData = data.map((authUser) => ({ ...authUser, ...userList.find((dbUser) => dbUser.userId === authUser.user_id) }));
+  const mergedData = data.users.map((authUser) => ({ ...authUser, ...userList.find((dbUser) => dbUser.userId === authUser.user_id) }));
 
-  res.json(mergedData);
+  res.json({ users: mergedData, pages: Math.ceil(data.total / pageSize) });
 });
 
 /**
@@ -65,7 +68,19 @@ const createUser = asyncHandler(async (req, res) => {
 const getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   if (user) {
-    res.json(user);
+    const body = { client_id: auth0ClientId, client_secret: auth0ClientSecret, audience: `https://${domain}/api/v2/`, grant_type: 'client_credentials' };
+
+    const options = {
+      headers: { 'content-type': 'application/json' },
+    };
+
+    const token = await axios.post(`https://${domain}/oauth/token`, body, options);
+
+    const config = {
+      headers: { Authorization: `Bearer ${token.data.access_token}` },
+    };
+    const { data } = await axios.get(`https://${domain}/api/v2/users/${user.userId}/roles`, config);
+    res.json({ user: user, roles: data });
   } else {
     res.status(404);
     throw new Error('User does not exist');

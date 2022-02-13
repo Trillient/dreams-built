@@ -1,0 +1,65 @@
+.button-update {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.button-delete {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.roles {
+  margin: 2rem auto;
+  border: 1px solid gainsboro;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.roles-title {
+  text-align: center;
+}
+
+.roles div {
+  margin: 1.5rem 0;
+}
+
+.employee,
+.admin {
+  text-align: center;
+}
+
+@media only screen and (min-width: 31.25rem) {
+  .form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr max-content;
+    margin: 1rem 0;
+    grid-template-areas: 'fname fname' 'lname lname' 'rate rate' 'update delete';
+  }
+
+  .fname {
+    grid-area: fname;
+    margin: 0.5rem 0;
+  }
+
+  .lname {
+    grid-area: lname;
+    margin: 0.5rem 0;
+  }
+
+  .rate {
+    grid-area: rate;
+    margin: 0.5rem 0;
+  }
+
+  .button-update {
+    width: min-content;
+    grid-area: update;
+  }
+
+  .button-delete {
+    width: min-content;
+    grid-area: delete;
+    justify-self: right;
+  }
+}
