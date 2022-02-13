@@ -2,7 +2,9 @@ const asyncHandler = require('express-async-handler');
 const axios = require('axios').default;
 const User = require('../models/userModel');
 const { domain, auth0ClientId, auth0ClientSecret } = require('../config/env');
+const dotenv = require('dotenv');
 
+dotenv.config();
 /**
  * @Desc Get a list of all users
  * @Route GET /api/users
@@ -61,7 +63,7 @@ const createUser = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Get a user's details
- * @Route GET /api/users/:id
+ * @Route GET /api/users/user/:id
  * @Access Private ("read:users", admin)
  */
 
@@ -89,7 +91,7 @@ const getUser = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Update a single user
- * @Route PUT /api/users/:id
+ * @Route PUT /api/users/user/:id
  * @Access Private ("update:users" admin)
  */
 
@@ -114,7 +116,7 @@ const updateUser = asyncHandler(async (req, res) => {
 
 /**
  * @Desc Delete a single user
- * @Route DELETE /api/users/:id
+ * @Route DELETE /api/users/user/:id
  * @Access Private ("delete:users", admin)
  */
 
@@ -127,6 +129,88 @@ const deleteUser = asyncHandler(async (req, res) => {
   } else {
     res.status(404);
     throw new Error('User not found');
+  }
+});
+
+/**
+ * @Desc Add a user role to user
+ * @Route POST /api/users/roles/user/:id
+ * @Access Private ("update:users", admin)
+ */
+
+const addRole = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    const body = { client_id: auth0ClientId, client_secret: auth0ClientSecret, audience: `https://${domain}/api/v2/`, grant_type: 'client_credentials' };
+
+    const options = {
+      headers: { 'content-type': 'application/json' },
+    };
+
+    const token = await axios.post(`https://${domain}/oauth/token`, body, options);
+
+    let role;
+    if (req.query.role === 'admin') {
+      role = process.env.AUTH0_ADMIN_ROLE;
+    }
+
+    if (req.query.role === 'employee') {
+      role = process.env.AUTH0_EMPLOYEE_ROLE;
+    }
+
+    const config = {
+      headers: { 'content-type': 'application/json', Authorization: `Bearer ${token.data.access_token}`, 'cache-control': 'no-cache' },
+    };
+
+    await axios.post(`https://${domain}/api/v2/users/${user.userId}/roles`, { roles: [role] }, config).catch((e) => console.log(e));
+    const roles = await axios.get(`https://${domain}/api/v2/users/${user.userId}/roles`, config);
+    res.json({ user: user, roles: roles.data });
+  } else {
+    res.status(404);
+    throw new Error('User does not exist');
+  }
+});
+
+/**
+ * @Desc Remove a user role from a user
+ * @Route POST /api/users/roles/user/:id
+ * @Access Private ("update:users", admin)
+ */
+
+const deleteRole = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    const body = { client_id: auth0ClientId, client_secret: auth0ClientSecret, audience: `https://${domain}/api/v2/`, grant_type: 'client_credentials' };
+
+    const options = {
+      headers: { 'content-type': 'application/json' },
+    };
+
+    const token = await axios.post(`https://${domain}/oauth/token`, body, options);
+
+    let role;
+    if (req.query.role === 'admin') {
+      role = process.env.AUTH0_ADMIN_ROLE;
+    }
+
+    if (req.query.role === 'employee') {
+      role = process.env.AUTH0_EMPLOYEE_ROLE;
+    }
+
+    const config = {
+      headers: { Authorization: `Bearer ${token.data.access_token}` },
+      data: { roles: [role] },
+    };
+
+    await axios.delete(`https://${domain}/api/v2/users/${user.userId}/roles`, config);
+    const roles = await axios.get(`https://${domain}/api/v2/users/${user.userId}/roles`, config);
+
+    res.json({ user: user, roles: roles.data });
+  } else {
+    res.status(404);
+    throw new Error('User does not exist');
   }
 });
 
@@ -179,4 +263,4 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getUsers, createUser, getUser, updateUser, deleteUser, getUserProfile, updateUserProfile };
+module.exports = { getUsers, createUser, getUser, updateUser, deleteUser, addRole, deleteRole, getUserProfile, updateUserProfile };

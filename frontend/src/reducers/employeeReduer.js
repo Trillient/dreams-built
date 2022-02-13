@@ -41,6 +41,18 @@ export const userReducer = (state = { user: [] }, action) => {
       return { loading: false, redirect: true, user: action.payload };
     case actions.USER_DELETE_FAIL:
       return { loading: false, error: action.payload };
+    case actions.USER_DELETE_ROLE_REQUEST:
+      return { ...state, loading: true };
+    case actions.USER_DELETE_ROLE_SUCCESS:
+      return { ...state, loading: false, roles: action.payload.roles };
+    case actions.USER_DELETE_ROLE_FAIL:
+      return { loading: false, error: action.payload };
+    case actions.USER_ADD_ROLE_REQUEST:
+      return { ...state, loading: true };
+    case actions.USER_ADD_ROLE_SUCCESS:
+      return { ...state, loading: false, roles: action.payload.roles };
+    case actions.USER_ADD_ROLE_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
-import { deleteUser, getUser, resetUserRedirect, updateUser } from '../../actions/employeeActions';
+import { addRole, deleteRole, deleteUser, getUser, resetUserRedirect, updateUser } from '../../actions/employeeActions';
 import AdminGroup from '../../components/groups/AdminGroup';
 import DetailsGroup from '../../components/groups/DetailsGroup';
 import Loader from '../../components/Loader';
@@ -47,9 +47,9 @@ const EditEmployeeScreen = () => {
           }
         })();
       } else {
-        setFirstName(user.firstName);
-        setLastName(user.lastName);
-        setHourlyRate(user.hourlyRate);
+        setFirstName(user.firstName || '');
+        setLastName(user.lastName || '');
+        setHourlyRate(user.hourlyRate || '');
         setIsAdmin(roles && roles.filter(({ name }) => name === 'Admin').length > 0);
         setIsEmployee(roles && roles.filter(({ name }) => name === 'Employee').length > 0);
       }
@@ -68,6 +68,11 @@ const EditEmployeeScreen = () => {
     const token = await getAccessTokenSilently();
     dispatch(deleteUser(token, userId));
     setModalShow(false);
+  };
+
+  const handleRoleChange = async (method, role) => {
+    const token = await getAccessTokenSilently();
+    method === 'assign' ? dispatch(addRole(token, userId, role)) : dispatch(deleteRole(token, userId, role));
   };
 
   return loading ? (
@@ -113,24 +118,52 @@ const EditEmployeeScreen = () => {
               {!isAdmin ? (
                 <div className={styles.admin}>
                   <h4>Not Admin</h4>
-                  <Button variant="warning">Give Admin Privleges</Button>
+                  <Button
+                    onClick={() => {
+                      handleRoleChange('assign', 'admin');
+                    }}
+                    variant="warning"
+                  >
+                    Give Admin Privleges
+                  </Button>
                 </div>
               ) : (
                 <div className={styles.admin}>
                   <h4>Admin</h4>
-                  <Button variant="danger">Remove Admin Privileges</Button>
+                  <Button
+                    onClick={() => {
+                      handleRoleChange('remove', 'admin');
+                    }}
+                    variant="danger"
+                  >
+                    Remove Admin Privileges
+                  </Button>
                 </div>
               )}
 
               {!isEmployee ? (
                 <div className={styles.employee}>
                   <h4>Not an Employee</h4>
-                  <Button variant="warning">Give Employee Privleges</Button>
+                  <Button
+                    onClick={() => {
+                      handleRoleChange('assign', 'employee');
+                    }}
+                    variant="warning"
+                  >
+                    Give Employee Privleges
+                  </Button>
                 </div>
               ) : (
                 <div className={styles.employee}>
                   <h4>Employee</h4>
-                  <Button variant="danger">Remove Employee Privileges</Button>
+                  <Button
+                    onClick={() => {
+                      handleRoleChange('remove', 'employee');
+                    }}
+                    variant="danger"
+                  >
+                    Remove Employee Privileges
+                  </Button>
                 </div>
               )}
             </div>
