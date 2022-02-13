@@ -179,33 +179,35 @@ export const resetJobRedirect = () => async (dispatch) => {
   });
 };
 
-export const getJobPartsList = (token, limit, page, search) => async (dispatch) => {
-  try {
-    dispatch({
-      type: actions.JOBPARTLIST_FETCH_REQUEST,
-    });
+export const getJobPartsList =
+  (token, limit = '', page = '', search = '') =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: actions.JOBPARTLIST_FETCH_REQUEST,
+      });
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/parts?limit=${limit}&page=${page}&keyword=${search}`, config);
+      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/parts?limit=${limit}&page=${page}&keyword=${search}`, config);
 
-    dispatch({
-      type: actions.JOBPARTLIST_FETCH_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+      dispatch({
+        type: actions.JOBPARTLIST_FETCH_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
 
-    dispatch({
-      type: actions.JOBPARTLIST_FETCH_FAIL,
-      payload: message,
-    });
-  }
-};
+      dispatch({
+        type: actions.JOBPARTLIST_FETCH_FAIL,
+        payload: message,
+      });
+    }
+  };
 
 export const updateJobPartOrder = (token, list) => async (dispatch) => {
   try {
