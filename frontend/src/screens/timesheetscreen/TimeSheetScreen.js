@@ -4,9 +4,11 @@ import { Form, Button, Dropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import { DateTime } from 'luxon';
+import Select from 'react-select';
 
 import { getTimesheet, handleSubmit } from '../../actions/timesheetActions';
 import { getJobList } from '../../actions/jobActions';
+import { getEmployees } from '../../actions/employeeActions';
 
 import TimesheetDay from '../../components/TimesheetDay';
 import Loader from '../../components/Loader';
@@ -14,8 +16,6 @@ import Message from '../../components/Message';
 import CustomMenu from '../../components/CustomMenu';
 
 import styles from './timesheet.module.css';
-import { getEmployees } from '../../actions/employeeActions';
-import Select from 'react-select';
 
 const TimesheetScreen = () => {
   const { getAccessTokenSilently, user } = useAuth0();
