@@ -62,7 +62,18 @@ const ScheduleScreen = () => {
     setSelectedDate(e);
     setWeekStart(DateTime.fromJSDate(e).startOf('week').toFormat('yyyy-MM-dd'));
     setWeekEnd(DateTime.fromJSDate(e).endOf('week').toFormat('yyyy-MM-dd'));
-    console.log(DateTime.fromJSDate(e).startOf('week').toFormat('yyyy-MM-dd'));
+  };
+
+  const changeDateWeekHandler = (e) => {
+    if (e === 1) {
+      setSelectedDate(DateTime.fromJSDate(selectedDate).plus({ days: 7 }).toJSDate());
+      setWeekStart(DateTime.fromJSDate(selectedDate).plus({ days: 7 }).startOf('week').toFormat('yyyy-MM-dd'));
+      setWeekEnd(DateTime.fromJSDate(selectedDate).plus({ days: 7 }).endOf('week').toFormat('yyyy-MM-dd'));
+    } else {
+      setSelectedDate(DateTime.fromJSDate(selectedDate).minus({ days: 7 }).toJSDate());
+      setWeekStart(DateTime.fromJSDate(selectedDate).minus({ days: 7 }).startOf('week').toFormat('yyyy-MM-dd'));
+      setWeekEnd(DateTime.fromJSDate(selectedDate).minus({ days: 7 }).endOf('week').toFormat('yyyy-MM-dd'));
+    }
   };
 
   return loading || dueDateLoading ? (
@@ -91,11 +102,21 @@ const ScheduleScreen = () => {
           />
         </div>
         <div className={styles.pagination}>
-          <Button className={styles['btn-pag']}>
+          <Button
+            className={styles['btn-pag']}
+            onClick={() => {
+              changeDateWeekHandler(0);
+            }}
+          >
             <BsArrowLeft />
           </Button>
           <DatePicker calendarClassName={styles['date-calendar']} className={styles['date-picker']} calendarIcon={<BsFillCalendarFill />} clearIcon={null} onChange={changeDateHandler} value={selectedDate} />
-          <Button className={styles['btn-pag']}>
+          <Button
+            className={styles['btn-pag']}
+            onClick={() => {
+              changeDateWeekHandler(1);
+            }}
+          >
             <BsArrowRight />
           </Button>
         </div>
@@ -114,7 +135,7 @@ const ScheduleScreen = () => {
       <Table responsive="sm" bordered className={styles.table}>
         <thead className={styles.thead}>
           <tr>
-            <th className={styles['first-coloumn']}>#</th>
+            <th className={styles['first-coloumn']}></th>
             {weekArray.map((day) => (
               <th key={day.date} className={styles['static-table']}>
                 {day.day} <br />
