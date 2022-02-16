@@ -1,22 +1,26 @@
 import { Table, Button } from 'react-bootstrap';
+import DatePicker from 'react-date-picker';
 
 import Calendar from '../../components/Calendar';
 
 import styles from './scheduleScreen.module.css';
 
-import CustomMenu from '../../components/CustomMenu';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDueDates, getJobPartsList } from '../../actions/jobActions';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { DateTime } from 'luxon';
+import Select from 'react-select';
+import ReactToPrint from 'react-to-print';
+import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 
 const ScheduleScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
+  const componentRef = useRef();
 
   const jobPartsList = useSelector((state) => state.jobParts);
   const { loading, error, jobParts } = jobPartsList;
@@ -27,8 +31,10 @@ const ScheduleScreen = () => {
   const startWeekInit = DateTime.now().startOf('week');
   const endWeekInit = DateTime.now().endOf('week').plus({ days: 1 });
 
-  const [weekStart] = useState(startWeekInit.toFormat('yyyy-MM-dd'));
-  const [weekEnd] = useState(endWeekInit.toFormat('yyyy-MM-dd'));
+  const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('yyyy-MM-dd'));
+  const [weekEnd, setWeekEnd] = useState(endWeekInit.toFormat('yyyy-MM-dd'));
+  const [filterContractor, setFilterContractor] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   let weekArray = [];
   for (let i = 0; i < 7; i++) {
@@ -52,6 +58,13 @@ const ScheduleScreen = () => {
     })();
   }, [dispatch, getAccessTokenSilently, weekEnd, weekStart]);
 
+  const changeDateHandler = (e) => {
+    setSelectedDate(e);
+    setWeekStart(DateTime.fromJSDate(e).startOf('week').toFormat('yyyy-MM-dd'));
+    setWeekEnd(DateTime.fromJSDate(e).endOf('week').toFormat('yyyy-MM-dd'));
+    console.log(DateTime.fromJSDate(e).startOf('week').toFormat('yyyy-MM-dd'));
+  };
+
   return loading || dueDateLoading ? (
     <Loader />
   ) : error ? (
@@ -61,12 +74,45 @@ const ScheduleScreen = () => {
   ) : (
     <div className={styles.calendar}>
       <div className={styles.header}>
-        <CustomMenu className={styles.search} />
-        <p>Pagination</p>
-        <Button className={styles.button}>+</Button>
+        <div className={styles.filter}>
+          <Select
+            className={styles.select}
+            menuPosition={'fixed'}
+            isClearable="true"
+            placeholder="Filter by Contractor..."
+            isMulti
+            closeMenuOnSelect="false"
+            onChange={setFilterContractor}
+            options={[
+              { value: 'hamburger', label: 'Hamburger' },
+              { value: 'fries', label: 'Fries' },
+              { value: 'milkshake', label: 'Milkshake' },
+            ]}
+          />
+        </div>
+        <div className={styles.pagination}>
+          <Button className={styles['btn-pag']}>
+            <BsArrowLeft />
+          </Button>
+          <DatePicker calendarClassName={styles['date-calendar']} className={styles['date-picker']} calendarIcon={<BsFillCalendarFill />} clearIcon={null} onChange={changeDateHandler} value={selectedDate} />
+          <Button className={styles['btn-pag']}>
+            <BsArrowRight />
+          </Button>
+        </div>
+        <div className={styles.add}>
+          <Button>+</Button>
+        </div>
+        <ReactToPrint
+          trigger={() => (
+            <button className={styles.printer}>
+              <BsFillPrinterFill />
+            </button>
+          )}
+          content={() => componentRef.current}
+        />
       </div>
       <Table responsive="sm" bordered className={styles.table}>
-        <thead>
+        <thead className={styles.thead}>
           <tr>
             <th className={styles['first-coloumn']}>#</th>
             {weekArray.map((day) => (

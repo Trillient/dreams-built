@@ -5,7 +5,7 @@
 }
 
 body {
-  background-color: #dddcda;
+  background-color: var(--seconday-background);
 }
 
 .parent-container {
@@ -27,6 +27,23 @@ body {
 
 .display-none_lg-screen {
   display: none;
+}
+
+.react-date-picker__wrapper {
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 0.3rem;
+  padding: 0.5rem;
+}
+
+.react-date-picker__inputGroup {
+  border: none;
+  padding: 0rem;
+  border-right: 1px solid hsl(0, 0%, 80%);
+  border-radius: 0;
+}
+
+.react-date-picker__button {
+  margin-left: 0.3rem;
 }
 
 @media only screen and (min-width: 35.9rem) {

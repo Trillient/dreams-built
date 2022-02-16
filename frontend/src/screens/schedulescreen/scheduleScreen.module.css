@@ -1,11 +1,40 @@
 .calendar {
   background-color: white;
   min-height: auto;
-  width: 100%;
   border-radius: 0.5rem;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  margin: 2rem 0;
+  margin: 2rem 1rem;
   padding: 0.5rem;
+}
+
+.printer {
+  border: none;
+  background: none;
+  display: inline;
+}
+
+.pagination {
+  grid-area: pagination;
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.add {
+  grid-area: add;
+}
+
+.btn-pag {
+  font-size: 1.1rem;
+}
+
+.filter {
+  grid-area: filter;
+}
+
+.select {
+  display: inline;
 }
 
 .header {
@@ -13,33 +42,54 @@
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
   justify-items: center;
-}
-.button {
-  justify-self: end;
-  margin-right: 1rem;
-}
-
-.search {
-  justify-self: start;
-}
-
-.search input {
-  border: 1px solid lightgray;
-  border-radius: 0.5rem;
+  padding: 1rem 0;
 }
 
 .table {
   min-height: 70vh;
-  overflow-x: scroll;
 }
 
 .first-coloumn {
   width: 9%;
 }
 
+.thead {
+  position: sticky;
+  background-color: white;
+  top: 0.5px;
+  outline: 0 0 1px 0 black solid;
+}
+
 .static-table {
   width: 13%;
   overflow-wrap: break-word;
-  position: sticky;
-  top: 1px;
+}
+
+@media only screen and (min-width: 40rem) {
+  .calendar {
+    margin: 2rem;
+  }
+
+  .header {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: max-content min-content;
+    grid-template-areas: 'filter pagination add' 'filter . printer';
+  }
+
+  .printer {
+    margin: 1rem 1rem 0 0;
+    grid-area: printer;
+    justify-self: right;
+  }
+
+  .add {
+    justify-self: right;
+    margin-right: 1rem;
+  }
+
+  .filter {
+    justify-self: left;
+    margin-left: 1rem;
+    align-self: flex-start;
+  }
 }
