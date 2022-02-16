@@ -132,24 +132,26 @@ const ScheduleScreen = () => {
           content={() => componentRef.current}
         />
       </div>
-      <Table responsive="sm" bordered className={styles.table}>
-        <thead className={styles.thead}>
-          <tr>
-            <th className={styles['first-coloumn']}></th>
-            {weekArray.map((day) => (
-              <th key={day.date} className={styles['static-table']}>
-                {day.day} <br />
-                {day.shortDate}
-              </th>
+      <div ref={componentRef}>
+        <Table responsive="sm" bordered className={styles.table}>
+          <thead className={styles.thead}>
+            <tr>
+              <th className={styles['first-coloumn']}></th>
+              {weekArray.map((day) => (
+                <th key={day.date} className={styles['static-table']}>
+                  {day.day} <br />
+                  {day.shortDate}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {jobParts.map((jobPart) => (
+              <Calendar key={jobPart._id} jobPart={jobPart} week={weekArray} dueDates={dueDates} loading={loading} dueDateLoading={dueDateLoading} />
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {jobParts.map((jobPart) => (
-            <Calendar key={jobPart._id} jobPart={jobPart} week={weekArray} dueDates={dueDates} loading={loading} dueDateLoading={dueDateLoading} />
-          ))}
-        </tbody>
-      </Table>
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 };
