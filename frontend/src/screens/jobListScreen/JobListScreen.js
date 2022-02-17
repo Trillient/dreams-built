@@ -3,12 +3,12 @@ import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { FiEdit } from 'react-icons/fi';
 import fontColorContrast from 'font-color-contrast';
 import ReactToPrint from 'react-to-print';
 import { ToastContainer } from 'react-toastify';
 import { BsFillPrinterFill } from 'react-icons/bs';
 import { TiTick } from 'react-icons/ti';
+import { FiEdit } from 'react-icons/fi';
 
 import { getJobList } from '../../actions/jobActions';
 

@@ -16,6 +16,7 @@ import { DateTime } from 'luxon';
 import Select from 'react-select';
 import ReactToPrint from 'react-to-print';
 import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
+import { ScheduleCreateJobsDueDate } from '../../components/modals/ScheduleCreateJobsDueDate';
 
 const ScheduleScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -31,6 +32,7 @@ const ScheduleScreen = () => {
   const startWeekInit = DateTime.now().startOf('week');
   const endWeekInit = DateTime.now().endOf('week').plus({ days: 1 });
 
+  const [modalShow, setModalShow] = useState(false);
   const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('yyyy-MM-dd'));
   const [weekEnd, setWeekEnd] = useState(endWeekInit.toFormat('yyyy-MM-dd'));
   const [filterContractor, setFilterContractor] = useState([]);
@@ -76,9 +78,7 @@ const ScheduleScreen = () => {
     }
   };
 
-  return loading || dueDateLoading ? (
-    <Loader />
-  ) : error ? (
+  return error ? (
     <Message variant="danger">{error}</Message>
   ) : dueDateError ? (
     <Message variant="danger">{dueDateError}</Message>
@@ -121,7 +121,7 @@ const ScheduleScreen = () => {
           </Button>
         </div>
         <div className={styles.add}>
-          <Button>+</Button>
+          <Button onClick={setModalShow}>+</Button>
         </div>
         <ReactToPrint
           trigger={() => (
@@ -152,6 +152,7 @@ const ScheduleScreen = () => {
           </tbody>
         </Table>
       </div>
+      <ScheduleCreateJobsDueDate show={modalShow} setModalShow={setModalShow} onHide={() => setModalShow(false)} />
     </div>
   );
 };
