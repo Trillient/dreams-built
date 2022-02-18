@@ -1,22 +1,22 @@
+import { useEffect, useRef, useState } from 'react';
 import { Table, Button } from 'react-bootstrap';
-import DatePicker from 'react-date-picker';
-
-import Calendar from '../../components/Calendar';
-
-import styles from './scheduleScreen.module.css';
-
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getDueDates, getJobPartsList } from '../../actions/jobActions';
-import { useEffect, useRef, useState } from 'react';
+import DatePicker from 'react-date-picker';
 import { toast } from 'react-toastify';
-import Message from '../../components/Message';
-import Loader from '../../components/Loader';
 import { DateTime } from 'luxon';
 import Select from 'react-select';
 import ReactToPrint from 'react-to-print';
 import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
+
+import { getDueDates, getJobPartsList } from '../../actions/jobActions';
+
+import Calendar from '../../components/Calendar';
+import Message from '../../components/Message';
+import Loader from '../../components/Loader';
 import { ScheduleCreateJobsDueDate } from '../../components/modals/ScheduleCreateJobsDueDate';
+
+import styles from './scheduleScreen.module.css';
 
 const ScheduleScreen = () => {
   const { getAccessTokenSilently } = useAuth0();

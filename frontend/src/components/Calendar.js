@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import fontColorContrast from 'font-color-contrast';
 
-import styles from './calendar.module.css';
 import ScheduleEditDueDate from './modals/ScheduleEditDueDate';
 import ScheduleCreateDueDate from './modals/ScheduleCreateDueDate';
+
+import styles from './calendar.module.css';
 
 const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
   const [actionItem, setActionItem] = useState('');

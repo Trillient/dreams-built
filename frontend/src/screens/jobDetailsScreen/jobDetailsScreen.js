@@ -47,11 +47,9 @@ const JobDetailsScreen = () => {
   const { dueDateUpdated } = dueDates;
 
   const [display, setDisplay] = useState(0);
-
   const [jobNumberError, setJobNumberError] = useState(false);
   const [addressError, setAddressError] = useState(false);
   const [clientError, setClientError] = useState(false);
-
   const [modalShow, setModalShow] = useState(false);
   const [jobNumber, setJobNumber] = useState('');
   const [client, setClient] = useState('');
@@ -61,10 +59,9 @@ const JobDetailsScreen = () => {
   const [color, setColor] = useState('#00ccb4');
   const [area, setArea] = useState('');
   const [invoiced, setInvoiced] = useState(false);
-
   const [shift, setShift] = useState(0);
 
-  const defaultLabel = job && job.client ? { label: `${job.client.clientName}` } : '';
+  const defaultLabel = job?.client ? { label: `${job.client.clientName}` } : '';
 
   useEffect(() => {
     if (redirect) {
@@ -189,7 +186,7 @@ const JobDetailsScreen = () => {
                 </Form.Group>
                 <Form.Group className={styles.color} controlId="color">
                   <Form.Label>Colour *</Form.Label>
-                  <Form.Control style={{ width: '100%' }} type="color" defaultValue="#563d7c" onChange={(e) => setColor(e.target.value)} title="Choose your color" />
+                  <Form.Control style={{ width: '100%' }} type="color" value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
                 </Form.Group>
                 <Form.Group className={styles.client} controlId="company">
                   <Form.Label>Client *</Form.Label>

@@ -48,10 +48,10 @@ const EditClientScreen = () => {
           }
         })();
       } else {
-        setClientName(clientDetails.clientName ? clientDetails.clientName : '');
-        setColor(clientDetails.color ? clientDetails.color : '');
-        setContactName(clientDetails.contact && clientDetails.contact.name ? clientDetails.contact.name : '');
-        setContactEmail(clientDetails.contact && clientDetails.contact.email ? clientDetails.contact.email : '');
+        setClientName(clientDetails?.clientName || '');
+        setColor(clientDetails?.color || '');
+        setContactName(clientDetails?.contact?.name || '');
+        setContactEmail(clientDetails?.contact?.email || '');
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
