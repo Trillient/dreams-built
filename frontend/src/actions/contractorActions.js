@@ -3,33 +3,35 @@ import { toast } from 'react-toastify';
 
 import * as actions from '../constants/contractorConstants';
 
-export const getContractors = (token, limit, page, search) => async (dispatch) => {
-  try {
-    dispatch({
-      type: actions.CONTRACTORLIST_FETCH_REQUEST,
-    });
+export const getContractors =
+  (token, limit = '', page = '', search = '') =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: actions.CONTRACTORLIST_FETCH_REQUEST,
+      });
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/contractors?limit=${limit}&page=${page}&keyword=${search}`, config);
+      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/contractors?limit=${limit}&page=${page}&keyword=${search}`, config);
 
-    dispatch({
-      type: actions.CONTRACTORLIST_FETCH_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+      dispatch({
+        type: actions.CONTRACTORLIST_FETCH_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      const message = error.response && error.response.data.message ? error.response.data.message : error.message;
 
-    dispatch({
-      type: actions.CONTRACTORLIST_FETCH_FAIL,
-      payload: message,
-    });
-  }
-};
+      dispatch({
+        type: actions.CONTRACTORLIST_FETCH_FAIL,
+        payload: message,
+      });
+    }
+  };
 
 export const getContractor = (token, contractorId) => async (dispatch) => {
   try {

@@ -16,6 +16,8 @@ import Loader from '../../components/Loader';
 import { ScheduleCreateJobsDueDate } from '../../components/modals/ScheduleCreateJobsDueDate';
 
 import styles from './scheduleScreen.module.css';
+import { ToastContainer } from 'react-toastify';
+import { getContractors } from '../../actions/contractorActions';
 
 const ScheduleScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -59,6 +61,7 @@ const ScheduleScreen = () => {
           const token = await getAccessTokenSilently();
           dispatch(getDueDates(token, weekStart, weekEnd));
           dispatch(getJobPartsList(token));
+          dispatch(getContractors(token));
         } catch (err) {
           console.error(err);
         }
@@ -69,18 +72,18 @@ const ScheduleScreen = () => {
   const changeDateHandler = (e) => {
     setSelectedDate(e);
     setWeekStart(DateTime.fromJSDate(e).startOf('week').toFormat('yyyy-MM-dd'));
-    setWeekEnd(DateTime.fromJSDate(e).endOf('week').toFormat('yyyy-MM-dd'));
+    setWeekEnd(DateTime.fromJSDate(e).endOf('week').plus({ days: 1 }).toFormat('yyyy-MM-dd'));
   };
 
   const changeDateWeekHandler = (e) => {
     if (e === 1) {
       setSelectedDate(DateTime.fromJSDate(selectedDate).plus({ days: 7 }).toJSDate());
       setWeekStart(DateTime.fromJSDate(selectedDate).plus({ days: 7 }).startOf('week').toFormat('yyyy-MM-dd'));
-      setWeekEnd(DateTime.fromJSDate(selectedDate).plus({ days: 7 }).endOf('week').toFormat('yyyy-MM-dd'));
+      setWeekEnd(DateTime.fromJSDate(selectedDate).plus({ days: 7 }).endOf('week').plus({ days: 1 }).toFormat('yyyy-MM-dd'));
     } else {
       setSelectedDate(DateTime.fromJSDate(selectedDate).minus({ days: 7 }).toJSDate());
       setWeekStart(DateTime.fromJSDate(selectedDate).minus({ days: 7 }).startOf('week').toFormat('yyyy-MM-dd'));
-      setWeekEnd(DateTime.fromJSDate(selectedDate).minus({ days: 7 }).endOf('week').toFormat('yyyy-MM-dd'));
+      setWeekEnd(DateTime.fromJSDate(selectedDate).minus({ days: 7 }).endOf('week').plus({ days: 1 }).toFormat('yyyy-MM-dd'));
     }
   };
 
@@ -90,6 +93,7 @@ const ScheduleScreen = () => {
     <Message variant="danger">{dueDateError}</Message>
   ) : (
     <div className={styles.calendar}>
+      <ToastContainer theme="colored" />
       <div className={styles.header}>
         <div className={styles.filter}>
           <Select

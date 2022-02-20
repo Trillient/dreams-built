@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { DateTime } from 'luxon';
 import { toast } from 'react-toastify';
 
 import * as actions from '../constants/jobConstants';
@@ -454,6 +455,14 @@ export const updateJobPartDueDate = (token, dueId, dueDate, startDate) => async 
         Authorization: `Bearer ${token}`,
       },
     };
+
+    if (dueDate && startDate && DateTime.fromISO(dueDate) < DateTime.fromISO(startDate)) {
+      toast.error('Start Date must be less than Due Date');
+      dispatch({
+        type: actions.JOBPART_DUEDATE_UPDATE_FAIL,
+      });
+      return;
+    }
 
     const dates = { dueDate: dueDate, startDate: startDate };
 
