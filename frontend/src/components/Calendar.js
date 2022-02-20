@@ -22,9 +22,9 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
 
   const editJobHandler = (e, job, date) => {
     e.stopPropagation();
-    setModalEditShow(true);
     setDate(date);
     setJob(job);
+    setModalEditShow(true);
   };
 
   return (
@@ -41,12 +41,12 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
                   .map((job) => (
                     <div
                       key={job.job._id}
-                      style={{ backgroundColor: job.job.color, color: fontColorContrast(job.job.color), borderRadius: '0.2rem' }}
+                      style={{ borderRadius: '0.2rem' }}
                       onClick={(e) => {
-                        editJobHandler(e, job.job, date);
+                        editJobHandler(e, job, date);
                       }}
                     >
-                      <div className={styles['job-insert']}>
+                      <div style={{ backgroundColor: job.job.color, color: fontColorContrast(job.job.color) }} className={styles['job-insert']}>
                         {job.job.jobNumber} - {job.job.address}
                       </div>
                     </div>

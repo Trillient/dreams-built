@@ -568,3 +568,9 @@ export const getDueDates = (token, weekStart, weekEnd) => async (dispatch) => {
     });
   }
 };
+
+export const resetDueDateUpdate = () => async (dispatch) => {
+  dispatch({
+    type: actions.JOBPART_DUEDATE_RESET,
+  });
+};

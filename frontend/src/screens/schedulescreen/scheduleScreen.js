@@ -3,13 +3,12 @@ import { Table, Button } from 'react-bootstrap';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-date-picker';
-import { toast } from 'react-toastify';
 import { DateTime } from 'luxon';
 import Select from 'react-select';
 import ReactToPrint from 'react-to-print';
 import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 
-import { getDueDates, getJobPartsList } from '../../actions/jobActions';
+import { getDueDates, getJobPartsList, resetDueDateUpdate } from '../../actions/jobActions';
 
 import Calendar from '../../components/Calendar';
 import Message from '../../components/Message';
@@ -28,6 +27,9 @@ const ScheduleScreen = () => {
 
   const dueDateList = useSelector((state) => state.dueDateList);
   const { dueDateLoading, dueDateError, dueDates } = dueDateList;
+
+  const dueDateUpdates = useSelector((state) => state.jobDueDates);
+  const { dueDateUpdated } = dueDateUpdates;
 
   const startWeekInit = DateTime.now().startOf('week');
   const endWeekInit = DateTime.now().endOf('week').plus({ days: 1 });
@@ -49,16 +51,20 @@ const ScheduleScreen = () => {
   }
 
   useEffect(() => {
-    (async () => {
-      try {
-        const token = await getAccessTokenSilently();
-        dispatch(getJobPartsList(token));
-        dispatch(getDueDates(token, weekStart, weekEnd));
-      } catch (err) {
-        toast.error(err);
-      }
-    })();
-  }, [dispatch, getAccessTokenSilently, weekEnd, weekStart]);
+    if (dueDateUpdated) {
+      dispatch(resetDueDateUpdate());
+    } else {
+      (async () => {
+        try {
+          const token = await getAccessTokenSilently();
+          dispatch(getDueDates(token, weekStart, weekEnd));
+          dispatch(getJobPartsList(token));
+        } catch (err) {
+          console.error(err);
+        }
+      })();
+    }
+  }, [dispatch, getAccessTokenSilently, weekEnd, weekStart, dueDateUpdated]);
 
   const changeDateHandler = (e) => {
     setSelectedDate(e);

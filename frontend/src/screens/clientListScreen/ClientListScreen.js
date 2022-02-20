@@ -24,7 +24,7 @@ const ClientListScreen = () => {
   const { loading, error, clientList, pages } = clients;
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(1);
+  const [limit, setLimit] = useState(25);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
