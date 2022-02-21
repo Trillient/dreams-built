@@ -16,7 +16,7 @@ const ScheduleEditDueDate = ({ setModalShow, date, job, jobPart, modalDueDate, .
 
   const [startDate, setStartDate] = useState(job.startDate ? job.startDate : '');
   const [dueDate, setDueDate] = useState(job.dueDate ? job.dueDate : '');
-  const [contractors, setContractors] = useState([]);
+  const [setContractors] = useState([]);
 
   useEffect(() => {
     setStartDate(job.startDate ? job.startDate : '');
