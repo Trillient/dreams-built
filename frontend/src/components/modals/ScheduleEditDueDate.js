@@ -5,7 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
 import Select from 'react-select';
 
-import { deleteJobPartDueDate, updateJobPartDueDate } from '../../actions/jobActions';
+import { deleteJobPartDueDate, updateAllJobPartDueDate } from '../../actions/jobActions';
+
+import styles from './scheduleEditDueDate.module.css';
 
 const ScheduleEditDueDate = ({ setModalShow, date, job, jobPart, modalDueDate, ...rest }) => {
   const { getAccessTokenSilently } = useAuth0();
@@ -16,17 +18,17 @@ const ScheduleEditDueDate = ({ setModalShow, date, job, jobPart, modalDueDate, .
 
   const [startDate, setStartDate] = useState(job.startDate ? job.startDate : '');
   const [dueDate, setDueDate] = useState(job.dueDate ? job.dueDate : '');
-  const [setContractors] = useState([]);
+  const [contractors, setContractors] = useState([]);
 
   useEffect(() => {
     setStartDate(job.startDate ? job.startDate : '');
     setDueDate(job.dueDate ? job.dueDate : '');
-  }, [job.dueDate, job.startDate]);
+  }, [job.dueDate, job.startDate, job.contractors]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     const token = await getAccessTokenSilently();
-    dispatch(updateJobPartDueDate(token, job._id, dueDate, startDate));
+    dispatch(updateAllJobPartDueDate(token, job._id, dueDate, startDate, contractors));
     setModalShow(false);
   };
 
@@ -40,47 +42,59 @@ const ScheduleEditDueDate = ({ setModalShow, date, job, jobPart, modalDueDate, .
     rest.show && (
       <Modal {...rest} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
         <Modal.Header>
-          <Modal.Title id="contained-modal-title-vcenter"></Modal.Title>
-          <LinkContainer to={`/job/details/${job.job._id}`}>
-            <Button className="btn-sm">Job Details</Button>
-          </LinkContainer>
+          <Modal.Title id="contained-modal-title-vcenter">
+            <h1 className={styles.title}>{jobPart.jobPartTitle}</h1>
+          </Modal.Title>
           <Button variant="secondary" onClick={() => setModalShow(false)}>
-            Close
+            X
           </Button>
         </Modal.Header>
 
         <Modal.Body>
-          <Form onSubmit={submitHandler}>
-            <h2>{jobPart.jobPartTitle}</h2>
-            <h3>
-              {job.job.jobNumber} - {job.job.address} - {job._id}
-            </h3>
-            <Form.Group controlId={jobPart.jobPartTitle.startDate}>
-              <Form.Label>Start Date</Form.Label>
+          <LinkContainer className={styles.link} to={`/job/details/${job.job._id}`}>
+            <a href="/#">Job Details</a>
+          </LinkContainer>
+          <Form className={styles.form} onSubmit={submitHandler}>
+            <h2 className={styles['sub-title']}>
+              {job.job.jobNumber} - {job.job.address}
+            </h2>
+            <Form.Group className={styles.start} controlId={jobPart.jobPartTitle.startDate}>
+              <Form.Label>Start Date:</Form.Label>
               <Form.Control type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}></Form.Control>
             </Form.Group>
-            <Form.Group controlId={jobPart.jobPartTitle.dueDate}>
-              <Form.Label>Due Date</Form.Label>
+            <Form.Group className={styles.due} controlId={jobPart.jobPartTitle.dueDate}>
+              <Form.Label>Due Date:</Form.Label>
               <Form.Control type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}></Form.Control>
             </Form.Group>
-            <Select
-              menuPosition={'fixed'}
-              isClearable="true"
-              placeholder="Add Contractor..."
-              isMulti
-              closeMenuOnSelect="false"
-              onChange={setContractors}
-              options={
-                contractorList &&
-                contractorList.map((contractor) => {
-                  return { ...contractor, label: contractor.contractor, value: contractor._id };
-                })
-              }
-            />
-            <Button type="submit" variant="success">
+            <Form.Group className={styles.contractors} controlId={jobPart.jobPartTitle.dueDate}>
+              <Form.Label>Contractors:</Form.Label>
+              <Select
+                menuPosition={'fixed'}
+                isClearable="true"
+                placeholder="Add Contractor..."
+                isMulti
+                closeMenuOnSelect="false"
+                defaultValue={
+                  job.contractors
+                    ? job.contractors.map((contractor) => {
+                        return { ...contractor, label: contractor.contractor, value: contractor._id };
+                      })
+                    : []
+                }
+                onChange={setContractors}
+                options={
+                  contractorList &&
+                  contractorList.map((contractor) => {
+                    return { ...contractor, label: contractor.contractor, value: contractor._id };
+                  })
+                }
+              />
+            </Form.Group>
+
+            <Button className={styles.save} type="submit" variant="success">
               Save
             </Button>
-            <Button variant="danger" onClick={handleDelete}>
+            <Button className={styles.delete} variant="danger" onClick={handleDelete}>
               Delete
             </Button>
           </Form>

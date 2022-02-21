@@ -488,6 +488,50 @@ export const updateJobPartDueDate = (token, dueId, dueDate, startDate) => async 
   }
 };
 
+export const updateAllJobPartDueDate = (token, dueId, dueDate, startDate, contractors) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPART_DUEDATE_UPDATE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    if (dueDate && startDate && DateTime.fromISO(dueDate) < DateTime.fromISO(startDate)) {
+      toast.error('Start Date must be less than Due Date');
+      dispatch({
+        type: actions.JOBPART_DUEDATE_UPDATE_FAIL,
+      });
+      return;
+    }
+
+    const body = { dueDate: dueDate, startDate: startDate, contractors: contractors.map((contractor) => contractor._id) };
+
+    const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/job/duedates/job/part/${dueId}`, body, config);
+
+    toast.success('Saved!');
+    dispatch({
+      type: actions.JOBPART_DUEDATE_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
+    dispatch({
+      type: actions.JOBPART_DUEDATE_UPDATE_FAIL,
+      payload: message,
+    });
+  }
+};
+
 export const updateJobPartAllDueDate = (token, jobId, shift) => async (dispatch) => {
   try {
     dispatch({

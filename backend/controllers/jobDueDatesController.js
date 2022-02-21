@@ -11,7 +11,7 @@ const JobPart = require('../models/jobPartModel');
  */
 
 const getAllJobDueDates = asyncHandler(async (req, res) => {
-  const jobDueDates = await JobDueDate.find({ dueDateRange: { $elemMatch: { $gte: req.query.rangeStart, $lt: req.query.rangeEnd } } }).populate('job jobPartTitle', 'jobNumber client address jobPartTitle jobOrder color');
+  const jobDueDates = await JobDueDate.find({ dueDateRange: { $elemMatch: { $gte: req.query.rangeStart, $lt: req.query.rangeEnd } } }).populate('job jobPartTitle contractors');
 
   res.json(jobDueDates);
 });

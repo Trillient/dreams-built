@@ -1,0 +1,54 @@
+.title {
+  font-size: 2rem;
+}
+
+.sub-title {
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.link {
+  display: grid;
+  justify-content: center;
+  margin-bottom: 0.2rem;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+}
+
+@media only screen and (min-width: 40rem) {
+  .form {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'title title' 'start due' 'contractors contractors' 'save delete';
+  }
+
+  .sub-title {
+    grid-area: title;
+  }
+
+  .start {
+    grid-area: start;
+  }
+
+  .due {
+    grid-area: due;
+  }
+
+  .contractors {
+    grid-area: contractors;
+  }
+
+  .save {
+    grid-area: save;
+    width: max-content;
+  }
+
+  .delete {
+    justify-self: right;
+    grid-area: delete;
+    width: max-content;
+  }
+}
