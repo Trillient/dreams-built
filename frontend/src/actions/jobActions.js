@@ -408,41 +408,43 @@ export const getJobDueDates = (token, jobId) => async (dispatch) => {
   }
 };
 
-export const createJobPartDueDate = (token, jobId, jobPart, dueDate, startDate) => async (dispatch) => {
-  try {
-    dispatch({
-      type: actions.JOBPART_DUEDATE_CREATE_REQUEST,
-    });
+export const createJobPartDueDate =
+  (token, jobId, jobPart, dueDate, startDate, contractors = []) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: actions.JOBPART_DUEDATE_CREATE_REQUEST,
+      });
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-    const dates = { dueDate: dueDate, startDate: startDate };
+      const body = { dueDate: dueDate, startDate: startDate, contractors: contractors.map((contractor) => contractor._id) };
 
-    const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/job/duedates/parts/${jobId}?partid=${jobPart}`, dates, config);
+      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/job/duedates/parts/${jobId}?partid=${jobPart}`, body, config);
 
-    toast.success('Created!');
-    dispatch({
-      type: actions.JOBPART_DUEDATE_CREATE_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+      toast.success('Created!');
+      dispatch({
+        type: actions.JOBPART_DUEDATE_CREATE_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
-    if (error.response.data.errors && message.length > 0) {
-      message.map((err) => toast.error(err.msg));
-    } else {
-      toast.error(message);
+      if (error.response.data.errors && message.length > 0) {
+        message.map((err) => toast.error(err.msg));
+      } else {
+        toast.error(message);
+      }
+      dispatch({
+        type: actions.JOBPART_DUEDATE_CREATE_FAIL,
+        payload: message,
+      });
     }
-    dispatch({
-      type: actions.JOBPART_DUEDATE_CREATE_FAIL,
-      payload: message,
-    });
-  }
-};
+  };
 
 export const updateJobPartDueDate = (token, dueId, dueDate, startDate) => async (dispatch) => {
   try {
@@ -488,7 +490,7 @@ export const updateJobPartDueDate = (token, dueId, dueDate, startDate) => async 
   }
 };
 
-export const updateAllJobPartDueDate = (token, dueId, dueDate, startDate, contractors) => async (dispatch) => {
+export const updateWholeJobPartDueDate = (token, dueId, dueDate, startDate, contractors) => async (dispatch) => {
   try {
     dispatch({
       type: actions.JOBPART_DUEDATE_UPDATE_REQUEST,
@@ -613,10 +615,47 @@ export const getDueDates = (token, weekStart, weekEnd) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    const message = error.response && error.response.data.message ? error.response.data.message : error.message;
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
     dispatch({
       type: actions.DUEDATELIST_FETCH_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const getDueDate = (token, jobPartId, jobId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.JOBPART_DUEDATE_FETCH_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/job/duedates/parts/${jobId}?jobPart=${jobPartId}`, config);
+    dispatch({
+      type: actions.JOBPART_DUEDATE_FETCH_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
+    dispatch({
+      type: actions.JOBPART_DUEDATE_FETCH_FAIL,
       payload: message,
     });
   }
