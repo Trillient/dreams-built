@@ -8,9 +8,9 @@
 }
 
 .link {
-  display: grid;
-  justify-content: center;
-  margin-bottom: 0.2rem;
+  margin: 0 auto 0.2rem;
+  width: max-content;
+  display: block;
 }
 
 .form {
