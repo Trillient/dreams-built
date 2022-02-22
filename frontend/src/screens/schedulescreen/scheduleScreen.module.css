@@ -60,7 +60,7 @@
   position: sticky;
   background-color: white;
   top: -1px;
-  z-index: 2;
+  z-index: 0;
   overflow-wrap: break-word;
   white-space: nowrap;
   overflow: hidden;
