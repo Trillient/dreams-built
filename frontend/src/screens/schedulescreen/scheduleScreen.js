@@ -6,9 +6,11 @@ import DatePicker from 'react-date-picker';
 import { DateTime } from 'luxon';
 import Select from 'react-select';
 import ReactToPrint from 'react-to-print';
+import { ToastContainer } from 'react-toastify';
 import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 
 import { getDueDates, getJobList, getJobPartsList, resetDueDateUpdate } from '../../actions/jobActions';
+import { getContractors } from '../../actions/contractorActions';
 
 import Calendar from '../../components/Calendar';
 import Message from '../../components/Message';
@@ -16,8 +18,6 @@ import Loader from '../../components/Loader';
 import { ScheduleCreateJobsDueDate } from '../../components/modals/ScheduleCreateJobsDueDate';
 
 import styles from './scheduleScreen.module.css';
-import { ToastContainer } from 'react-toastify';
-import { getContractors } from '../../actions/contractorActions';
 
 const ScheduleScreen = () => {
   const { getAccessTokenSilently } = useAuth0();

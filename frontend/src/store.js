@@ -4,7 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { entryArrayReducer, validateReducer } from './reducers/timesheetReducer';
 import { jobDueDatesReducer, getJobPartsReducer, getJobsReducer, jobPartReducer, jobReducer, getDueDatesReducer } from './reducers/jobReducer';
 import { clientReducer, getClientsReducer } from './reducers/clientReducer';
-import { getEmployeesReducer, userReducer } from './reducers/employeeReduer';
+import { getEmployeesReducer, profileReducer, userReducer } from './reducers/employeeReduer';
 import { reportReducer } from './reducers/reportsReducer';
 import { contractorReducer, getContractorsReducer } from './reducers/contractorReducer';
 
@@ -21,6 +21,7 @@ const reducer = combineReducers({
   contractor: contractorReducer,
   employees: getEmployeesReducer,
   employee: userReducer,
+  profile: profileReducer,
   jobDueDates: jobDueDatesReducer,
   dueDateList: getDueDatesReducer,
   reports: reportReducer,

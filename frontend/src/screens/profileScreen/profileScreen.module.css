@@ -1,0 +1,49 @@
+.form {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin: 1rem;
+  grid-template-areas: 'img' 'email' 'fname' 'lname' 'update';
+  gap: 1rem;
+}
+
+.img {
+  border-radius: 50%;
+  height: 70px;
+  width: 70px;
+  grid-area: img;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.email {
+  grid-area: email;
+}
+
+.fname {
+  grid-area: fname;
+}
+
+.lname {
+  grid-area: lname;
+}
+
+.button-update {
+  width: 100%;
+  grid-area: update;
+}
+
+@media only screen and (min-width: 31.25rem) {
+  .form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    max-width: 30rem;
+    margin: 3rem auto;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    grid-template-columns: 3fr 8fr;
+    grid-template-areas: 'img email' 'fname fname' 'lname lname' 'update .';
+  }
+
+  .button-update {
+    width: min-content;
+  }
+}

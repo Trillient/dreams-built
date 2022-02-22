@@ -211,3 +211,69 @@ export const resetUserRedirect = () => async (dispatch) => {
     type: actions.USER_RESET_REDIRECT,
   });
 };
+
+export const getProfile = (token, userId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.PROFILE_FETCH_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/users/profile/${userId}`, config);
+
+    dispatch({
+      type: actions.PROFILE_FETCH_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
+    dispatch({
+      type: actions.PROFILE_FETCH_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const updateProfile = (token, user, userId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.PROFILE_UPDATE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/users/profile/${userId}`, user, config);
+    toast.success('Saved!');
+    dispatch({
+      type: actions.PROFILE_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
+    dispatch({
+      type: actions.PROFILE_UPDATE_FAIL,
+      payload: message,
+    });
+  }
+};

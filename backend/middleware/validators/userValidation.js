@@ -8,7 +8,7 @@ const userSchema = [
   body('auth0Email', 'Must enter a valid email').exists().normalizeEmail().isEmail(),
 ];
 
-const userUpdateSchema = [body('firstName', 'First Name must be valid').optional().isString(), body('lastName', 'Last Name must be valid').optional().isString(), body('auth0Email', 'Must enter a valid email').exists().normalizeEmail().isEmail()];
+const userUpdateSchema = [body('firstName', 'First Name must be valid').optional().isString(), body('lastName', 'Last Name must be valid').optional().isString(), body('auth0Email', 'Must enter a valid email').optional().normalizeEmail().isEmail()];
 
 const userAdminUpdateSchema = [body('hourlyRate', 'Hourly Rate must be a valid number').optional().isFloat({ min: 0 })];
 

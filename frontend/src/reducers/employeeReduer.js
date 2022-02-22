@@ -57,3 +57,22 @@ export const userReducer = (state = { user: [] }, action) => {
       return state;
   }
 };
+
+export const profileReducer = (state = { userData: '', error: false }, action) => {
+  switch (action.type) {
+    case actions.PROFILE_FETCH_REQUEST:
+      return { ...state, loading: true };
+    case actions.PROFILE_FETCH_SUCCESS:
+      return { ...state, loading: false, userData: action.payload };
+    case actions.PROFILE_FETCH_FAIL:
+      return { ...state, loading: false, error: action.payload };
+    case actions.PROFILE_UPDATE_REQUEST:
+      return { ...state, loading: true };
+    case actions.PROFILE_UPDATE_SUCCESS:
+      return { ...state, loading: false, userData: action.payload.userProfile };
+    case actions.PROFILE_UPDATE_FAIL:
+      return { ...state, loading: false };
+    default:
+      return state;
+  }
+};
