@@ -7,10 +7,21 @@
   padding: 0.5rem;
 }
 
+.header {
+  display: grid;
+  grid-template-columns: 1fr 9fr 1fr;
+  align-items: center;
+  justify-items: center;
+  grid-template-areas: 'pagination pagination pagination' 'filter filter filter' '. add printer';
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
 .printer {
   border: none;
   background: none;
   display: inline;
+  grid-area: printer;
 }
 
 .pagination {
@@ -25,6 +36,10 @@
   grid-area: add;
 }
 
+.select {
+  display: inline;
+}
+
 .btn-pag {
   font-size: 1.1rem;
 }
@@ -33,36 +48,70 @@
   grid-area: filter;
 }
 
-.select {
-  display: inline;
-}
-
-.header {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  justify-items: center;
-  padding: 1rem 0;
-}
-
 .table {
   min-height: 70vh;
 }
 
 .first-coloumn {
-  width: 9%;
+  width: 2%;
 }
 
 .thead {
   position: sticky;
   background-color: white;
-  top: 0.5px;
-  outline: 0 0 1px 0 black solid;
+  top: -1px;
+  z-index: 2;
+  overflow-wrap: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .static-table {
-  width: 13%;
+  width: 14%;
   overflow-wrap: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile {
+  display: none;
+  text-align: center;
+}
+
+@media only screen and (min-width: 10rem) {
+  .mobile {
+    display: block;
+    margin: 0 auto;
+  }
+  .desktop {
+    display: none;
+  }
+  .table th,
+  .table td {
+    border: 1px solid #dee2e6;
+  }
+}
+
+@media (min-width: 0rem) and (max-width: 20rem) {
+  .table th,
+  .table td {
+    border: 1px solid black;
+  }
+}
+
+@media only screen and (min-width: 15rem) and (max-width: 60rem) {
+  .table th,
+  .table td {
+    padding: 0.5rem 0.1rem;
+  }
+
+  .month {
+    font-size: 1.7rem;
+    text-align: left;
+    margin: 0.5rem;
+  }
 }
 
 @media only screen and (min-width: 40rem) {
@@ -78,7 +127,6 @@
 
   .printer {
     margin: 1rem 1rem 0 0;
-    grid-area: printer;
     justify-self: right;
   }
 
@@ -91,5 +139,15 @@
     justify-self: left;
     margin-left: 1rem;
     align-self: flex-start;
+  }
+}
+
+@media only screen and (min-width: 50rem) {
+  .mobile {
+    display: none;
+  }
+
+  .desktop {
+    display: unset;
   }
 }

@@ -19,7 +19,6 @@
   width: 100%;
   padding: 0.5rem;
   height: min-content;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   border-radius: 0.2rem;
   cursor: pointer;
   margin: 0.2rem 0.1rem;
@@ -28,4 +27,71 @@
 .job-insert:hover {
   transform: scale(1.02);
   transition: all 150ms ease-in-out;
+}
+
+.mobile {
+  display: none;
+}
+
+@media only screen and (min-width: 10rem) {
+  .mobile {
+    display: unset;
+  }
+  .desktop {
+    display: none;
+  }
+  .heading {
+    position: sticky;
+    left: 0;
+    background-color: white !important;
+    overflow-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 1;
+  }
+}
+
+@media only screen and (max-width: 36rem) {
+  .item {
+    padding: 0;
+  }
+  .job-insert {
+    padding: 0.2rem;
+    margin: 0;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  }
+  .heading {
+    overflow-wrap: break-word;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.7rem;
+  }
+  .job-insert {
+    font-size: 0.7rem;
+    color: white;
+    padding: 0.4rem 0.1rem;
+    max-height: auto;
+    overflow-wrap: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 0.2rem;
+    cursor: pointer;
+    max-width: 3rem;
+    margin: 0.2rem 0.1rem;
+  }
+}
+
+@media only screen and (min-width: 36rem) {
+  .job-insert {
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  }
+  .mobile {
+    display: none;
+  }
+
+  .desktop {
+    display: unset;
+  }
 }

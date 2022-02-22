@@ -1,8 +1,9 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
+
 import { getJobDueDates } from '../../actions/jobActions';
 
 import JobPartDueDates from '../JobPartDueDates';

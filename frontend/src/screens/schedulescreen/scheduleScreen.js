@@ -148,14 +148,21 @@ const ScheduleScreen = () => {
         />
       </div>
       <div ref={componentRef}>
+        <h1 className={`${styles.mobile} ${styles.month}`}>{DateTime.fromFormat(weekStart, 'yyyy-MM-dd').toFormat('MMMM')}</h1>
         <Table responsive="sm" bordered className={styles.table}>
           <thead className={styles.thead}>
             <tr>
               <th className={styles['first-coloumn']}></th>
               {weekArray.map((day) => (
                 <th key={day.date} className={styles['static-table']}>
-                  {day.day} <br />
-                  {day.shortDate}
+                  <div className={styles.mobile}>
+                    {day.day[0]} <br />
+                    {day.shortDate.slice(0, 2)}
+                  </div>
+                  <div className={styles.desktop}>
+                    {day.day} <br />
+                    {day.shortDate}
+                  </div>
                 </th>
               ))}
             </tr>

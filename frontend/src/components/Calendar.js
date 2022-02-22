@@ -38,7 +38,7 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading, filterCont
     !dueDateLoading && (
       <>
         <tr>
-          <th>{jobPart.jobPartTitle}</th>
+          <th className={styles.heading}>{jobPart.jobPartTitle}</th>
           {week.map(({ isoDate, date }) => (
             <td key={isoDate} className={styles.item} onClick={() => createJobHandler(date)}>
               {actionItem &&
@@ -60,7 +60,8 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading, filterCont
                       }}
                     >
                       <div style={{ backgroundColor: job.job.color, color: fontColorContrast(job.job.color) }} className={styles['job-insert']}>
-                        {job.job.jobNumber} - {job.job.address}
+                        {job.job.jobNumber} - <span className={styles.mobile}>{job.job.address.slice(0, 10)}...</span>
+                        <span className={styles.desktop}>{job.job.address}</span>
                       </div>
                     </div>
                   ))}
