@@ -20,11 +20,15 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
     }
   }, [dueDates, jobPart, loading, dueDateLoading]);
 
-  const editJobHandler = (e, job, date) => {
+  const editJobHandler = (e, job) => {
     e.stopPropagation();
-    setDate(date);
     setJob(job);
     setModalEditShow(true);
+  };
+
+  const createJobHandler = (date) => {
+    setDate(date);
+    setModalCreateShow(true);
   };
 
   return (
@@ -34,7 +38,7 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
         <tr>
           <th>{jobPart.jobPartTitle}</th>
           {week.map(({ isoDate, date }) => (
-            <td key={isoDate} className={styles.item} onClick={() => setModalCreateShow(true)}>
+            <td key={isoDate} className={styles.item} onClick={() => createJobHandler(date)}>
               {actionItem &&
                 actionItem
                   .filter((dueDate) => dueDate.dueDateRange.includes(isoDate))
@@ -43,7 +47,7 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
                       key={job.job._id}
                       style={{ borderRadius: '0.2rem' }}
                       onClick={(e) => {
-                        editJobHandler(e, job, date);
+                        editJobHandler(e, job);
                       }}
                     >
                       <div style={{ backgroundColor: job.job.color, color: fontColorContrast(job.job.color) }} className={styles['job-insert']}>
@@ -55,8 +59,8 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
             </td>
           ))}
         </tr>
-        <ScheduleEditDueDate show={modalEditShow} date={date} job={job} jobPart={jobPart} setModalShow={setModalEditShow} onHide={() => setModalEditShow(false)} />
-        <ScheduleCreateDueDate show={modalCreateShow} date={date} job={job} jobPart={jobPart} setModalShow={setModalCreateShow} onHide={() => setModalCreateShow(false)} />
+        <ScheduleEditDueDate show={modalEditShow} job={job} jobPart={jobPart} setModalShow={setModalEditShow} onHide={() => setModalEditShow(false)} />
+        <ScheduleCreateDueDate show={modalCreateShow} date={date} jobPart={jobPart} setModalShow={setModalCreateShow} onHide={() => setModalCreateShow(false)} />
       </>
     )
   );
