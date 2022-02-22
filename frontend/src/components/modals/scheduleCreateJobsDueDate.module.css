@@ -1,0 +1,16 @@
+@media only screen and (min-width: 48rem) {
+  .body {
+    display: grid;
+    gap: 1rem;
+  }
+}
+
+@media only screen and (min-width: 62rem) {
+  .body {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'job job';
+  }
+  .job {
+    grid-area: job;
+  }
+}

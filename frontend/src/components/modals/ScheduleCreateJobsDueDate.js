@@ -7,6 +7,8 @@ import { getJobDueDates } from '../../actions/jobActions';
 
 import JobPartDueDates from '../JobPartDueDates';
 
+import styles from './scheduleCreateJobsDueDate.module.css';
+
 export const ScheduleCreateJobsDueDate = ({ setModalShow, ...rest }) => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
@@ -19,25 +21,27 @@ export const ScheduleCreateJobsDueDate = ({ setModalShow, ...rest }) => {
   const [job, setJob] = useState('');
 
   useEffect(() => {
+    if (!rest.show) {
+      setJob('');
+    }
     if (job) {
       (async () => {
         const token = await getAccessTokenSilently();
         dispatch(getJobDueDates(token, job._id));
       })();
     }
-  }, [dispatch, getAccessTokenSilently, job]);
-  console.log(job._id);
+  }, [dispatch, getAccessTokenSilently, job, rest.show]);
   return (
     rest.show && (
-      <Modal {...rest} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
+      <Modal {...rest} size="xl" aria-labelledby="contained-modal-title-vcenter" centered>
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">Create Job Due Dates</Modal.Title>
           <Button variant="secondary" onClick={() => setModalShow(false)}>
             X
           </Button>
         </Modal.Header>
-        <Modal.Body>
-          <Form.Group>
+        <Modal.Body className={styles.body}>
+          <Form.Group className={styles.job}>
             <Form.Label>Job:</Form.Label>
             <Select
               placeholder="22000 - 123 Abc place..."
