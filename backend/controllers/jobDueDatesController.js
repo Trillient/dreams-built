@@ -24,12 +24,19 @@ const getAllJobDueDates = asyncHandler(async (req, res) => {
 
 const getJobPartDueDates = asyncHandler(async (req, res) => {
   const jobParams = req.params.jobid;
-  const partQuery = req.query.jobPart;
+  const partQuery = req.query.jobPart || '';
 
   const checkJobExists = await JobDetails.findById(jobParams);
 
   if (checkJobExists) {
-    const jobDueDates = await JobDueDate.find({ job: jobParams, jobPartTitle: partQuery }).populate('jobPartTitle', 'jobPartTitle');
+    let query = {};
+    if (partQuery) {
+      query = { job: jobParams, jobPartTitle: partQuery };
+    } else {
+      query = { job: jobParams };
+    }
+    const jobDueDates = await JobDueDate.find(query).populate('jobPartTitle', 'jobPartTitle');
+
     res.json(jobDueDates);
   } else {
     res.status(404);
