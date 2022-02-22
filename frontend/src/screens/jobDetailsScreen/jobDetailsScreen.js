@@ -14,9 +14,9 @@ import DetailsGroup from '../../components/groups/DetailsGroup';
 import JobPartDueDates from '../../components/JobPartDueDates';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
+import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
 
 import styles from './jobDetailsScreen.module.css';
-import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
 
 const JobDetailsScreen = () => {
   const customStyles = {

@@ -8,7 +8,7 @@ import Select from 'react-select';
 import ReactToPrint from 'react-to-print';
 import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 
-import { getDueDates, getJobPartsList, resetDueDateUpdate } from '../../actions/jobActions';
+import { getDueDates, getJobList, getJobPartsList, resetDueDateUpdate } from '../../actions/jobActions';
 
 import Calendar from '../../components/Calendar';
 import Message from '../../components/Message';
@@ -62,6 +62,7 @@ const ScheduleScreen = () => {
           dispatch(getDueDates(token, weekStart, weekEnd));
           dispatch(getJobPartsList(token));
           dispatch(getContractors(token));
+          dispatch(getJobList(token));
         } catch (err) {
           console.error(err);
         }
