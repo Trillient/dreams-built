@@ -597,7 +597,7 @@ export const deleteJobPartDueDate = (token, dueId) => async (dispatch) => {
   }
 };
 
-export const getDueDates = (token, weekStart, weekEnd) => async (dispatch) => {
+export const getDueDates = (token, weekStart, weekEnd, contractors) => async (dispatch) => {
   try {
     dispatch({
       type: actions.DUEDATELIST_FETCH_REQUEST,

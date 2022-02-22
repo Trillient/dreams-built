@@ -6,12 +6,14 @@ import ScheduleCreateDueDate from './modals/ScheduleCreateDueDate';
 
 import styles from './calendar.module.css';
 
-const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
+const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading, filterContractor }) => {
   const [actionItem, setActionItem] = useState('');
   const [modalEditShow, setModalEditShow] = useState(false);
   const [modalCreateShow, setModalCreateShow] = useState(false);
   const [date, setDate] = useState('');
   const [job, setJob] = useState('');
+
+  const filterContractorIds = filterContractor.map((contractor) => contractor._id);
 
   useEffect(() => {
     if (!loading && !dueDateLoading && dueDates) {
@@ -42,6 +44,13 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading }) => {
               {actionItem &&
                 actionItem
                   .filter((dueDate) => dueDate.dueDateRange.includes(isoDate))
+                  .filter((job) => {
+                    if (filterContractor.length > 0) {
+                      return job.contractors.map((contractor) => contractor._id).some((contractor) => filterContractorIds.includes(contractor));
+                    } else {
+                      return job;
+                    }
+                  })
                   .map((job) => (
                     <div
                       key={job.job._id}

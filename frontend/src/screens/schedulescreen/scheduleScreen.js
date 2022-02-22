@@ -33,6 +33,9 @@ const ScheduleScreen = () => {
   const dueDateUpdates = useSelector((state) => state.jobDueDates);
   const { dueDateUpdated } = dueDateUpdates;
 
+  const contractorsList = useSelector((state) => state.contractors);
+  const { contractorList } = contractorsList;
+
   const startWeekInit = DateTime.now().startOf('week');
   const endWeekInit = DateTime.now().endOf('week').plus({ days: 1 });
 
@@ -105,11 +108,12 @@ const ScheduleScreen = () => {
             isMulti
             closeMenuOnSelect="false"
             onChange={setFilterContractor}
-            options={[
-              { value: 'hamburger', label: 'Hamburger' },
-              { value: 'fries', label: 'Fries' },
-              { value: 'milkshake', label: 'Milkshake' },
-            ]}
+            options={
+              contractorList &&
+              contractorList.map((contractor) => {
+                return { ...contractor, label: contractor.contractor, value: contractor._id };
+              })
+            }
           />
         </div>
         <div className={styles.pagination}>
@@ -158,7 +162,7 @@ const ScheduleScreen = () => {
           </thead>
           <tbody>
             {jobParts.map((jobPart) => (
-              <Calendar key={jobPart._id} jobPart={jobPart} week={weekArray} dueDates={dueDates} loading={loading} dueDateLoading={dueDateLoading} />
+              <Calendar key={jobPart._id} jobPart={jobPart} week={weekArray} dueDates={dueDates} loading={loading} filterContractor={filterContractor} dueDateLoading={dueDateLoading} />
             ))}
           </tbody>
         </Table>
