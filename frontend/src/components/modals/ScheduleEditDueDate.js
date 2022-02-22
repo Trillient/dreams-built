@@ -5,11 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
 import Select from 'react-select';
 
-import { deleteJobPartDueDate, updateAllJobPartDueDate } from '../../actions/jobActions';
+import { deleteJobPartDueDate, updateWholeJobPartDueDate } from '../../actions/jobActions';
 
 import styles from './scheduleEditDueDate.module.css';
 
-const ScheduleEditDueDate = ({ setModalShow, date, job, jobPart, modalDueDate, ...rest }) => {
+const ScheduleEditDueDate = ({ setModalShow, job, jobPart, ...rest }) => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
 
@@ -28,7 +28,7 @@ const ScheduleEditDueDate = ({ setModalShow, date, job, jobPart, modalDueDate, .
   const submitHandler = async (e) => {
     e.preventDefault();
     const token = await getAccessTokenSilently();
-    dispatch(updateAllJobPartDueDate(token, job._id, dueDate, startDate, contractors));
+    dispatch(updateWholeJobPartDueDate(token, job._id, dueDate, startDate, contractors));
     setModalShow(false);
   };
 
@@ -49,7 +49,6 @@ const ScheduleEditDueDate = ({ setModalShow, date, job, jobPart, modalDueDate, .
             X
           </Button>
         </Modal.Header>
-
         <Modal.Body>
           <LinkContainer className={styles.link} to={`/job/details/${job.job._id}`}>
             <a href="/#">Job Details</a>
@@ -58,15 +57,15 @@ const ScheduleEditDueDate = ({ setModalShow, date, job, jobPart, modalDueDate, .
             <h2 className={styles['sub-title']}>
               {job.job.jobNumber} - {job.job.address}
             </h2>
-            <Form.Group className={styles.start} controlId={jobPart.jobPartTitle.startDate}>
+            <Form.Group className={styles.start}>
               <Form.Label>Start Date:</Form.Label>
               <Form.Control type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}></Form.Control>
             </Form.Group>
-            <Form.Group className={styles.due} controlId={jobPart.jobPartTitle.dueDate}>
+            <Form.Group className={styles.due}>
               <Form.Label>Due Date:</Form.Label>
               <Form.Control type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}></Form.Control>
             </Form.Group>
-            <Form.Group className={styles.contractors} controlId={jobPart.jobPartTitle.dueDate}>
+            <Form.Group className={styles.contractors}>
               <Form.Label>Contractors:</Form.Label>
               <Select
                 menuPosition={'fixed'}
@@ -90,7 +89,6 @@ const ScheduleEditDueDate = ({ setModalShow, date, job, jobPart, modalDueDate, .
                 }
               />
             </Form.Group>
-
             <Button className={styles.save} type="submit" variant="success">
               Save
             </Button>
