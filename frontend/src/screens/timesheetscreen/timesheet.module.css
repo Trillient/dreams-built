@@ -1,22 +1,17 @@
-.btn-time-save {
-  margin: 1rem 0 -1.5rem auto;
+.btn-btm-save {
+  width: 100%;
 }
 
 .users {
-  max-width: 17.1rem;
   margin-bottom: 1rem;
 }
 
 .grid-card-top {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr;
   gap: 1rem;
 }
 
-.btn-time-save {
-  margin-top: 0rem;
-  margin-bottom: 0rem;
-}
 .header {
   margin-top: 0.3rem;
   display: flex;
@@ -37,13 +32,9 @@
 }
 
 .title {
-  display: block;
   flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: auto;
   align-self: auto;
-  order: 0;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   text-align: center;
 }
 
@@ -59,6 +50,10 @@
 .btn-sml-screen-btm {
   display: block;
   margin: 0 auto;
+}
+
+.dropdown {
+  width: 100%;
 }
 
 .table-coloumn-delete {
@@ -77,6 +72,23 @@
   }
   .btn-sml-screen-btm {
     display: none;
+  }
+  .dropdown {
+    width: max-content;
+  }
+  .btn-time-save {
+    justify-self: right;
+  }
+
+  .users {
+    max-width: 17.1rem;
+  }
+
+  .btn-btm-save,
+  .btn-time-save {
+    width: min-content;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
 }
 

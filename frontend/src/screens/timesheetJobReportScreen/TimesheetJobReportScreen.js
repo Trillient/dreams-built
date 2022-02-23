@@ -57,6 +57,7 @@ const TimesheetJobReportScreen = () => {
   ) : (
     <section className="container">
       <div className={styles.page}>
+        <h1 style={{ textAlign: 'center' }}>Labour Expenses</h1>
         <div className={styles.pagination}>
           <Button
             className={styles['btn-pag']}

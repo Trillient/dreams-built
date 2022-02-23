@@ -2,15 +2,13 @@ import { Table } from 'react-bootstrap';
 
 import styles from './jobReport.module.css';
 
-const style = { width: '15%', textAlign: 'right' };
-
 const JobReportCard = ({ job }) => {
   return (
     <div className={styles.border}>
-      <h2 style={{ fontSize: '1.5rem' }}>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
         {job.jobNumber} - {job.value[0]?.job?.address}
       </h2>
-      <p>
+      <p className={styles.dates}>
         <strong>
           <em>
             {job.value[0].weekStart} - {job.value[0].weekEnd}
@@ -21,9 +19,9 @@ const JobReportCard = ({ job }) => {
         <thead>
           <tr>
             <th>Employee</th>
-            <th style={style}>Rate ($/hr)</th>
-            <th style={style}>Hours</th>
-            <th style={style}>Cost</th>
+            <th className={`${styles.col} ${styles.rate}`}>Rate ($/hr)</th>
+            <th className={`${styles.col} ${styles.time}`}>Hours</th>
+            <th className={styles.col}>Cost</th>
           </tr>
         </thead>
         <tbody>
@@ -32,28 +30,28 @@ const JobReportCard = ({ job }) => {
               <td>
                 {entry.user.firstName} {entry.user.lastName}
               </td>
-              <td style={style}>$ {entry.user.hourlyRate}</td>
-              <td style={style}>{entry.jobTime}</td>
-              <td style={style}>$ {(entry.user.hourlyRate * entry.jobTime).toFixed(2)}</td>
+              <td className={`${styles.col} ${styles.rate}`}>$ {entry.user.hourlyRate}</td>
+              <td className={`${styles.col} ${styles.time}`}>{entry.jobTime}</td>
+              <td className={styles.col}>$ {(entry?.user?.hourlyRate * entry?.jobTime)?.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>
         <tfoot>
           <tr className={styles.footer}>
             <th className={styles.footer}>Total</th>
-            <td className={styles.footer}></td>
-            <th className={styles.footer} style={style}>
+            <td className={`${styles.footer} ${styles.rate}`}></td>
+            <th className={`${styles.footer} ${styles.time} ${styles.col}`}>
               {job.value
                 .map((entry) => entry.jobTime)
                 .reduce((previous, current) => previous + current, 0)
                 .toFixed(2)}
             </th>
-            <th className={styles.footer} style={style}>
+            <th className={`${styles.footer} ${styles.col}`}>
               ${' '}
-              {job.value
-                .map((entry) => entry.jobTime * entry.user.hourlyRate)
+              {job?.value
+                ?.map((entry) => entry.jobTime * entry.user.hourlyRate)
                 .reduce((previous, current) => previous + current, 0)
-                .toFixed(2)}
+                ?.toFixed(2)}
             </th>
           </tr>
         </tfoot>

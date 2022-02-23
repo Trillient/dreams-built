@@ -9,3 +9,34 @@
 .footer td {
   border: none;
 }
+
+.dates {
+  color: #5562ae;
+}
+
+.col {
+  text-align: right;
+}
+
+.rate,
+.time {
+  display: none;
+}
+
+@media only screen and (min-width: 30rem) {
+  .time {
+    display: table-cell;
+  }
+}
+
+@media only screen and (min-width: 40rem) {
+  .rate {
+    display: table-cell;
+  }
+}
+
+@media only screen and (min-width: 50rem) {
+  .col {
+    width: 15%;
+  }
+}

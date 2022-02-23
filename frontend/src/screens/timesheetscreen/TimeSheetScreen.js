@@ -118,7 +118,7 @@ const TimesheetScreen = () => {
           ) : null}
           <div className={styles['grid-card-top']}>
             <Dropdown>
-              <Dropdown.Toggle id="dropdown-button" variant="primary">
+              <Dropdown.Toggle id="dropdown-button" variant="primary" className={styles.dropdown}>
                 Week: {weekStart} - {weekEnd}
               </Dropdown.Toggle>
               <Dropdown.Menu as={CustomMenu} style={{ boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' }}>
@@ -136,14 +136,14 @@ const TimesheetScreen = () => {
                 ))}
               </Dropdown.Menu>
             </Dropdown>
-            <Button variant="primary" type="submit" className={styles['btn-time-save']}>
+            <Button variant="info" type="submit" className={styles['btn-time-save']}>
               Save
             </Button>
           </div>
           {weekArray.map((day) => (
             <TimesheetDay key={day.date} day={day.day} date={day.date} ordinal={day.ordinal} month={day.month} />
           ))}
-          <Button variant="primary" type="submit">
+          <Button variant="info" type="submit" className={styles['btn-btm-save']}>
             Save
           </Button>
         </Form>
