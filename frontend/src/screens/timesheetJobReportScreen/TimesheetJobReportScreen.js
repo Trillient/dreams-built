@@ -1,21 +1,17 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
-
+import { BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { getEmployeeTimeSheets } from '../../actions/reportActions';
-
-import EmployeeReportCard from '../../components/EmployeeReportCard';
-import JobReportCard from '../../components/JobReportCard';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-
-import styles from './timesheetReports.module.css';
+import styles from './timesheetJobReportScreen.module.css';
 import DatePicker from 'react-date-picker';
+import JobReportCard from '../../components/JobReportCard';
 
-const TimeSheetReportScreen = () => {
+const TimesheetJobReportScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
 
@@ -87,15 +83,9 @@ const TimeSheetReportScreen = () => {
               <JobReportCard job={job} />
             </div>
           ))}
-        {timesheets.sortedByEmployee &&
-          timesheets.sortedByEmployee.map((employee) => (
-            <div key={employee.userId} className={styles.card}>
-              <EmployeeReportCard employee={employee} />
-            </div>
-          ))}
       </div>
     </section>
   );
 };
 
-export default TimeSheetReportScreen;
+export default TimesheetJobReportScreen;

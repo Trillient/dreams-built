@@ -118,8 +118,12 @@ export const AdminSidebarData = [
     iconOpened: <RiArrowUpSFill />,
     subNav: [
       {
-        title: 'Employee Timesheets',
-        path: '/reports/timesheets',
+        title: 'Timesheets - Employees',
+        path: '/reports/timesheets/employees',
+      },
+      {
+        title: 'Timesheets - Jobs',
+        path: '/reports/timesheets/jobs',
       },
     ],
   },

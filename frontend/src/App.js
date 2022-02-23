@@ -22,10 +22,11 @@ import CreateJobPartScreen from './screens/createJobPartScreen/CreateJobPartScre
 import EditJobPartScreen from './screens/editJobPartScreen/EditJobPartScreen';
 import EmployeesScreen from './screens/employeesScreen/EmployeesScreen';
 import EditEmployeeScreen from './screens/editEmployeeScreen/EditEmployeeScreen';
-import TimeSheetReportScreen from './screens/timesheetReportScreen/TimeSheetReportScreen';
+import TimesheetUserReportScreen from './screens/timesheetUserReportScreen/TimesheetUserReportScreen';
 import ContractorListScreen from './screens/contractorListScreen/ContractorListScreen';
 import EditContractorScreen from './screens/editContractorScreen/EditContractorScreen';
 import CreateContractorScreen from './screens/createContractorScreen/CreateContractorScreen';
+import TimesheetJobReportScreen from './screens/timesheetJobReportScreen/TimesheetJobReportScreen';
 
 const App = () => {
   const { isAuthenticated } = useAuth0();
@@ -52,7 +53,8 @@ const App = () => {
           <Route path="employees/edit/:id" element={<EditEmployeeScreen />} />
           <Route path="schedule" element={<ScheduleScreen />} />
           <Route path="profile" element={<Profile />} />
-          <Route path="reports/timesheets" element={<TimeSheetReportScreen />} />
+          <Route path="reports/timesheets/employees" element={<TimesheetUserReportScreen />} />
+          <Route path="reports/timesheets/jobs" element={<TimesheetJobReportScreen />} />
         </Routes>
       </Layout>
     </Router>

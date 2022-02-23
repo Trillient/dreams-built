@@ -34,7 +34,7 @@ const JobReportCard = ({ job }) => {
               </td>
               <td style={style}>$ {entry.user.hourlyRate}</td>
               <td style={style}>{entry.jobTime}</td>
-              <td style={style}>$ {entry.user.hourlyRate * entry.jobTime}</td>
+              <td style={style}>$ {(entry.user.hourlyRate * entry.jobTime).toFixed(2)}</td>
             </tr>
           ))}
         </tbody>
@@ -43,10 +43,17 @@ const JobReportCard = ({ job }) => {
             <th className={styles.footer}>Total</th>
             <td className={styles.footer}></td>
             <th className={styles.footer} style={style}>
-              {job.value.map((entry) => entry.jobTime).reduce((previous, current) => previous + current, 0)}
+              {job.value
+                .map((entry) => entry.jobTime)
+                .reduce((previous, current) => previous + current, 0)
+                .toFixed(2)}
             </th>
             <th className={styles.footer} style={style}>
-              $ {job.value.map((entry) => entry.jobTime * entry.user.hourlyRate).reduce((previous, current) => previous + current, 0)}
+              ${' '}
+              {job.value
+                .map((entry) => entry.jobTime * entry.user.hourlyRate)
+                .reduce((previous, current) => previous + current, 0)
+                .toFixed(2)}
             </th>
           </tr>
         </tfoot>
