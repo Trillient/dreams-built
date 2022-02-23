@@ -26,6 +26,8 @@ const timesheetEntrySchema = mongoose.Schema(
   { timestamps: true }
 );
 
+timesheetEntrySchema.index({ updatedAt: 1 }, { expireAfterSeconds: 15811200 });
+
 const TimesheetEntry = mongoose.model('TimesheetEntry', timesheetEntrySchema);
 
 module.exports = TimesheetEntry;
