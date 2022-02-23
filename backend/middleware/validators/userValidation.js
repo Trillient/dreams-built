@@ -1,5 +1,4 @@
 const { body, param } = require('express-validator');
-const User = require('../../models/userModel');
 
 const userSchema = [
   body('userId', 'userId required').exists().isString(),

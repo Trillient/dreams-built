@@ -1,10 +1,14 @@
 import { Table } from 'react-bootstrap';
 
+import styles from './jobReport.module.css';
+
+const style = { width: '15%', textAlign: 'right' };
+
 const JobReportCard = ({ job }) => {
   return (
-    <>
-      <h2>
-        {job.jobNumber} - {job.value[0].address}
+    <div className={styles.border}>
+      <h2 style={{ fontSize: '1.5rem' }}>
+        {job.jobNumber} - {job.value[0]?.job?.address}
       </h2>
       <p>
         <strong>
@@ -17,9 +21,9 @@ const JobReportCard = ({ job }) => {
         <thead>
           <tr>
             <th>Employee</th>
-            <th>Rate ($/hr)</th>
-            <th>Cost</th>
-            <th>Times</th>
+            <th style={style}>Rate ($/hr)</th>
+            <th style={style}>Hours</th>
+            <th style={style}>Cost</th>
           </tr>
         </thead>
         <tbody>
@@ -28,22 +32,26 @@ const JobReportCard = ({ job }) => {
               <td>
                 {entry.user.firstName} {entry.user.lastName}
               </td>
-              <td>$ {entry.user.hourlyRate}</td>
-              <td>$ {entry.user.hourlyRate * entry.jobTime}</td>
-              <td>{entry.jobTime}</td>
+              <td style={style}>$ {entry.user.hourlyRate}</td>
+              <td style={style}>{entry.jobTime}</td>
+              <td style={style}>$ {entry.user.hourlyRate * entry.jobTime}</td>
             </tr>
           ))}
         </tbody>
         <tfoot>
-          <tr>
-            <th>Total</th>
-            <td></td>
-            <td>$ {job.value.map((entry) => entry.jobTime * entry.user.hourlyRate).reduce((previous, current) => previous + current, 0)}</td>
-            <td>{job.value.map((entry) => entry.jobTime).reduce((previous, current) => previous + current, 0)}</td>
+          <tr className={styles.footer}>
+            <th className={styles.footer}>Total</th>
+            <td className={styles.footer}></td>
+            <th className={styles.footer} style={style}>
+              {job.value.map((entry) => entry.jobTime).reduce((previous, current) => previous + current, 0)}
+            </th>
+            <th className={styles.footer} style={style}>
+              $ {job.value.map((entry) => entry.jobTime * entry.user.hourlyRate).reduce((previous, current) => previous + current, 0)}
+            </th>
           </tr>
         </tfoot>
       </Table>
-    </>
+    </div>
   );
 };
 

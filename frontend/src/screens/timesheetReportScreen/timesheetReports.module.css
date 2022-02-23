@@ -1,7 +1,21 @@
-.card {
+.page {
   background-color: whitesmoke;
   padding: 2rem;
   margin: 1rem;
   border-radius: 0.5rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.pagination {
+  grid-area: pagination;
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin: 1rem auto;
+  max-width: 16rem;
+}
+
+.btn-pag {
+  font-size: 1.1rem;
 }

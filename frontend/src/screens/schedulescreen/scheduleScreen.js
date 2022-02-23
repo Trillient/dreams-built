@@ -125,7 +125,7 @@ const ScheduleScreen = () => {
           >
             <BsArrowLeft />
           </Button>
-          <DatePicker calendarClassName={styles['date-calendar']} className={styles['date-picker']} calendarIcon={<BsFillCalendarFill />} clearIcon={null} onChange={changeDateHandler} value={selectedDate} />
+          <DatePicker calendarIcon={<BsFillCalendarFill />} clearIcon={null} onChange={changeDateHandler} value={selectedDate} />
           <Button
             className={styles['btn-pag']}
             onClick={() => {
