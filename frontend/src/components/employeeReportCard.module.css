@@ -1,0 +1,48 @@
+.dates {
+  color: #5562ae;
+}
+
+.footer th,
+.footer td {
+  border: none;
+}
+.edit {
+  display: none;
+}
+
+@media only screen and (min-width: 2rem) {
+  .edit {
+    display: table-cell;
+    width: 2%;
+  }
+
+  .address,
+  .city,
+  .time,
+  .job {
+    display: none;
+  }
+}
+@media only screen and (min-width: 25rem) {
+  .job {
+    display: table-cell;
+  }
+}
+
+@media only screen and (min-width: 35rem) {
+  .time {
+    display: table-cell;
+  }
+}
+
+@media only screen and (min-width: 48rem) {
+  .address {
+    display: unset;
+  }
+}
+
+@media only screen and (min-width: 62rem) {
+  .city {
+    display: unset;
+  }
+}

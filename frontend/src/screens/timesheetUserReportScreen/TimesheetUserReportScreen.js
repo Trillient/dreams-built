@@ -60,6 +60,7 @@ const TimesheetUserReportScreen = () => {
   ) : (
     <section className="container">
       <div className={styles.page}>
+        <h1 style={{ textAlign: 'center' }}>Timesheets</h1>
         <div className={styles.pagination}>
           <Button
             className={styles['btn-pag']}

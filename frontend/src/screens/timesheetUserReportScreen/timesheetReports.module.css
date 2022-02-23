@@ -1,21 +1,39 @@
 .page {
   background-color: whitesmoke;
   padding: 2rem;
-  margin: 1rem;
+  margin: 2rem 0;
   border-radius: 0.5rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .pagination {
-  grid-area: pagination;
   display: grid;
-  grid-template-columns: 1fr 4fr 1fr;
-  gap: 1rem;
   align-items: center;
-  margin: 1rem auto;
+  margin: 2rem auto;
   max-width: 16rem;
 }
-
 .btn-pag {
+  display: none;
   font-size: 1.1rem;
+}
+
+.card {
+  border: 1px solid gainsboro;
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+}
+
+@media only screen and (min-width: 30rem) {
+  .pagination {
+    grid-template-columns: 1fr 4fr 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin: 2rem auto;
+    max-width: 16rem;
+  }
+
+  .btn-pag {
+    display: unset;
+  }
 }

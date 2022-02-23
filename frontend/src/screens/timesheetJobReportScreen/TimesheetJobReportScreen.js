@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
+import DatePicker from 'react-date-picker';
+
 import { getEmployeeTimeSheets } from '../../actions/reportActions';
+
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import styles from './timesheetJobReportScreen.module.css';
-import DatePicker from 'react-date-picker';
 import JobReportCard from '../../components/JobReportCard';
+
+import styles from './timesheetJobReportScreen.module.css';
 
 const TimesheetJobReportScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -78,12 +81,7 @@ const TimesheetJobReportScreen = () => {
           </Button>
         </div>
 
-        {timesheets.sortedByEmployee &&
-          timesheets.sortedByJob.map((job) => (
-            <div key={job.jobNumber} className={styles.card}>
-              <JobReportCard job={job} />
-            </div>
-          ))}
+        {timesheets.sortedByEmployee && timesheets.sortedByJob.map((job) => <JobReportCard key={job.jobNumber} job={job} />)}
       </div>
     </section>
   );

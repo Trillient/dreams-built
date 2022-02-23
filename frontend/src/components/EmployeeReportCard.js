@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
+
 import EmployeeRow from './EmployeeRow';
+
+import styles from './employeeReportCard.module.css';
 
 const EmployeeReportCard = ({ employee }) => {
   const [title, setTitle] = useState('');
@@ -21,12 +24,13 @@ const EmployeeReportCard = ({ employee }) => {
     } else {
       setTitle(employee.userId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      <h2>{title}</h2>
-      <p>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{title}</h2>
+      <p className={styles.dates}>
         <strong>
           <em>
             {employee.value[0].weekStart} - {employee.value[0].weekEnd}
@@ -37,10 +41,11 @@ const EmployeeReportCard = ({ employee }) => {
         <thead>
           <tr>
             <th>Day</th>
-            <th>Start Time</th>
-            <th>End Time</th>
+            <th className={styles.time}>Start Time</th>
+            <th className={styles.time}>End Time</th>
+            <th className={styles.job}>Job</th>
             <th>Total Time</th>
-            <th>Edit</th>
+            <th className={styles.edit}>Edit</th>
           </tr>
         </thead>
         <tbody>
@@ -48,15 +53,17 @@ const EmployeeReportCard = ({ employee }) => {
             <EmployeeRow entry={entry} key={entry._id} />
           ))}
         </tbody>
-        <tfoot>
+        <tfoot className={styles.footer}>
           <tr>
             <th>Total</th>
-            <td></td>
-            <td></td>
+            <td className={styles.time}></td>
+            <td className={styles.time}></td>
+            <td className={styles.job}></td>
             <td>{employee.value.map((entry) => entry.jobTime).reduce((previous, current) => previous + current, 0)}</td>
+            <td className={styles.edit}></td>
           </tr>
         </tfoot>
-      </Table>{' '}
+      </Table>
     </>
   );
 };
