@@ -80,9 +80,22 @@ const createUserEntry = asyncHandler(async (req, res) => {
  */
 
 const getAllUsers = asyncHandler(async (req, res) => {
-  const result = await TimesheetEntry.find({ weekStart: req.query.weekstart }).populate('user job', 'firstName lastName auth0Email hourlyRate userId jobNumber address city');
+  const entries = await TimesheetEntry.find({ weekStart: req.query.weekstart }).populate('user job', 'firstName lastName auth0Email hourlyRate userId jobNumber address city');
+  const commentsInitial = await User.aggregate([
+    {
+      $lookup: {
+        from: 'timesheetcomments',
+        localField: '_id',
+        foreignField: 'user',
+        pipeline: [{ $match: { weekStart: req.query.weekstart } }],
+        as: 'matches',
+      },
+    },
+  ]);
 
-  res.json(result);
+  const comments = commentsInitial.filter((entries) => entries.matches.length > 0);
+
+  res.json({ entries, comments });
 });
 
 /**

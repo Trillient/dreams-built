@@ -10,6 +10,13 @@
   display: none;
 }
 
+.card {
+  border: 1px solid gainsboro;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0 1rem;
+  border-radius: 0.5rem;
+}
+
 @media only screen and (min-width: 2rem) {
   .edit {
     display: table-cell;

@@ -25,12 +25,12 @@ export const getEmployeeTimeSheets = (token, weekStart) => async (dispatch) => {
     };
 
     const sortedByJob = Array.from(
-      data.sort((a, b) => a.jobNumber - b.jobNumber).reduce((m, { jobNumber, ...o }) => m.set(jobNumber, [...(m.get(jobNumber) || []), o]), new Map()),
+      data.entries.sort((a, b) => a.jobNumber - b.jobNumber).reduce((m, { jobNumber, ...o }) => m.set(jobNumber, [...(m.get(jobNumber) || []), o]), new Map()),
       ([jobNumber, value]) => ({ jobNumber, value })
     );
 
     const sortedByUser = Array.from(
-      data
+      data.entries
         .sort((a, b) => (a.user.firstName && b.user.firstName ? a.user.firstName.normalize().localeCompare(b.user.firstName.normalize()) : false))
         .sort((a, b) => {
           const firstTime = a.startTime.split(':');
@@ -44,7 +44,7 @@ export const getEmployeeTimeSheets = (token, weekStart) => async (dispatch) => {
 
     dispatch({
       type: actions.REPORT_EMPLOYEES_TIMESHEET_SUCCESS,
-      payload: { sortedByJob: sortedByJob, sortedByEmployee: sortedByUser },
+      payload: { sortedByJob: sortedByJob, sortedByEmployee: sortedByUser, comments: data.comments },
     });
   } catch (error) {
     dispatch({

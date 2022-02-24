@@ -99,12 +99,12 @@ const TimesheetUserReportScreen = () => {
         <div ref={componentRef}>
           {timesheets.sortedByEmployee &&
             timesheets.sortedByEmployee.map((employee) => (
-              <>
+              <div key={employee.userId}>
                 <div className="page-break" />
-                <div key={employee.userId} className={styles.card}>
+                <div className={styles.card}>
                   <EmployeeReportCard employee={employee} />
                 </div>
-              </>
+              </div>
             ))}
         </div>
       </div>

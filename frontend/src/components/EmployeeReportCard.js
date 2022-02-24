@@ -1,11 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
 import EmployeeRow from './EmployeeRow';
 
 import styles from './employeeReportCard.module.css';
 
 const EmployeeReportCard = ({ employee }) => {
+  const timesheetList = useSelector((state) => state.reports);
+  const { timesheets } = timesheetList;
+
+  const commentsDB = timesheets.comments[0] ? timesheets.comments.filter((data) => data._id === employee.value[0].user._id) : '';
+  const sorter = {
+    Monday: 1,
+    Tuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+    Sunday: 7,
+  };
+
   const [title, setTitle] = useState('');
 
   const firstName = employee.value[0].user.firstName;
@@ -64,6 +79,19 @@ const EmployeeReportCard = ({ employee }) => {
           </tr>
         </tfoot>
       </Table>
+      {commentsDB && commentsDB[0] && (
+        <div className={styles.card}>
+          <h3 style={{ textAlign: 'center', fontSize: '1.5rem' }}>Comments</h3>
+          {commentsDB[0].matches
+            .sort((a, b) => sorter[a.day] - sorter[b.day])
+            .map(({ comments, day }) => (
+              <div key={day}>
+                <h4 style={{ fontSize: '1.2rem' }}>{day}</h4>
+                <p style={{ marginLeft: '1.2rem', color: 'grey' }}>{comments}</p>
+              </div>
+            ))}
+        </div>
+      )}
     </>
   );
 };
