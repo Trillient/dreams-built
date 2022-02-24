@@ -1,29 +1,32 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { DateTime } from 'luxon';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import DatePicker from 'react-date-picker';
 import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 
-import { getEmployeeTimeSheets } from '../../actions/reportActions';
+import { getEmployeeTimeSheets, getEmployeeTimeSheetsNotEntered } from '../../actions/reportActions';
 
 import EmployeeReportCard from '../../components/EmployeeReportCard';
-import Loader from '../../components/Loader';
 import Message from '../../components/Message';
+import ReportNoteEnteredModal from '../../components/modals/ReportNoteEnteredModal';
 
 import styles from './timesheetReports.module.css';
-import DatePicker from 'react-date-picker';
+import ReactToPrint from 'react-to-print';
 
 const TimesheetUserReportScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
+  const componentRef = useRef();
 
   const timesheetList = useSelector((state) => state.reports);
-  const { loading, error, timesheets } = timesheetList;
+  const { error, timesheets } = timesheetList;
 
   const dbDateFormat = 'dd/MM/yyyy';
   const startWeekInit = DateTime.now().startOf('week');
 
+  const [modalShow, setModalShow] = useState(false);
   const [weekStart, setWeekStart] = useState({ calendar: startWeekInit.toJSDate(), db: startWeekInit.toFormat(dbDateFormat) });
 
   useEffect(() => {
@@ -53,14 +56,19 @@ const TimesheetUserReportScreen = () => {
     }
   };
 
-  return loading ? (
-    <Loader />
-  ) : error ? (
+  const getNotEnteredUsers = async () => {
+    const token = await getAccessTokenSilently();
+    dispatch(getEmployeeTimeSheetsNotEntered(token, weekStart.db));
+    setModalShow(true);
+  };
+
+  return error ? (
     <Message variant="danger">{error}</Message>
   ) : (
     <section className="container">
       <div className={styles.page}>
         <h1 style={{ textAlign: 'center' }}>Timesheets</h1>
+        <Button onClick={getNotEnteredUsers}>Not Entered</Button>
         <div className={styles.pagination}>
           <Button
             className={styles['btn-pag']}
@@ -79,15 +87,28 @@ const TimesheetUserReportScreen = () => {
           >
             <BsArrowRight />
           </Button>
+          <ReactToPrint
+            trigger={() => (
+              <button className={styles.printer}>
+                <BsFillPrinterFill />
+              </button>
+            )}
+            content={() => componentRef.current}
+          />
         </div>
-
-        {timesheets.sortedByEmployee &&
-          timesheets.sortedByEmployee.map((employee) => (
-            <div key={employee.userId} className={styles.card}>
-              <EmployeeReportCard employee={employee} />
-            </div>
-          ))}
+        <div ref={componentRef}>
+          {timesheets.sortedByEmployee &&
+            timesheets.sortedByEmployee.map((employee) => (
+              <>
+                <div className="page-break" />
+                <div key={employee.userId} className={styles.card}>
+                  <EmployeeReportCard employee={employee} />
+                </div>
+              </>
+            ))}
+        </div>
       </div>
+      <ReportNoteEnteredModal show={modalShow} setModalShow={setModalShow} onHide={() => setModalShow(false)} />
     </section>
   );
 };

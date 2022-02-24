@@ -8,6 +8,15 @@
   background-color: gainsboro;
 }
 
+@media print {
+  .blank {
+    display: none;
+  }
+  .heading {
+    font-weight: bold;
+  }
+}
+
 .blank {
   margin: 1rem;
 }

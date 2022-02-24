@@ -75,6 +75,12 @@
   text-overflow: ellipsis;
 }
 
+@media print {
+  .static-table {
+    font-weight: bold;
+  }
+}
+
 .mobile {
   display: none;
   text-align: center;

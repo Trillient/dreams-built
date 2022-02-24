@@ -24,6 +24,13 @@
   border-radius: 0.5rem;
 }
 
+.printer {
+  border: none;
+  background: none;
+  display: inline;
+  grid-area: printer;
+}
+
 @media only screen and (min-width: 30rem) {
   .pagination {
     grid-template-columns: 1fr 4fr 1fr;

@@ -53,3 +53,28 @@ export const getEmployeeTimeSheets = (token, weekStart) => async (dispatch) => {
     });
   }
 };
+
+export const getEmployeeTimeSheetsNotEntered = (token, weekStart) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.REPORT_EMPLOYEES_NOT_ENTERED_TIMESHEET_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/timesheet/admin/users?weekstart=${weekStart}`, config);
+
+    dispatch({
+      type: actions.REPORT_EMPLOYEES_NOT_ENTERED_TIMESHEET_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: actions.REPORT_EMPLOYEES_NOT_ENTERED_TIMESHEET_FAIL,
+      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
+    });
+  }
+};

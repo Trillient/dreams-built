@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { FiEdit } from 'react-icons/fi';
+
 import TimesheetEntryModal from './modals/TimesheetEntryModal';
 
 import styles from './employeeReportCard.module.css';

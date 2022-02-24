@@ -76,3 +76,19 @@ body {
     margin: auto;
   }
 }
+
+@media all {
+  .page-break {
+    display: none;
+  }
+}
+
+.page-break {
+  display: block;
+  page-break-before: always;
+}
+
+@page {
+  size: auto;
+  margin: 10mm;
+}

@@ -86,6 +86,30 @@ const getAllUsers = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @Desc Get all users that have no timesheet entries for week
+ * @Route GET /api/timesheet/admin/users
+ * @Access Private - ("admin_read:timesheet", Admin)
+ */
+
+const getAllUsersNotEntered = asyncHandler(async (req, res) => {
+  const userEntries = await User.aggregate([
+    {
+      $lookup: {
+        from: 'timesheetentries',
+        localField: 'userId',
+        foreignField: 'userId',
+        pipeline: [{ $match: { weekStart: req.query.weekstart } }],
+        as: 'matches',
+      },
+    },
+  ]);
+
+  const data = userEntries.filter((entries) => entries.matches.length < 1);
+
+  res.json(data);
+});
+
+/**
  * @Desc Update a timesheet entry for a user
  * @Route PATCH /api/timesheet/admin/users/entry/:id
  * @Access Private - ("admin_update:timesheet", Admin)
@@ -108,6 +132,7 @@ const updateAUsersEntry = asyncHandler(async (req, res) => {
     throw new Error('Entry not found');
   }
 });
+
 /**
  * @Desc Delete a timesheet entry for a user
  * @Route DELETE /api/timesheet/admin/users/entry/:id
@@ -126,4 +151,4 @@ const deleteAUsersEntry = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getUserEntries, createUserEntry, getAllUsers, updateAUsersEntry, deleteAUsersEntry };
+module.exports = { getUserEntries, createUserEntry, getAllUsers, getAllUsersNotEntered, updateAUsersEntry, deleteAUsersEntry };
