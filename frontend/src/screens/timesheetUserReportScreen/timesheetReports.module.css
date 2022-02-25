@@ -9,8 +9,7 @@
 .pagination {
   display: grid;
   align-items: center;
-  margin: 2rem auto;
-  max-width: 16rem;
+  max-width: 10rem;
 }
 .btn-pag {
   display: none;
@@ -31,16 +30,43 @@
   grid-area: printer;
 }
 
+.controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  justify-items: center;
+  margin: 1rem 0;
+}
+
+.printer-container {
+  justify-self: right;
+}
+
 @media only screen and (min-width: 30rem) {
   .pagination {
     grid-template-columns: 1fr 4fr 1fr;
     gap: 1rem;
     align-items: center;
-    margin: 2rem auto;
     max-width: 16rem;
   }
 
   .btn-pag {
     display: unset;
+  }
+}
+
+@media only screen and (min-width: 55rem) {
+  .controls {
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: left;
+    margin-bottom: 2rem;
+  }
+
+  .pagination {
+    justify-self: center;
+  }
+
+  .printer-container {
+    align-self: end;
   }
 }

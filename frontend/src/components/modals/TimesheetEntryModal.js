@@ -11,13 +11,10 @@ const TimesheetEntryModal = ({ setModalShow, entry, ...rest }) => {
   };
   return (
     <Modal {...rest} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
-      <Modal.Header>
+      <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
           <h1>{entry.day}</h1>
         </Modal.Title>
-        <Button variant="secondary" onClick={() => setModalShow(false)}>
-          Close
-        </Button>
       </Modal.Header>
       <Modal.Body>
         <h2>

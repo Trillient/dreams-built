@@ -10,7 +10,7 @@ import { getEmployeeTimeSheets, getEmployeeTimeSheetsNotEntered } from '../../ac
 
 import EmployeeReportCard from '../../components/EmployeeReportCard';
 import Message from '../../components/Message';
-import ReportNoteEnteredModal from '../../components/modals/ReportNoteEnteredModal';
+import ReportNoteEnteredModal from '../../components/modals/ReportNotEnteredModal';
 
 import styles from './timesheetReports.module.css';
 import ReactToPrint from 'react-to-print';
@@ -68,33 +68,41 @@ const TimesheetUserReportScreen = () => {
     <section className="container">
       <div className={styles.page}>
         <h1 style={{ textAlign: 'center' }}>Timesheets</h1>
-        <Button onClick={getNotEnteredUsers}>Not Entered</Button>
-        <div className={styles.pagination}>
-          <Button
-            className={styles['btn-pag']}
-            onClick={() => {
-              changeDateWeekHandler(0);
-            }}
-          >
-            <BsArrowLeft />
-          </Button>
-          <DatePicker calendarIcon={<BsFillCalendarFill />} onChange={changeDateHandler} clearIcon={null} value={weekStart.calendar} />
-          <Button
-            className={styles['btn-pag']}
-            onClick={() => {
-              changeDateWeekHandler(1);
-            }}
-          >
-            <BsArrowRight />
-          </Button>
-          <ReactToPrint
-            trigger={() => (
-              <button className={styles.printer}>
-                <BsFillPrinterFill />
-              </button>
-            )}
-            content={() => componentRef.current}
-          />
+        <div className={styles.controls}>
+          <div>
+            <Button onClick={getNotEnteredUsers}>Not Entered</Button>
+          </div>
+
+          <div className={styles.pagination}>
+            <Button
+              className={styles['btn-pag']}
+              onClick={() => {
+                changeDateWeekHandler(0);
+              }}
+            >
+              <BsArrowLeft />
+            </Button>
+            <DatePicker calendarIcon={<BsFillCalendarFill />} onChange={changeDateHandler} clearIcon={null} value={weekStart.calendar} />
+
+            <Button
+              className={styles['btn-pag']}
+              onClick={() => {
+                changeDateWeekHandler(1);
+              }}
+            >
+              <BsArrowRight />
+            </Button>
+          </div>
+          <div className={styles['printer-container']}>
+            <ReactToPrint
+              trigger={() => (
+                <button className={styles.printer}>
+                  <BsFillPrinterFill />
+                </button>
+              )}
+              content={() => componentRef.current}
+            />
+          </div>
         </div>
         <div ref={componentRef}>
           {timesheets.sortedByEmployee &&

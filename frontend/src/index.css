@@ -8,6 +8,12 @@ body {
   background-color: var(--seconday-background);
 }
 
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .parent-container {
   padding: 1rem 0rem;
 }

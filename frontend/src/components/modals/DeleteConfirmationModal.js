@@ -2,9 +2,13 @@ import { Button, Modal } from 'react-bootstrap';
 
 const DeleteConfirmationModal = ({ setModalShow, handleDeleteTrue, title, ...rest }) => {
   return (
-    <Modal {...rest} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
+    <Modal {...rest} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>
+          <h1 style={{ fontSize: '1.6rem' }}>Delete "{title}" ?</h1>
+        </Modal.Title>
+      </Modal.Header>
       <Modal.Body style={{ textAlign: 'center' }}>
-        <h1 style={{ fontSize: '1.6rem', marginBottom: '2rem' }}>Delete "{title}" ?</h1>
         <Button
           variant="danger"
           onClick={() => {
@@ -15,8 +19,14 @@ const DeleteConfirmationModal = ({ setModalShow, handleDeleteTrue, title, ...res
         >
           Delete
         </Button>
-        <Button variant="secondary" onClick={() => setModalShow(false)} style={{ marginLeft: '0.5rem' }}>
-          Close
+        <Button
+          variant="secondary"
+          onClick={() => {
+            setModalShow(false);
+          }}
+          style={{ marginLeft: '0.5rem' }}
+        >
+          Cancel
         </Button>
       </Modal.Body>
     </Modal>

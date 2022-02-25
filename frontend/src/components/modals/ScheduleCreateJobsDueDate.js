@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Form, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 
@@ -35,11 +35,8 @@ export const ScheduleCreateJobsDueDate = ({ setModalShow, ...rest }) => {
   return (
     rest.show && (
       <Modal {...rest} size="xl" aria-labelledby="contained-modal-title-vcenter" centered>
-        <Modal.Header>
+        <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">Create Job Due Dates</Modal.Title>
-          <Button variant="secondary" onClick={() => setModalShow(false)}>
-            X
-          </Button>
         </Modal.Header>
         <Modal.Body className={styles.body}>
           <Form.Group className={styles.job}>
@@ -63,5 +60,3 @@ export const ScheduleCreateJobsDueDate = ({ setModalShow, ...rest }) => {
     )
   );
 };
-//48rem media query
-//62rem media query

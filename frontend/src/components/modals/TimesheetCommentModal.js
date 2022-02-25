@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Form, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateComments } from '../../actions/timesheetActions';
 
@@ -16,16 +16,13 @@ const TimesheetCommentModal = ({ setModalShow, day, date, ordinal, month, ...res
 
   return (
     <Modal {...rest} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
-      <Modal.Header>
+      <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
           <h1 style={{ fontSize: '1.6rem' }}>
             {day} - {date}
             <sup>{ordinal}</sup> {month}
           </h1>
         </Modal.Title>
-        <Button variant="secondary" onClick={() => setModalShow(false)}>
-          Close
-        </Button>
       </Modal.Header>
       <Modal.Body>
         <Form.Group controlId={`comments`}>

@@ -1,6 +1,16 @@
 import axios from 'axios';
 import * as actions from '../constants/reportConstants';
 
+export const sorter = {
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
+  Sunday: 7,
+};
+
 export const getEmployeeTimeSheets = (token, weekStart) => async (dispatch) => {
   try {
     dispatch({
@@ -13,16 +23,6 @@ export const getEmployeeTimeSheets = (token, weekStart) => async (dispatch) => {
       },
     };
     const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/timesheet/admin?weekstart=${weekStart}`, config);
-
-    const sorter = {
-      Monday: 1,
-      Tuesday: 2,
-      Wednesday: 3,
-      Thursday: 4,
-      Friday: 5,
-      Saturday: 6,
-      Sunday: 7,
-    };
 
     const sortedByJob = Array.from(
       data.entries.sort((a, b) => a.jobNumber - b.jobNumber).reduce((m, { jobNumber, ...o }) => m.set(jobNumber, [...(m.get(jobNumber) || []), o]), new Map()),

@@ -3,6 +3,7 @@ import { Table } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 
 import EmployeeRow from './EmployeeRow';
+import { sorter } from '../actions/reportActions';
 
 import styles from './employeeReportCard.module.css';
 
@@ -11,15 +12,6 @@ const EmployeeReportCard = ({ employee }) => {
   const { timesheets } = timesheetList;
 
   const commentsDB = timesheets.comments[0] ? timesheets.comments.filter((data) => data._id === employee.value[0].user._id) : '';
-  const sorter = {
-    Monday: 1,
-    Tuesday: 2,
-    Wednesday: 3,
-    Thursday: 4,
-    Friday: 5,
-    Saturday: 6,
-    Sunday: 7,
-  };
 
   const [title, setTitle] = useState('');
 

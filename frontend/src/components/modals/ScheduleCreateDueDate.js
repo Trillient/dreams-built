@@ -54,13 +54,10 @@ const ScheduleCreateDueDate = ({ setModalShow, date, jobPart, ...rest }) => {
       <Message variant="danger">{error}</Message>
     ) : (
       <Modal {...rest} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
-        <Modal.Header>
+        <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             <h1 className={styles.title}>{jobPart.jobPartTitle}</h1>
           </Modal.Title>
-          <Button variant="secondary" onClick={() => setModalShow(false)}>
-            X
-          </Button>
         </Modal.Header>
         <Modal.Body>
           <Form className={styles.form} onSubmit={submitHandler}>
