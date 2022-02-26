@@ -54,11 +54,11 @@ const TimesheetEntryModal = ({ setModalShow, entry, ...rest }) => {
         <Form onSubmit={handleSubmit} className={styles.form}>
           <Form.Group controlId="startTime">
             <Form.Label>Start Time:</Form.Label>
-            <Form.Control type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)}></Form.Control>
+            <Form.Control type="time" isInvalid={!startTime} value={startTime} onChange={(e) => setStartTime(e.target.value)}></Form.Control>
           </Form.Group>
           <Form.Group controlId="endTime">
             <Form.Label>End Time:</Form.Label>
-            <Form.Control type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)}></Form.Control>
+            <Form.Control type="time" isInvalid={!endTime} value={endTime} onChange={(e) => setEndTime(e.target.value)}></Form.Control>
           </Form.Group>
           <Form.Group>
             <Form.Label>Job Number: </Form.Label>
