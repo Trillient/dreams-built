@@ -32,7 +32,7 @@ const TimesheetScreen = () => {
 
   const [weekStart, setWeekStart] = useState(startWeekInit.toFormat('dd/MM/yyyy'));
   const [weekEnd, setWeekEnd] = useState(weekEndInit.toFormat('dd/MM/yyyy'));
-  const [selectedUser, setSelectedUser] = useState({ label: user.given_name, value: user.sub });
+  const [selectedUser, setSelectedUser] = useState({ label: user.given_name || user.email, value: user.sub });
 
   let timesheetPeriods = [{ weekStart: startWeekInit.toFormat('dd/MM/yyyy'), weekEnd: weekEndInit.toFormat('dd/MM/yyyy') }];
   for (let i = 1; i < 4; i++) {

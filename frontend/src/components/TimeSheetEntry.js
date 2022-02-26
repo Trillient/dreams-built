@@ -112,7 +112,6 @@ const TimesheetEntry = ({ entryId, day }) => {
           <Select
             styles={customStyles}
             menuPosition={'fixed'}
-            isClearable="true"
             defaultValue={defaultLabel}
             onChange={setJob}
             options={
