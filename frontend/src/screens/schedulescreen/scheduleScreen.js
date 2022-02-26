@@ -149,7 +149,7 @@ const ScheduleScreen = () => {
       </div>
       <div ref={componentRef}>
         <h1 className={`${styles.mobile} ${styles.month}`}>{DateTime.fromFormat(weekStart, 'yyyy-MM-dd').toFormat('MMMM')}</h1>
-        <Table responsive="sm" bordered className={styles.table}>
+        <Table responsive bordered className={styles.table}>
           <thead className={styles.thead}>
             <tr>
               <th className={styles['first-coloumn']}></th>

@@ -55,12 +55,13 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading, filterCont
                     <div
                       key={job.job._id}
                       style={{ borderRadius: '0.2rem' }}
+                      className={styles['job-container']}
                       onClick={(e) => {
                         editJobHandler(e, job);
                       }}
                     >
                       <div style={{ backgroundColor: job.job.color, color: fontColorContrast(job.job.color) }} className={styles['job-insert']}>
-                        {job.job.jobNumber} - <span className={styles.mobile}>{job.job.address.slice(0, 10)}...</span>
+                        {job.job.jobNumber} - <span className={styles.mobile}>{job.job.address.slice(0, 5)}...</span>
                         <span className={styles.desktop}>{job.job.address}</span>
                       </div>
                     </div>

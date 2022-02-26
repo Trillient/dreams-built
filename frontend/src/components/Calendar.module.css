@@ -25,7 +25,7 @@
   font-weight: 700;
   color: white;
   z-index: 100;
-  width: 100%;
+
   padding: 0.5rem;
   height: min-content;
   border-radius: 0.2rem;
@@ -61,7 +61,7 @@
   }
 }
 
-@media only screen and (max-width: 36rem) {
+@media only screen and (max-width: 75rem) {
   .item {
     padding: 0;
   }
@@ -87,12 +87,12 @@
     text-overflow: ellipsis;
     border-radius: 0.2rem;
     cursor: pointer;
-    max-width: 3rem;
+
     margin: 0.2rem 0.1rem;
   }
 }
 
-@media only screen and (min-width: 36rem) {
+@media only screen and (min-width: 80rem) {
   .job-insert {
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   }

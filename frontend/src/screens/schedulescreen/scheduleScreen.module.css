@@ -50,6 +50,9 @@
 
 .table {
   min-height: 70vh;
+  overflow-x: auto;
+  display: block;
+  table-layout: auto;
 }
 
 .first-coloumn {
@@ -107,7 +110,7 @@
   }
 }
 
-@media only screen and (min-width: 15rem) and (max-width: 60rem) {
+@media only screen and (min-width: 15rem) and (max-width: 80rem) {
   .table th,
   .table td {
     padding: 0.5rem 0.1rem;
@@ -120,7 +123,7 @@
   }
 }
 
-@media only screen and (min-width: 40rem) {
+@media only screen and (min-width: 75rem) {
   .calendar {
     margin: 2rem;
   }
@@ -148,7 +151,7 @@
   }
 }
 
-@media only screen and (min-width: 50rem) {
+@media only screen and (min-width: 80rem) {
   .mobile {
     display: none;
   }
