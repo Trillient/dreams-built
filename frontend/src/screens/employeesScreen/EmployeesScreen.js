@@ -5,8 +5,10 @@ import { FiEdit } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
 import { ToastContainer } from 'react-toastify';
+
 import { getEmployees } from '../../actions/employeeActions';
 import HeaderSearchGroup from '../../components/groups/HeaderSearchGroup';
+
 import PaginationGroup from '../../components/groups/PaginationGroup';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';

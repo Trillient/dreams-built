@@ -14,7 +14,7 @@
   display: none;
 }
 
-@media only screen and (min-width: 40rem) {
+@media only screen and (min-width: 59.5rem) {
   .responsive {
     display: table-cell;
   }

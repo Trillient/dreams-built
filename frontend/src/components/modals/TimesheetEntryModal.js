@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
+import { toast } from 'react-toastify';
 
 import { deleteEmployeeTimesheetEntry, updateEmployeeTimesheetEntry } from '../../actions/reportActions';
 
@@ -33,9 +34,13 @@ const TimesheetEntryModal = ({ setModalShow, entry, ...rest }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = await getAccessTokenSilently();
-    dispatch(updateEmployeeTimesheetEntry(token, entry._id, startTime, endTime, job.value));
-    setModalShow(false);
+    if (job) {
+      const token = await getAccessTokenSilently();
+      dispatch(updateEmployeeTimesheetEntry(token, entry._id, startTime, endTime, job.value));
+      setModalShow(false);
+    } else {
+      toast.error('Missing Job!');
+    }
   };
 
   const handleDelete = async () => {
