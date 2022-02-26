@@ -81,7 +81,7 @@ const EditClientScreen = () => {
           <DetailsGroup title="Edit Client" link="/clients" linkName="Clients">
             <Form className={styles.form} onSubmit={submitHandler}>
               <Form.Group className={styles.client} controlId="Client">
-                <Form.Label>Client</Form.Label>
+                <Form.Label>Client *</Form.Label>
                 <Form.Control type="text" placeholder="Company..." value={clientName} onChange={(e) => setClientName(e.target.value)}></Form.Control>
               </Form.Group>
               <Form.Group className={styles.color} controlId="color">

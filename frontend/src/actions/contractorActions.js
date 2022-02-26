@@ -143,7 +143,9 @@ export const deleteContractor = (token, contractorId) => async (dispatch) => {
     };
 
     const { data } = await axios.delete(`${process.env.REACT_APP_API_URL}/contractors/${contractorId}`, config);
+
     toast.success('Deleted!');
+
     dispatch({
       type: actions.CONTRACTOR_DELETE_SUCCESS,
       payload: data,

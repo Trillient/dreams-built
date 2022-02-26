@@ -77,6 +77,8 @@ export const createClient =
 
       const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/clients`, client, config);
 
+      toast.success('Saved!');
+
       dispatch({
         type: actions.CLIENT_CREATE_SUCCESS,
         payload: data,
@@ -144,7 +146,9 @@ export const deleteClient = (token, clientId) => async (dispatch) => {
     };
 
     const { data } = await axios.delete(`${process.env.REACT_APP_API_URL}/clients/${clientId}`, config);
+
     toast.success('Deleted!');
+
     dispatch({
       type: actions.CLIENT_DELETE_SUCCESS,
       payload: data,

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
-import { ToastContainer } from 'react-toastify';
 
 import { createClient, resetClientRedirect } from '../../actions/clientActions';
 
@@ -41,16 +40,15 @@ const CreateClientScreen = () => {
   };
   return (
     <>
-      <ToastContainer theme="colored" />
       <AdminGroup>
         <DetailsGroup title="Create Client" link="/clients" linkName="Clients">
           <Form className={styles.form} onSubmit={submitHandler}>
             <Form.Group className={styles.client} controlId="Client">
-              <Form.Label>Client</Form.Label>
+              <Form.Label>Client *</Form.Label>
               <Form.Control type="text" placeholder="Company..." value={clientName} onChange={(e) => setClientName(e.target.value)}></Form.Control>
             </Form.Group>
             <Form.Group className={styles.color} controlId="color">
-              <Form.Label>Colour</Form.Label>
+              <Form.Label>Colour *</Form.Label>
               <Form.Control type="color" style={{ width: '100%' }} value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
             </Form.Group>
             <div className={styles.contact}>
