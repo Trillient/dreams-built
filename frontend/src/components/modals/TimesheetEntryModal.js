@@ -4,7 +4,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 
-import { updateEmployeeTimesheetEntry } from '../../actions/reportActions';
+import { deleteEmployeeTimesheetEntry, updateEmployeeTimesheetEntry } from '../../actions/reportActions';
 
 import styles from './timesheetEntryModal.module.css';
 
@@ -37,6 +37,13 @@ const TimesheetEntryModal = ({ setModalShow, entry, ...rest }) => {
     dispatch(updateEmployeeTimesheetEntry(token, entry._id, startTime, endTime, job.value));
     setModalShow(false);
   };
+
+  const handleDelete = async () => {
+    const token = await getAccessTokenSilently();
+    dispatch(deleteEmployeeTimesheetEntry(token, entry._id));
+    setModalShow(false);
+  };
+
   return (
     <Modal {...rest} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header closeButton>
@@ -80,7 +87,9 @@ const TimesheetEntryModal = ({ setModalShow, entry, ...rest }) => {
           <Button type="submit" variant="success" style={{ marginTop: '1rem' }}>
             Save
           </Button>
-          <Button variant="danger">Delete</Button>
+          <Button onClick={handleDelete} variant="danger">
+            Delete
+          </Button>
         </Form>
       </Modal.Body>
     </Modal>

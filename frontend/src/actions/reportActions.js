@@ -150,6 +150,40 @@ export const updateEmployeeTimesheetEntry = (token, entryId, startTime, endTime,
   }
 };
 
+export const deleteEmployeeTimesheetEntry = (token, entryId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.REPORT_DELETE_EMPLOYEE_TIMESHEET_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.delete(`${process.env.REACT_APP_API_URL}/timesheet/admin/users/entry/${entryId}`, config);
+
+    toast.success('Deleted!');
+
+    dispatch({
+      type: actions.REPORT_DELETE_EMPLOYEE_TIMESHEET_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
+    dispatch({
+      type: actions.REPORT_DELETE_EMPLOYEE_TIMESHEET_FAIL,
+    });
+  }
+};
+
 export const resetReportRefresh = () => async (dispatch) => {
   dispatch({
     type: actions.REPORT_RESET,

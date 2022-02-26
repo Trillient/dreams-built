@@ -66,7 +66,12 @@ const EmployeeReportCard = ({ employee }) => {
             <td className={styles.time}></td>
             <td className={styles.time}></td>
             <td className={styles.job}></td>
-            <td>{employee.value.map((entry) => entry.jobTime).reduce((previous, current) => previous + current, 0)}</td>
+            <td>
+              {employee.value
+                .map((entry) => entry.jobTime)
+                .reduce((previous, current) => previous + current, 0)
+                .toFixed(2)}
+            </td>
             <td className={styles.edit}></td>
           </tr>
         </tfoot>
