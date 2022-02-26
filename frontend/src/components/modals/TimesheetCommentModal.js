@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Form, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateComments } from '../../actions/timesheetActions';
 
 const TimesheetCommentModal = ({ setModalShow, day, date, ordinal, month, ...rest }) => {
   const dispatch = useDispatch();
+  const limit = 500;
+
   const commentEntries = useSelector((state) => state.timesheet);
   const { comments } = commentEntries;
   const commentExists = comments.filter((comment) => comment.day === day && comment.comments !== '').length > 0 ? comments.filter((comment) => comment.day === day)[0].comments : '';
@@ -13,6 +15,13 @@ const TimesheetCommentModal = ({ setModalShow, day, date, ordinal, month, ...res
   useEffect(() => {
     dispatch(updateComments(day, comment));
   }, [day, comment, dispatch]);
+
+  const setFormattedComment = useCallback(
+    (text) => {
+      setComment(text.slice(0, limit));
+    },
+    [limit, setComment]
+  );
 
   return (
     <Modal {...rest} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
@@ -27,8 +36,11 @@ const TimesheetCommentModal = ({ setModalShow, day, date, ordinal, month, ...res
       <Modal.Body>
         <Form.Group controlId={`comments`}>
           <Form.Label>Comments:</Form.Label>
-          <Form.Control style={{ width: '100%', padding: '0.5rem 0.7rem', minHeight: '10rem' }} as="textarea" placeholder="Begin message..." value={comment} onChange={(e) => setComment(e.target.value)} />
+          <Form.Control style={{ width: '100%', padding: '0.5rem 0.7rem', minHeight: '10rem' }} as="textarea" placeholder="Begin message..." value={comment} onChange={(e) => setFormattedComment(e.target.value)} />
         </Form.Group>
+        <p style={{ color: 'grey', fontStyle: 'italic' }}>
+          {comment.length}/{limit}
+        </p>
       </Modal.Body>
     </Modal>
   );
