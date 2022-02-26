@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { DateTime } from 'luxon';
+import { toast } from 'react-toastify';
 import * as actions from '../constants/reportConstants';
 
 export const sorter = {
@@ -77,4 +79,79 @@ export const getEmployeeTimeSheetsNotEntered = (token, weekStart) => async (disp
       payload: error.response && error.response.data.message ? error.response.data.message : error.message,
     });
   }
+};
+
+export const updateEmployeeTimesheetEntry = (token, entryId, startTime, endTime, jobId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.REPORT_UPDATE_EMPLOYEE_TIMESHEET_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    let errors = [];
+    let jobTime;
+
+    if (!endTime) {
+      errors = [...errors, { message: `End Time Not Entered` }];
+    }
+
+    if (!startTime) {
+      errors = [...errors, { message: `Start Time Not Entered` }];
+    }
+
+    if (startTime && endTime) {
+      jobTime = (DateTime.fromFormat(endTime, 'hh:mm').diff(DateTime.fromFormat(startTime, 'hh:mm'), 'seconds', 'minutes').toFormat('mm') / 60).toFixed(2);
+    }
+
+    if (jobTime <= 0 || isNaN(jobTime)) {
+      errors = [...errors, { message: `Times Not Valid` }];
+    }
+
+    if (errors.length > 0) {
+      const duplicateReduction = [...new Set(errors.map((err) => err.message))];
+      duplicateReduction.map((err) => toast.error(err));
+      dispatch({
+        type: actions.REPORT_ENTRY_VALIDATION_FAIL,
+      });
+      throw new Error('Validation Errors');
+    }
+
+    const entry = {
+      startTime: startTime,
+      endTime: endTime,
+      job: jobId,
+      jobTime: jobTime,
+    };
+
+    const { data } = await axios.patch(`${process.env.REACT_APP_API_URL}/timesheet/admin/users/entry/${entryId}`, entry, config);
+
+    toast.success('Saved!');
+
+    dispatch({
+      type: actions.REPORT_UPDATE_EMPLOYEE_TIMESHEET_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
+    dispatch({
+      type: actions.REPORT_UPDATE_EMPLOYEE_TIMESHEET_FAIL,
+    });
+  }
+};
+
+export const resetReportRefresh = () => async (dispatch) => {
+  dispatch({
+    type: actions.REPORT_RESET,
+  });
 };

@@ -1,43 +1,83 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import { useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import Select from 'react-select';
+
+import { updateEmployeeTimesheetEntry } from '../../actions/reportActions';
+
+import styles from './timesheetEntryModal.module.css';
 
 const TimesheetEntryModal = ({ setModalShow, entry, ...rest }) => {
+  const { getAccessTokenSilently } = useAuth0();
+  const dispatch = useDispatch();
+
+  const customStyles = {
+    control: (base, state) => ({
+      ...base,
+      borderColor: state.isFocused ? '#ddd' : job ? '#ddd' : 'red',
+      '&:hover': {
+        borderColor: state.isFocused ? '#ddd' : job ? '#ddd' : 'red',
+      },
+    }),
+  };
+
+  const jobsList = useSelector((state) => state.jobsList);
+  const { jobList } = jobsList;
+
+  const defaultLabel = entry.job ? { ...entry.job, label: `${entry.job.jobNumber} - ${entry.job.address}`, value: entry.job._id } : '';
+
   const [startTime, setStartTime] = useState(entry.startTime);
   const [endTime, setEndTime] = useState(entry.endTime);
-  const [jobNumber, setJobNumber] = useState(entry.jobNumber);
+  const [job, setJob] = useState({ value: entry.job._id });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = await getAccessTokenSilently();
+    dispatch(updateEmployeeTimesheetEntry(token, entry._id, startTime, endTime, job.value));
+    setModalShow(false);
   };
   return (
-    <Modal {...rest} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
+    <Modal {...rest} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          <h1>{entry.day}</h1>
+          <h1 style={{ fontSize: '2.2rem' }}>{entry.day}</h1>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h2>
+        <h2 style={{ fontSize: '1.7rem' }}>
           {entry.user.firstName} {entry.user.lastName}
         </h2>
         <p>
           <em>{entry.entryId}</em>
         </p>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} className={styles.form}>
           <Form.Group controlId="startTime">
-            <Form.Label>Start Time</Form.Label>
+            <Form.Label>Start Time:</Form.Label>
             <Form.Control type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)}></Form.Control>
           </Form.Group>
           <Form.Group controlId="endTime">
-            <Form.Label>End Time</Form.Label>
+            <Form.Label>End Time:</Form.Label>
             <Form.Control type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)}></Form.Control>
           </Form.Group>
-          <Form.Group controlId="jobNumber">
-            <Form.Label>Job Number</Form.Label>
-            <Form.Control type="number" value={jobNumber} onChange={(e) => setJobNumber(e.target.value)}></Form.Control>
+          <Form.Group>
+            <Form.Label>Job Number: </Form.Label>
+            <Select
+              styles={customStyles}
+              menuPosition={'fixed'}
+              isClearable="true"
+              defaultValue={defaultLabel}
+              onChange={setJob}
+              options={
+                jobList &&
+                jobList.map((option) => {
+                  return { ...option, label: `${option.jobNumber} - ${option.address}, ${option.city}`, value: option._id };
+                })
+              }
+            />
           </Form.Group>
 
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="success" style={{ marginTop: '1rem' }}>
             Save
           </Button>
           <Button variant="danger">Delete</Button>

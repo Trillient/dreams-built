@@ -18,11 +18,24 @@ const ScheduleEditDueDate = ({ setModalShow, job, jobPart, ...rest }) => {
 
   const [startDate, setStartDate] = useState(job.startDate ? job.startDate : '');
   const [dueDate, setDueDate] = useState(job.dueDate ? job.dueDate : '');
-  const [contractors, setContractors] = useState([]);
+  const [contractors, setContractors] = useState(
+    job.contractors
+      ? job.contractors.map((contractor) => {
+          return { ...contractor, label: contractor.contractor, value: contractor._id };
+        })
+      : []
+  );
 
   useEffect(() => {
     setStartDate(job.startDate ? job.startDate : '');
     setDueDate(job.dueDate ? job.dueDate : '');
+    setContractors(
+      job.contractors
+        ? job.contractors.map((contractor) => {
+            return { ...contractor, label: contractor.contractor, value: contractor._id };
+          })
+        : []
+    );
   }, [job.dueDate, job.startDate, job.contractors]);
 
   const submitHandler = async (e) => {

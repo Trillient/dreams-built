@@ -1,4 +1,4 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { DateTime } from 'luxon';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-date-picker';
 import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 
-import { getEmployeeTimeSheets, getEmployeeTimeSheetsNotEntered } from '../../actions/reportActions';
+import { getEmployeeTimeSheets, getEmployeeTimeSheetsNotEntered, resetReportRefresh } from '../../actions/reportActions';
 
 import EmployeeReportCard from '../../components/EmployeeReportCard';
 import Message from '../../components/Message';
@@ -14,6 +14,9 @@ import ReportNoteEnteredModal from '../../components/modals/ReportNotEnteredModa
 
 import styles from './timesheetReports.module.css';
 import ReactToPrint from 'react-to-print';
+import Loader from '../../components/Loader';
+import { getJobList } from '../../actions/jobActions';
+import { ToastContainer } from 'react-toastify';
 
 const TimesheetUserReportScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -21,7 +24,7 @@ const TimesheetUserReportScreen = () => {
   const componentRef = useRef();
 
   const timesheetList = useSelector((state) => state.reports);
-  const { error, timesheets } = timesheetList;
+  const { error, timesheets, refresh } = timesheetList;
 
   const dbDateFormat = 'dd/MM/yyyy';
   const startWeekInit = DateTime.now().startOf('week');
@@ -30,15 +33,20 @@ const TimesheetUserReportScreen = () => {
   const [weekStart, setWeekStart] = useState({ calendar: startWeekInit.toJSDate(), db: startWeekInit.toFormat(dbDateFormat) });
 
   useEffect(() => {
-    (async () => {
-      try {
-        const token = await getAccessTokenSilently();
-        dispatch(getEmployeeTimeSheets(token, weekStart.db));
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-  }, [dispatch, getAccessTokenSilently, weekStart.db]);
+    if (refresh) {
+      dispatch(resetReportRefresh());
+    } else {
+      (async () => {
+        try {
+          const token = await getAccessTokenSilently();
+          dispatch(getEmployeeTimeSheets(token, weekStart.db));
+          dispatch(getJobList(token));
+        } catch (err) {
+          console.error(err);
+        }
+      })();
+    }
+  }, [dispatch, getAccessTokenSilently, weekStart.db, refresh]);
 
   const changeDateHandler = (e) => {
     const date = DateTime.fromJSDate(e).startOf('week');
@@ -66,6 +74,7 @@ const TimesheetUserReportScreen = () => {
     <Message variant="danger">{error}</Message>
   ) : (
     <section className="container">
+      <ToastContainer theme="colored" />
       <div className={styles.page}>
         <h1 style={{ textAlign: 'center' }}>Timesheets</h1>
         <div className={styles.controls}>
@@ -121,4 +130,6 @@ const TimesheetUserReportScreen = () => {
   );
 };
 
-export default TimesheetUserReportScreen;
+export default withAuthenticationRequired(TimesheetUserReportScreen, {
+  onRedirecting: () => <Loader />,
+});

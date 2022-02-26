@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -80,4 +80,6 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default withAuthenticationRequired(Profile, {
+  onRedirecting: () => <Loader />,
+});

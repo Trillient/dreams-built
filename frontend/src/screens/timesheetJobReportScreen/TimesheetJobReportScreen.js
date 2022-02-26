@@ -1,4 +1,4 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
@@ -87,4 +87,6 @@ const TimesheetJobReportScreen = () => {
   );
 };
 
-export default TimesheetJobReportScreen;
+export default withAuthenticationRequired(TimesheetJobReportScreen, {
+  onRedirecting: () => <Loader />,
+});

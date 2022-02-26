@@ -73,7 +73,7 @@ const patchTimesheetSchema = [
       value.split(':');
       return Boolean(24 > parseFloat(parseInt(value[0], 10) + parseInt(value[1], 10) / 60));
     }),
-  body('jobNumber', 'Job number invalid, must be a positive integer').exists().withMessage('Job Number is missing').isInt({ min: 0 }),
+  body('job', 'Job invalid').exists().withMessage('Job Number is missing').isMongoId(),
   body('jobTime', 'Job time invalid').exists().withMessage('Job Time is missing').isFloat({ min: 0, max: 24 }),
 ];
 

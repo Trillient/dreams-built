@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const TimesheetComment = require('../models/timesheetCommentModel');
 const TimesheetEntry = require('../models/timesheetEntryModel');
 const User = require('../models/userModel');
+const JobDetails = require('../models/jobModel');
 
 /**
  * @Desc Get a user's timesheet entries
@@ -127,16 +128,24 @@ const getAllUsersNotEntered = asyncHandler(async (req, res) => {
  * @Route PATCH /api/timesheet/admin/users/entry/:id
  * @Access Private - ("admin_update:timesheet", Admin)
  */
-//TODO - update to handle job model addition
+
 const updateAUsersEntry = asyncHandler(async (req, res) => {
-  const { startTime, endTime, jobNumber, jobTime } = req.body;
+  const { startTime, endTime, job, jobTime } = req.body;
 
   const entry = await TimesheetEntry.findById(req.params.id);
 
   if (entry) {
+    const jobDB = await JobDetails.findById(job);
+
+    if (!jobDB) {
+      res.status(404);
+      throw new Error('Job Not Found!');
+    }
+
     entry.startTime = startTime;
     entry.endTime = endTime;
-    entry.jobNumber = jobNumber;
+    entry.job = jobDB._id;
+    entry.jobNumber = jobDB.jobNumber;
     entry.jobTime = jobTime;
     entry.save();
     res.json(entry);
