@@ -77,8 +77,8 @@ const ClientListScreen = () => {
                         <div className={styles.color} style={{ backgroundColor: client.color }}></div>
                       </td>
                       <td className={styles.client}>{client.clientName}</td>
-                      <td className={styles.responsive}>{client.contact && client.contact.name ? client.contact.name : null}</td>
-                      <td className={styles.responsive}>{client.contact && client.contact.email ? client.contact.email : null}</td>
+                      <td className={styles.responsive}>{client?.contact?.name}</td>
+                      <td className={styles.responsive}>{client?.contact?.email}</td>
                       <td>
                         <LinkContainer to={`/clients/edit/${client._id}`}>
                           <Button className="btn-sm">
