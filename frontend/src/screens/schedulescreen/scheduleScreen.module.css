@@ -51,8 +51,6 @@
 .table {
   min-height: 70vh;
   overflow-x: auto;
-  display: block;
-  table-layout: auto;
 }
 
 .first-coloumn {

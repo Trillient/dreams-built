@@ -103,7 +103,6 @@ const TimesheetScreen = () => {
             <div className={styles.users}>
               <Select
                 menuPosition={'fixed'}
-                isClearable="true"
                 placeholder="Select Employee..."
                 defaultValue={selectedUser}
                 onChange={setSelectedUser}
