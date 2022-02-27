@@ -1,6 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const Client = require('../models/clientModel');
 const JobDetails = require('../models/jobModel');
+const JobDueDate = require('../models/jobPartDueDateModel');
+const TimesheetEntry = require('../models/timesheetEntryModel');
 
 /**
  * @Desc Get a list of all Jobs
@@ -156,8 +158,20 @@ const deleteJob = asyncHandler(async (req, res) => {
   const job = await JobDetails.findById(req.params.id);
 
   if (job) {
-    await job.remove();
-    res.json({ message: 'Job removed' });
+    const checkJobUsedInDueDate = await JobDueDate.find({ job: job._id });
+    if (checkJobUsedInDueDate.length > 0) {
+      res.status(400);
+      throw new Error('Must remove all Job Due Dates first');
+    }
+
+    const checkJobUsedInTimesheetEntry = await TimesheetEntry.find({ job: job._id });
+    if (checkJobUsedInTimesheetEntry.length > 0) {
+      res.status(400);
+      throw new Error('Job is referenced in Timesheet Entries');
+    } else {
+      await job.remove();
+      res.json({ message: 'Job removed' });
+    }
   } else {
     res.status(404);
     throw new Error('Job not found');

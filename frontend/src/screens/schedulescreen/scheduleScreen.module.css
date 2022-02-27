@@ -80,6 +80,10 @@
   .static-table {
     font-weight: bold;
   }
+  .table th,
+  .table td {
+    padding: 0.2rem 0.2rem;
+  }
 }
 
 .mobile {

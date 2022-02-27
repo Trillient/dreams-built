@@ -60,12 +60,6 @@ export const getJob = (token, jobId) => async (dispatch) => {
   } catch (error) {
     const message = error.response && error.response.data.message ? error.response.data.message : error.message;
 
-    // if (error.response.data.errors && message.length > 0) {
-    //   message.map((err) => toast.error(err.msg));
-    // } else {
-    //   toast.error(message);
-    // }
-
     dispatch({
       type: actions.JOB_FETCH_FAIL,
       payload: message,
@@ -171,9 +165,17 @@ export const deleteJob = (token, jobId) => async (dispatch) => {
   } catch (error) {
     const message = error.response && error.response.data.message ? error.response.data.message : error.message;
 
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
+
+    const messageFailure = error.response && error.response.data.message ? error.response.data.message : error.message;
+
     dispatch({
       type: actions.JOB_DELETE_FAIL,
-      payload: message,
+      payload: message.length === 0 ? messageFailure : null,
     });
   }
 };
