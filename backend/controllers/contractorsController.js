@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Contractor = require('../models/contractorModel');
+const JobDueDate = require('../models/jobPartDueDateModel');
 
 /**
  * @Desc Get a list of all Contractors
@@ -131,8 +132,14 @@ const updateContractor = asyncHandler(async (req, res) => {
 const deleteContractor = asyncHandler(async (req, res) => {
   const contractor = await Contractor.findById(req.params.id);
   if (contractor) {
-    contractor.remove();
-    res.json({ message: 'Contractor removed!' });
+    const contractorInUse = await JobDueDate.find({ contractors: contractor._id });
+    if (contractorInUse.length > 0) {
+      res.status(400);
+      throw new Error('Contractor in use by Due Dates(s)');
+    } else {
+      contractor.remove();
+      res.json({ message: 'Contractor removed!' });
+    }
   } else {
     res.status(404);
     throw new Error('Contractor not found');
