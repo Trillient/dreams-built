@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+
 import { createJobPart, resetJobPartRedirect } from '../../actions/jobActions';
+
 import AdminGroup from '../../components/groups/AdminGroup';
 import DetailsGroup from '../../components/groups/DetailsGroup';
 import Loader from '../../components/Loader';
@@ -36,26 +37,23 @@ const CreateJobPartScreen = () => {
     dispatch(createJobPart({ token: token, jobPart: { jobPartTitle: jobPartTitle, jobDescription: jobDescription } }));
   };
   return (
-    <>
-      <ToastContainer theme="colored" />
-      <AdminGroup>
-        <DetailsGroup title="Job Part" link="/jobparts" linkName="Job Parts">
-          <Form className={styles.form} onSubmit={submitHandler}>
-            <Form.Group className={styles.part} controlId="jobPartTitle">
-              <Form.Label>Job Part</Form.Label>
-              <Form.Control type="text" value={jobPartTitle} placeholder="Box-up..." onChange={(e) => setJobPartTitle(e.target.value)}></Form.Control>
-            </Form.Group>
-            <Form.Group className={styles.description} controlId="jobPartDescription">
-              <Form.Label>Job Part</Form.Label>
-              <Form.Control as="textarea" value={jobDescription} placeholder="Place Shutters and..." onChange={(e) => setJobDescription(e.target.value)}></Form.Control>
-            </Form.Group>
-            <Button className={styles.button} disabled={!jobPartTitle} type="submit" variant="success">
-              Save
-            </Button>
-          </Form>
-        </DetailsGroup>
-      </AdminGroup>
-    </>
+    <AdminGroup>
+      <DetailsGroup title="Job Part" link="/jobparts" linkName="Job Parts">
+        <Form className={styles.form} onSubmit={submitHandler}>
+          <Form.Group className={styles.part} controlId="jobPartTitle">
+            <Form.Label>Job Part</Form.Label>
+            <Form.Control type="text" value={jobPartTitle} placeholder="Box-up..." onChange={(e) => setJobPartTitle(e.target.value)}></Form.Control>
+          </Form.Group>
+          <Form.Group className={styles.description} controlId="jobPartDescription">
+            <Form.Label>Job Part</Form.Label>
+            <Form.Control as="textarea" value={jobDescription} placeholder="Place Shutters and..." onChange={(e) => setJobDescription(e.target.value)}></Form.Control>
+          </Form.Group>
+          <Button className={styles.button} disabled={!jobPartTitle} type="submit" variant="success">
+            Save
+          </Button>
+        </Form>
+      </DetailsGroup>
+    </AdminGroup>
   );
 };
 

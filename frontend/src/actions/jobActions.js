@@ -143,7 +143,7 @@ export const updateJob =
 
       dispatch({
         type: actions.JOB_UPDATE_FAIL,
-        payload: messageFailure,
+        payload: message.length === 0 ? messageFailure : null,
       });
     }
   };
@@ -278,6 +278,7 @@ export const createJobPart =
       } else {
         toast.error(message);
       }
+
       dispatch({
         type: actions.JOBPART_CREATE_FAIL,
         payload: message,
@@ -335,12 +336,12 @@ export const updateJobPart =
 
       const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/job/parts/${jobPartId}`, jobPart, config);
 
+      toast.success('Saved!');
+
       dispatch({
         type: actions.JOBPART_UPDATE_SUCCESS,
         payload: data,
       });
-
-      toast.success('Saved!');
     } catch (error) {
       const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
 
@@ -349,9 +350,12 @@ export const updateJobPart =
       } else {
         toast.error(message);
       }
+
+      const messageFailure = error.response && error.response.data.message ? error.response.data.message : error.message;
+
       dispatch({
         type: actions.JOBPART_UPDATE_FAIL,
-        payload: message,
+        payload: message.length === 0 ? messageFailure : null,
       });
     }
   };
