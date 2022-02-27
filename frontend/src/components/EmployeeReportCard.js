@@ -1,18 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
 
 import EmployeeRow from './EmployeeRow';
-import { sorter } from '../actions/reportActions';
 
 import styles from './employeeReportCard.module.css';
 
 const EmployeeReportCard = ({ employee }) => {
-  // const timesheetList = useSelector((state) => state.reports);
-  // const { timesheets } = timesheetList;
-
-  // const commentsDB = timesheets.comments[0] ? timesheets.comments.filter((data) => data._id === employee.value[0].user._id) : '';
-
   const [title, setTitle] = useState('');
 
   const firstName = employee.firstName;

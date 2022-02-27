@@ -163,7 +163,7 @@ const getAllUsersNotEntered = asyncHandler(async (req, res) => {
  */
 
 const updateAUsersEntry = asyncHandler(async (req, res) => {
-  const { startTime, endTime, job } = req.body;
+  const { startTime, endTime, job, jobTime } = req.body;
 
   const entry = await TimesheetEntry.findById(req.params.id);
 

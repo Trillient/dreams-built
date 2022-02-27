@@ -129,8 +129,10 @@ export const updateEmployeeTimesheetEntry = (token, entryId, startTime, endTime,
       startTime: startTime,
       endTime: endTime,
       job: jobId,
-      jobTime: jobTime,
+      jobTime: parseFloat(jobTime),
     };
+
+    console.log(entry);
 
     const { data } = await axios.patch(`${process.env.REACT_APP_API_URL}/timesheet/admin/users/entry/${entryId}`, entry, config);
 
