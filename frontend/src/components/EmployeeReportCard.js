@@ -8,16 +8,16 @@ import { sorter } from '../actions/reportActions';
 import styles from './employeeReportCard.module.css';
 
 const EmployeeReportCard = ({ employee }) => {
-  const timesheetList = useSelector((state) => state.reports);
-  const { timesheets } = timesheetList;
+  // const timesheetList = useSelector((state) => state.reports);
+  // const { timesheets } = timesheetList;
 
-  const commentsDB = timesheets.comments[0] ? timesheets.comments.filter((data) => data._id === employee.value[0].user._id) : '';
+  // const commentsDB = timesheets.comments[0] ? timesheets.comments.filter((data) => data._id === employee.value[0].user._id) : '';
 
   const [title, setTitle] = useState('');
 
-  const firstName = employee.value[0].user.firstName;
-  const lastName = employee.value[0].user.lastName;
-  const email = employee.value[0].user.auth0Email;
+  const firstName = employee.firstName;
+  const lastName = employee.lastName;
+  const email = employee.auth0Email;
 
   useEffect(() => {
     if (firstName && lastName) {
@@ -40,7 +40,7 @@ const EmployeeReportCard = ({ employee }) => {
       <p className={styles.dates}>
         <strong>
           <em>
-            {employee.value[0].weekStart} - {employee.value[0].weekEnd}
+            {employee.entries[0]?.weekStart} - {employee.entries[0]?.weekEnd}
           </em>
         </strong>
       </p>
@@ -56,7 +56,7 @@ const EmployeeReportCard = ({ employee }) => {
           </tr>
         </thead>
         <tbody>
-          {employee.value.map((entry) => (
+          {employee.entries.map((entry) => (
             <EmployeeRow entry={entry} key={entry._id} />
           ))}
         </tbody>
@@ -67,7 +67,7 @@ const EmployeeReportCard = ({ employee }) => {
             <td className={styles.time}></td>
             <td className={styles.job}></td>
             <td>
-              {employee.value
+              {employee.entries
                 .map((entry) => entry.jobTime)
                 .reduce((previous, current) => previous + current, 0)
                 .toFixed(2)}
@@ -76,17 +76,15 @@ const EmployeeReportCard = ({ employee }) => {
           </tr>
         </tfoot>
       </Table>
-      {commentsDB && commentsDB[0] && (
+      {employee.comments.length > 0 && (
         <div className={styles.card}>
           <h3 style={{ textAlign: 'center', fontSize: '1.5rem' }}>Comments</h3>
-          {commentsDB[0].matches
-            .sort((a, b) => sorter[a.day] - sorter[b.day])
-            .map(({ comments, day }) => (
-              <div key={day}>
-                <h4 style={{ fontSize: '1.2rem' }}>{day}</h4>
-                <p style={{ marginLeft: '1.2rem', color: 'grey' }}>{comments}</p>
-              </div>
-            ))}
+          {employee.comments.map(({ comments, day }) => (
+            <div key={day}>
+              <h4 style={{ fontSize: '1.2rem' }}>{day}</h4>
+              <p style={{ marginLeft: '1.2rem', color: 'grey' }}>{comments}</p>
+            </div>
+          ))}
         </div>
       )}
     </>

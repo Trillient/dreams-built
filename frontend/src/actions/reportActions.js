@@ -27,22 +27,26 @@ export const getEmployeeTimeSheets = (token, weekStart) => async (dispatch) => {
     const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/timesheet/admin?weekstart=${weekStart}`, config);
 
     const sortedByJob = Array.from(
-      data.entries.sort((a, b) => a.jobNumber - b.jobNumber).reduce((m, { jobNumber, ...o }) => m.set(jobNumber, [...(m.get(jobNumber) || []), o]), new Map()),
+      data.jobs.sort((a, b) => a.jobNumber - b.jobNumber).reduce((m, { jobNumber, ...o }) => m.set(jobNumber, [...(m.get(jobNumber) || []), o]), new Map()),
       ([jobNumber, value]) => ({ jobNumber, value })
     );
 
-    const sortedByUser = Array.from(
-      data.entries
-        .sort((a, b) => (a.user.firstName && b.user.firstName ? a.user.firstName.normalize().localeCompare(b.user.firstName.normalize()) : false))
-        .sort((a, b) => {
-          const firstTime = a.startTime.split(':');
-          const secondTime = b.startTime.split(':');
-          return +firstTime[0] * 60 + +firstTime[1] - (+secondTime[0] * 60 + +secondTime[1]);
-        })
-        .sort((a, b) => sorter[a.day] - sorter[b.day])
-        .reduce((m, { userId, ...o }) => m.set(userId, [...(m.get(userId) || []), o]), new Map()),
-      ([userId, value]) => ({ userId, value })
-    );
+    const sortedByUser = data.entries.map((user) => ({
+      _id: user._id,
+      userId: user.userId,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      comments: user.comments?.sort((a, b) => sorter[a.day] - sorter[b.day]) || [],
+      entries: user.entries
+        ? user.entries
+            .sort((a, b) => {
+              const firstTime = a.startTime.split(':');
+              const secondTime = b.startTime.split(':');
+              return +firstTime[0] * 60 + +firstTime[1] - (+secondTime[0] * 60 + +secondTime[1]);
+            })
+            .sort((a, b) => sorter[a.day] - sorter[b.day])
+        : [],
+    }));
 
     dispatch({
       type: actions.REPORT_EMPLOYEES_TIMESHEET_SUCCESS,

@@ -81,22 +81,45 @@ const createUserEntry = asyncHandler(async (req, res) => {
  */
 
 const getAllUsers = asyncHandler(async (req, res) => {
-  const entries = await TimesheetEntry.find({ weekStart: req.query.weekstart }).populate('user job', 'firstName lastName auth0Email hourlyRate userId jobNumber address city');
-  const commentsInitial = await User.aggregate([
+  const jobs = await TimesheetEntry.find({ weekStart: req.query.weekstart }).populate('user job', 'firstName lastName auth0Email hourlyRate userId jobNumber address city');
+
+  const entriesInit = await User.aggregate([
+    { $sort: { lastName: 1, firstName: 1, _id: 1 } },
+    {
+      $lookup: {
+        from: 'timesheetentries',
+        localField: '_id',
+        foreignField: 'user',
+        pipeline: [
+          { $match: { weekStart: req.query.weekstart } },
+          {
+            $lookup: {
+              from: 'jobdetails',
+              localField: 'job',
+              foreignField: '_id',
+              as: 'job',
+            },
+          },
+          { $unwind: '$job' },
+        ],
+        as: 'entries',
+      },
+    },
+
     {
       $lookup: {
         from: 'timesheetcomments',
         localField: '_id',
         foreignField: 'user',
         pipeline: [{ $match: { weekStart: req.query.weekstart } }],
-        as: 'matches',
+        as: 'comments',
       },
     },
   ]);
 
-  const comments = commentsInitial.filter((entries) => entries.matches.length > 0);
+  const entries = entriesInit ? entriesInit.filter((entries) => entries.entries.length > 0 || entries.comments.length > 0) : [];
 
-  res.json({ entries, comments });
+  res.json({ jobs, entries });
 });
 
 /**
@@ -107,18 +130,28 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 const getAllUsersNotEntered = asyncHandler(async (req, res) => {
   const userEntries = await User.aggregate([
+    { $sort: { lastName: 1, firstName: 1, _id: 1 } },
     {
       $lookup: {
         from: 'timesheetentries',
-        localField: 'userId',
-        foreignField: 'userId',
+        localField: '_id',
+        foreignField: 'user',
         pipeline: [{ $match: { weekStart: req.query.weekstart } }],
-        as: 'matches',
+        as: 'entries',
+      },
+    },
+    {
+      $lookup: {
+        from: 'timesheetcomments',
+        localField: '_id',
+        foreignField: 'user',
+        pipeline: [{ $match: { weekStart: req.query.weekstart } }],
+        as: 'comments',
       },
     },
   ]);
 
-  const data = userEntries.filter((entries) => entries.matches.length < 1);
+  const data = userEntries.filter((entries) => entries.comments.length < 1 && entries.entries.length < 1);
 
   res.json(data);
 });
@@ -130,7 +163,7 @@ const getAllUsersNotEntered = asyncHandler(async (req, res) => {
  */
 
 const updateAUsersEntry = asyncHandler(async (req, res) => {
-  const { startTime, endTime, job, jobTime } = req.body;
+  const { startTime, endTime, job } = req.body;
 
   const entry = await TimesheetEntry.findById(req.params.id);
 
