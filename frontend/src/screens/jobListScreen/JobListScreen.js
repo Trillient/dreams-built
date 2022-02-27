@@ -5,7 +5,6 @@ import { Table, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import fontColorContrast from 'font-color-contrast';
 import ReactToPrint from 'react-to-print';
-import { ToastContainer } from 'react-toastify';
 import { BsFillPrinterFill } from 'react-icons/bs';
 import { TiTick } from 'react-icons/ti';
 import { FiEdit } from 'react-icons/fi';
@@ -56,80 +55,77 @@ const JobListScreen = () => {
   }
 
   return (
-    <>
-      <ToastContainer theme="colored" />
-      <div className={styles.parent}>
-        {loading ? (
-          <Loader />
-        ) : error ? (
-          <Message variant="danger">{error}</Message>
-        ) : (
-          <section className="container">
-            <div className={styles.card}>
-              <HeaderSearchGroup title="Jobs" setSearch={setSearch} link="/jobs/create" />
-              <ReactToPrint
-                trigger={() => (
-                  <button className={styles.printer}>
-                    <BsFillPrinterFill />
-                  </button>
-                )}
-                content={() => componentRef.current}
-              />
-              <div ref={componentRef}>
-                <style>{getPageMargins()}</style>
-                <Table bordered hover>
-                  <thead className={styles['table-head']}>
-                    <tr>
-                      <th>Job Number</th>
-                      <th className={styles.sm}>Client</th>
-                      <th>Address</th>
-                      <th className={styles.md}>City</th>
-                      <th className={`${styles.md} ${styles.edit}`}>Customer</th>
-                      <th className={`${styles.md} ${styles.edit}`}>m&sup2;</th>
-                      <th className={styles.md} style={{ width: '4%' }}>
-                        Invoiced
-                      </th>
-                      <th className={styles.edit} style={{ width: '4%' }}>
-                        Edit
-                      </th>
+    <div className={styles.parent}>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant="danger">{error}</Message>
+      ) : (
+        <section className="container">
+          <div className={styles.card}>
+            <HeaderSearchGroup title="Jobs" setSearch={setSearch} link="/jobs/create" />
+            <ReactToPrint
+              trigger={() => (
+                <button className={styles.printer}>
+                  <BsFillPrinterFill />
+                </button>
+              )}
+              content={() => componentRef.current}
+            />
+            <div ref={componentRef}>
+              <style>{getPageMargins()}</style>
+              <Table bordered hover>
+                <thead className={styles['table-head']}>
+                  <tr>
+                    <th>Job Number</th>
+                    <th className={styles.sm}>Client</th>
+                    <th>Address</th>
+                    <th className={styles.md}>City</th>
+                    <th className={`${styles.md} ${styles.edit}`}>Customer</th>
+                    <th className={`${styles.md} ${styles.edit}`}>m&sup2;</th>
+                    <th className={styles.md} style={{ width: '4%' }}>
+                      Invoiced
+                    </th>
+                    <th className={styles.edit} style={{ width: '4%' }}>
+                      Edit
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {jobList.map((job) => (
+                    <tr className={styles.row} key={job._id}>
+                      <td>
+                        <strong>{job.jobNumber}</strong>
+                      </td>
+                      {job.client === null ? (
+                        <td className={styles.sm}>Client Deleted</td>
+                      ) : (
+                        <td className={(styles.company, styles.sm)} style={{ backgroundColor: job.client.color, color: fontColorContrast(job.client.color) }}>
+                          {job.client.clientName}
+                        </td>
+                      )}
+                      <td>{job.address}</td>
+                      <td className={styles.md}>{job.city}</td>
+                      <td className={`${styles.md} ${styles.edit}`}>{job.endClient}</td>
+                      <td className={`${styles.md} ${styles.edit}`}>{job.area}</td>
+                      <td className={`${styles.md} ${styles.checked}`}>{job.isInvoiced ? <TiTick /> : null}</td>
+                      <td className={styles.edit}>
+                        <LinkContainer to={`/job/details/${job._id}`}>
+                          <Button className="btn-sm">
+                            <FiEdit />
+                          </Button>
+                        </LinkContainer>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {jobList.map((job) => (
-                      <tr className={styles.row} key={job._id}>
-                        <td>
-                          <strong>{job.jobNumber}</strong>
-                        </td>
-                        {job.client === null ? (
-                          <td className={styles.sm}>Client Deleted</td>
-                        ) : (
-                          <td className={(styles.company, styles.sm)} style={{ backgroundColor: job.client.color, color: fontColorContrast(job.client.color) }}>
-                            {job.client.clientName}
-                          </td>
-                        )}
-                        <td>{job.address}</td>
-                        <td className={styles.md}>{job.city}</td>
-                        <td className={`${styles.md} ${styles.edit}`}>{job.endClient}</td>
-                        <td className={`${styles.md} ${styles.edit}`}>{job.area}</td>
-                        <td className={`${styles.md} ${styles.checked}`}>{job.isInvoiced ? <TiTick /> : null}</td>
-                        <td className={styles.edit}>
-                          <LinkContainer to={`/job/details/${job._id}`}>
-                            <Button className="btn-sm">
-                              <FiEdit />
-                            </Button>
-                          </LinkContainer>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-              <PaginationGroup pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} limit={limit} setLimit={setLimit} />
+                  ))}
+                </tbody>
+              </Table>
             </div>
-          </section>
-        )}
-      </div>
-    </>
+            <PaginationGroup pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} limit={limit} setLimit={setLimit} />
+          </div>
+        </section>
+      )}
+    </div>
   );
 };
 
