@@ -12,7 +12,7 @@ import Loader from '../Loader';
 
 const Sidebar = ({ setSidebar }) => {
   const { isLoading, user } = useAuth0();
-
+  const domain = process.env.REACT_APP_CUSTOM_DOMAIN;
   return isLoading ? (
     <Loader />
   ) : (
@@ -22,9 +22,9 @@ const Sidebar = ({ setSidebar }) => {
           <Link to="#" className={styles['nav-icon']}>
             <AiOutlineClose onClick={() => setSidebar(false)} />
           </Link>
-          {user['http://www.dreamsbuilt.co.nz/roles'].includes('Admin')
+          {user[`${domain}/roles`].includes('Admin')
             ? AdminSidebarData.map((item, index) => <SubMenu item={item} key={index} setSidebar={setSidebar} />)
-            : user['http://www.dreamsbuilt.co.nz/roles'].includes('Employee')
+            : user[`${domain}/roles`].includes('Employee')
             ? EmployeeSidebarData.map((item, index) => <SubMenu item={item} key={index} setSidebar={setSidebar} />)
             : UnAuthenticatedSidebarData.map((item, index) => <SubMenu item={item} key={index} setSidebar={setSidebar} />)}
         </IconContext.Provider>
