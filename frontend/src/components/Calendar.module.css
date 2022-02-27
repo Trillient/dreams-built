@@ -16,10 +16,10 @@
     font-weight: bold;
   }
   .job-insert {
-    font-size: 0.6rem;
-    line-height: 0.8rem;
+    font-size: 0.5rem;
+    line-height: 0.6rem;
     margin: 0.1rem 0rem;
-    padding: 0.1rem;
+    padding: 0rem;
   }
   .item {
     padding: 0;

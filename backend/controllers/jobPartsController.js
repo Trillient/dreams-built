@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const JobPart = require('../models/jobPartModel');
+const JobDueDate = require('../models/jobPartDueDateModel');
 
 /**
  * @Desc Get a list of all job parts
@@ -137,8 +138,14 @@ const updateJobPart = asyncHandler(async (req, res) => {
 const deleteJobPart = asyncHandler(async (req, res) => {
   const jobPart = await JobPart.findById(req.params.id);
   if (jobPart) {
-    await jobPart.remove();
-    res.json({ message: 'Job part removed' });
+    const checkJobPartUsedInDueDate = await JobDueDate.find({ jobPartTitle: jobPart._id });
+    if (checkJobPartUsedInDueDate.length > 0) {
+      res.status(400);
+      throw new Error('Must remove all Job Due Dates first');
+    } else {
+      await jobPart.remove();
+      res.json({ message: 'Job part removed' });
+    }
   } else {
     res.status(404);
     throw new Error('Job part not found');
