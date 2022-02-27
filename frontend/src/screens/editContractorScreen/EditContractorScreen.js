@@ -47,10 +47,10 @@ const EditContractorScreen = () => {
           }
         })();
       } else {
-        setContractorName(contractorDetails.contractor ? contractorDetails.contractor : '');
-        setPhone(contractorDetails.phone ? contractorDetails.phone : '');
-        setContactName(contractorDetails.name ? contractorDetails.contact.name : '');
-        setContactEmail(contractorDetails.email ? contractorDetails.email : '');
+        setContractorName(contractorDetails?.contractor || '');
+        setPhone(contractorDetails?.phone || '');
+        setContactName(contractorDetails?.contact || '');
+        setContactEmail(contractorDetails?.email || '');
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,7 +80,7 @@ const EditContractorScreen = () => {
           <DetailsGroup title="Contractor" link="/contractors" linkName="Contractors">
             <Form className={styles.form} onSubmit={submitHandler}>
               <Form.Group className={styles.contractor} controlId="contractor">
-                <Form.Label>Contractor</Form.Label>
+                <Form.Label>Contractor *</Form.Label>
                 <Form.Control type="text" placeholder="Company..." value={contractorName} onChange={(e) => setContractorName(e.target.value)}></Form.Control>
               </Form.Group>
               <div className={styles.contact}>
