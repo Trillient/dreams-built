@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
 
 import { createContractor, resetContractorRedirect } from '../../actions/contractorActions';
 
@@ -40,36 +39,33 @@ const CreateContractorScreen = () => {
     dispatch(createContractor({ token: token, contractor: { contractor: contractorName, contact: contactName, email: contactEmail, phone: phone } }));
   };
   return (
-    <>
-      <ToastContainer theme="colored" />
-      <AdminGroup>
-        <DetailsGroup title="Contractor" link="/contractors" linkName="Contractors">
-          <Form className={styles.form} onSubmit={submitHandler}>
-            <Form.Group className={styles.contractor} controlId="contractor">
-              <Form.Label>Contractor</Form.Label>
-              <Form.Control type="text" placeholder="Company..." value={contractorName} onChange={(e) => setContractorName(e.target.value)}></Form.Control>
+    <AdminGroup>
+      <DetailsGroup title="Contractor" link="/contractors" linkName="Contractors">
+        <Form className={styles.form} onSubmit={submitHandler}>
+          <Form.Group className={styles.contractor} controlId="contractor">
+            <Form.Label>Contractor *</Form.Label>
+            <Form.Control type="text" placeholder="Company..." value={contractorName} onChange={(e) => setContractorName(e.target.value)}></Form.Control>
+          </Form.Group>
+          <div className={styles.contact}>
+            <Form.Group className="mb-2" controlId="contact.name">
+              <Form.Label>Contact Name</Form.Label>
+              <Form.Control type="text" placeholder="John Doe" value={contactName} onChange={(e) => setContactName(e.target.value)}></Form.Control>
             </Form.Group>
-            <div className={styles.contact}>
-              <Form.Group className="mb-2" controlId="contact.name">
-                <Form.Label>Contact Name</Form.Label>
-                <Form.Control type="text" placeholder="John Doe" value={contactName} onChange={(e) => setContactName(e.target.value)}></Form.Control>
-              </Form.Group>
-              <Form.Group className="mb-2" controlId="contact.email">
-                <Form.Label>Contact Email</Form.Label>
-                <Form.Control type="text" placeholder="john@gmail.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)}></Form.Control>
-              </Form.Group>
-              <Form.Group className="mb-2" controlId="contact.phone">
-                <Form.Label>Contact Phone</Form.Label>
-                <Form.Control type="text" placeholder="+64 7 555 555" value={phone} onChange={(e) => setPhone(e.target.value)}></Form.Control>
-              </Form.Group>
-            </div>
-            <Button type="submit" className={styles.button} variant="success" disabled={!contractorName}>
-              Create
-            </Button>
-          </Form>
-        </DetailsGroup>
-      </AdminGroup>
-    </>
+            <Form.Group className="mb-2" controlId="contact.email">
+              <Form.Label>Contact Email</Form.Label>
+              <Form.Control type="text" placeholder="john@gmail.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-2" controlId="contact.phone">
+              <Form.Label>Contact Phone</Form.Label>
+              <Form.Control type="text" placeholder="+64 7 555 555" value={phone} onChange={(e) => setPhone(e.target.value)}></Form.Control>
+            </Form.Group>
+          </div>
+          <Button type="submit" className={styles.button} variant="success" disabled={!contractorName}>
+            Create
+          </Button>
+        </Form>
+      </DetailsGroup>
+    </AdminGroup>
   );
 };
 

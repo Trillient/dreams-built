@@ -77,12 +77,15 @@ export const createContractor =
 
       const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/contractors`, contractor, config);
 
+      toast.success('Saved!');
+
       dispatch({
         type: actions.CONTRACTOR_CREATE_SUCCESS,
         payload: data,
       });
     } catch (error) {
       const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
       if (error.response.data.errors && message.length > 0) {
         message.map((err) => toast.error(err.msg));
       } else {
@@ -118,11 +121,13 @@ export const updateContractor =
       });
     } catch (error) {
       const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
       if (error.response.data.errors && message.length > 0) {
         message.map((err) => toast.error(err.msg));
       } else {
         toast.error(message);
       }
+
       dispatch({
         type: actions.CONTRACTOR_UPDATE_FAIL,
         payload: message,
@@ -158,6 +163,7 @@ export const deleteContractor = (token, contractorId) => async (dispatch) => {
     } else {
       toast.error(message);
     }
+
     dispatch({
       type: actions.CONTRACTOR_DELETE_FAIL,
       payload: message,
