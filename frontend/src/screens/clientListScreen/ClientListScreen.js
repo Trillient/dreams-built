@@ -3,7 +3,6 @@ import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { ToastContainer } from 'react-toastify';
 import { FiEdit } from 'react-icons/fi';
 
 import HeaderSearchGroup from '../../components/groups/HeaderSearchGroup';
@@ -47,55 +46,52 @@ const ClientListScreen = () => {
   }
 
   return (
-    <>
-      <ToastContainer theme="colored" />
-      <div className={styles.parent}>
-        {loading ? (
-          <Loader />
-        ) : error ? (
-          <Message variant="danger">{error}</Message>
-        ) : (
-          <section className="container">
-            <div className={styles.card}>
-              <HeaderSearchGroup title="Clients" setSearch={setSearch} link="/clients/create" />
-              <Table hover responsive="sm" bordered>
-                <thead>
-                  <tr>
-                    <th className={styles.responsive} style={{ width: '5%' }}>
-                      Colour
-                    </th>
-                    <th>Client</th>
-                    <th className={styles.responsive}>Contact</th>
-                    <th className={styles.responsive}>Email</th>
-                    <th style={{ width: '5%' }}>Edit</th>
+    <div className={styles.parent}>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant="danger">{error}</Message>
+      ) : (
+        <section className="container">
+          <div className={styles.card}>
+            <HeaderSearchGroup title="Clients" setSearch={setSearch} link="/clients/create" />
+            <Table hover responsive="sm" bordered>
+              <thead>
+                <tr>
+                  <th className={styles.responsive} style={{ width: '5%' }}>
+                    Colour
+                  </th>
+                  <th>Client</th>
+                  <th className={styles.responsive}>Contact</th>
+                  <th className={styles.responsive}>Email</th>
+                  <th style={{ width: '5%' }}>Edit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {clientList.map((client) => (
+                  <tr key={client._id} className={styles.data}>
+                    <td className={styles.responsive}>
+                      <div className={styles.color} style={{ backgroundColor: client.color }}></div>
+                    </td>
+                    <td className={styles.client}>{client.clientName}</td>
+                    <td className={styles.responsive}>{client?.contact?.name}</td>
+                    <td className={styles.responsive}>{client?.contact?.email}</td>
+                    <td>
+                      <LinkContainer to={`/clients/edit/${client._id}`}>
+                        <Button className="btn-sm">
+                          <FiEdit />
+                        </Button>
+                      </LinkContainer>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {clientList.map((client) => (
-                    <tr key={client._id} className={styles.data}>
-                      <td className={styles.responsive}>
-                        <div className={styles.color} style={{ backgroundColor: client.color }}></div>
-                      </td>
-                      <td className={styles.client}>{client.clientName}</td>
-                      <td className={styles.responsive}>{client?.contact?.name}</td>
-                      <td className={styles.responsive}>{client?.contact?.email}</td>
-                      <td>
-                        <LinkContainer to={`/clients/edit/${client._id}`}>
-                          <Button className="btn-sm">
-                            <FiEdit />
-                          </Button>
-                        </LinkContainer>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-              <PaginationGroup pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} limit={limit} setLimit={setLimit} />
-            </div>
-          </section>
-        )}
-      </div>
-    </>
+                ))}
+              </tbody>
+            </Table>
+            <PaginationGroup pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} limit={limit} setLimit={setLimit} />
+          </div>
+        </section>
+      )}
+    </div>
   );
 };
 

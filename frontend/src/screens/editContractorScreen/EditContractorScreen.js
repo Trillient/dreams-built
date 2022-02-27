@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
 
 import { deleteContractor, getContractor, resetContractorRedirect, updateContractor } from '../../actions/contractorActions';
 
@@ -68,47 +67,42 @@ const EditContractorScreen = () => {
     setModalShow(false);
   };
 
-  return (
-    <>
-      <ToastContainer theme="colored" />
-      {loading ? (
-        <Loader />
-      ) : error && error.length < 1 ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <AdminGroup>
-          <DetailsGroup title="Contractor" link="/contractors" linkName="Contractors">
-            <Form className={styles.form} onSubmit={submitHandler}>
-              <Form.Group className={styles.contractor} controlId="contractor">
-                <Form.Label>Contractor *</Form.Label>
-                <Form.Control type="text" placeholder="Company..." value={contractorName} onChange={(e) => setContractorName(e.target.value)}></Form.Control>
-              </Form.Group>
-              <div className={styles.contact}>
-                <Form.Group className="mb-2" controlId="contact.name">
-                  <Form.Label>Contact Name</Form.Label>
-                  <Form.Control type="text" placeholder="John Doe" value={contactName} onChange={(e) => setContactName(e.target.value)}></Form.Control>
-                </Form.Group>
-                <Form.Group className="mb-2" controlId="contact.email">
-                  <Form.Label>Contact Email</Form.Label>
-                  <Form.Control type="text" placeholder="john@gmail.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)}></Form.Control>
-                </Form.Group>
-                <Form.Group className="mb-2" controlId="contact.phone">
-                  <Form.Label>Contact Phone</Form.Label>
-                  <Form.Control type="text" placeholder="+64 7 555 555" value={phone} onChange={(e) => setPhone(e.target.value)}></Form.Control>
-                </Form.Group>
-              </div>
-              <Button className={styles['button-update']} disabled={!contractorName} type="submit" variant="success">
-                Save
-              </Button>
-              <Button className={styles['button-delete']} onClick={setModalShow} variant="danger">
-                Delete
-              </Button>
-            </Form>
-            <DeleteConfirmationModal title={contractorName} show={modalShow} setModalShow={setModalShow} onHide={() => setModalShow(false)} handleDeleteTrue={handleDeleteTrue} />
-          </DetailsGroup>
-        </AdminGroup>
-      )}
-    </>
+  return loading ? (
+    <Loader />
+  ) : error && error.length < 1 ? (
+    <Message variant="danger">{error}</Message>
+  ) : (
+    <AdminGroup>
+      <DetailsGroup title="Contractor" link="/contractors" linkName="Contractors">
+        <Form className={styles.form} onSubmit={submitHandler}>
+          <Form.Group className={styles.contractor} controlId="contractor">
+            <Form.Label>Contractor *</Form.Label>
+            <Form.Control type="text" placeholder="Company..." value={contractorName} onChange={(e) => setContractorName(e.target.value)}></Form.Control>
+          </Form.Group>
+          <div className={styles.contact}>
+            <Form.Group className="mb-2" controlId="contact.name">
+              <Form.Label>Contact Name</Form.Label>
+              <Form.Control type="text" placeholder="John Doe" value={contactName} onChange={(e) => setContactName(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-2" controlId="contact.email">
+              <Form.Label>Contact Email</Form.Label>
+              <Form.Control type="text" placeholder="john@gmail.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-2" controlId="contact.phone">
+              <Form.Label>Contact Phone</Form.Label>
+              <Form.Control type="text" placeholder="+64 7 555 555" value={phone} onChange={(e) => setPhone(e.target.value)}></Form.Control>
+            </Form.Group>
+          </div>
+          <Button className={styles['button-update']} disabled={!contractorName} type="submit" variant="success">
+            Save
+          </Button>
+          <Button className={styles['button-delete']} onClick={setModalShow} variant="danger">
+            Delete
+          </Button>
+        </Form>
+        <DeleteConfirmationModal title={contractorName} show={modalShow} setModalShow={setModalShow} onHide={() => setModalShow(false)} handleDeleteTrue={handleDeleteTrue} />
+      </DetailsGroup>
+    </AdminGroup>
   );
 };
 

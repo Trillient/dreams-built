@@ -9,7 +9,6 @@ import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 
 import styles from './profileScreen.module.css';
-import { ToastContainer } from 'react-toastify';
 
 const Profile = () => {
   const { user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
@@ -56,7 +55,6 @@ const Profile = () => {
   ) : (
     isAuthenticated && (
       <div className="container">
-        <ToastContainer theme="colored" />
         <Form className={styles.form} onSubmit={submitHandler}>
           <img className={styles.img} src={user.picture} alt={user.name} />
           <Form.Group className={styles.email} controlId="email">

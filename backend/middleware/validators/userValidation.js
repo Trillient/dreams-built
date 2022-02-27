@@ -4,7 +4,7 @@ const userSchema = [
   body('userId', 'userId required').exists().isString(),
   body('firstName', 'First Name must be valid').optional().isString(),
   body('lastName', 'Last Name must be valid').optional().isString(),
-  body('auth0Email', 'Must enter a valid email').exists().normalizeEmail().isEmail(),
+  body('auth0Email', 'Must enter a valid email').optional({ checkFalsy: true }).normalizeEmail().isEmail(),
 ];
 
 const userUpdateSchema = [body('firstName', 'First Name must be valid').optional().isString(), body('lastName', 'Last Name must be valid').optional().isString(), body('auth0Email', 'Must enter a valid email').optional().normalizeEmail().isEmail()];

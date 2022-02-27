@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
 
 import { addRole, deleteRole, deleteUser, getUser, resetUserRedirect, updateUser } from '../../actions/employeeActions';
 
@@ -81,98 +80,89 @@ const EditEmployeeScreen = () => {
   ) : error ? (
     <Message variant="danger">{error}</Message>
   ) : (
-    <>
-      <ToastContainer theme="colored" />
-      {loading ? (
-        <Loader />
-      ) : error && error.length < 1 ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <AdminGroup>
-          <DetailsGroup title="Edit Employee" link="/employees" linkName="Employees">
-            <Form className={styles.form} onSubmit={submitHandler}>
-              <Form.Group className={styles.fname} controlId="firstName">
-                <Form.Label>First Name:</Form.Label>
-                <Form.Control type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)}></Form.Control>
-              </Form.Group>
+    <AdminGroup>
+      <DetailsGroup title="Edit Employee" link="/employees" linkName="Employees">
+        <Form className={styles.form} onSubmit={submitHandler}>
+          <Form.Group className={styles.fname} controlId="firstName">
+            <Form.Label>First Name:</Form.Label>
+            <Form.Control type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)}></Form.Control>
+          </Form.Group>
 
-              <Form.Group className={styles.lname} controlId="lastName">
-                <Form.Label>Last Name:</Form.Label>
-                <Form.Control type="text" value={lastName} onChange={(e) => setLastName(e.target.value)}></Form.Control>
-              </Form.Group>
+          <Form.Group className={styles.lname} controlId="lastName">
+            <Form.Label>Last Name:</Form.Label>
+            <Form.Control type="text" value={lastName} onChange={(e) => setLastName(e.target.value)}></Form.Control>
+          </Form.Group>
 
-              <Form.Group className={styles.rate} controlId="hourlyRate">
-                <Form.Label>Hourly Rate</Form.Label>
-                <Form.Control type="Number" value={hourlyRate} min="0" onChange={(e) => setHourlyRate(e.target.value)} />
-              </Form.Group>
+          <Form.Group className={styles.rate} controlId="hourlyRate">
+            <Form.Label>Hourly Rate</Form.Label>
+            <Form.Control type="Number" value={hourlyRate} min="0" onChange={(e) => setHourlyRate(e.target.value)} />
+          </Form.Group>
 
-              <Button className={styles['button-update']} disabled={!firstName} type="submit" variant="success">
-                Save
+          <Button className={styles['button-update']} disabled={!firstName} type="submit" variant="success">
+            Save
+          </Button>
+          <Button className={styles['button-delete']} onClick={setModalShow} variant="danger">
+            Delete
+          </Button>
+        </Form>
+
+        <div className={styles.roles}>
+          <h3 className={styles['roles-title']}>Roles</h3>
+          {!isAdmin ? (
+            <div className={styles.admin}>
+              <h4>Not Admin</h4>
+              <Button
+                onClick={() => {
+                  handleRoleChange('assign', 'admin');
+                }}
+                variant="warning"
+              >
+                Give Admin Privileges
               </Button>
-              <Button className={styles['button-delete']} onClick={setModalShow} variant="danger">
-                Delete
-              </Button>
-            </Form>
-
-            <div className={styles.roles}>
-              <h3 className={styles['roles-title']}>Roles</h3>
-              {!isAdmin ? (
-                <div className={styles.admin}>
-                  <h4>Not Admin</h4>
-                  <Button
-                    onClick={() => {
-                      handleRoleChange('assign', 'admin');
-                    }}
-                    variant="warning"
-                  >
-                    Give Admin Privleges
-                  </Button>
-                </div>
-              ) : (
-                <div className={styles.admin}>
-                  <h4>Admin</h4>
-                  <Button
-                    onClick={() => {
-                      handleRoleChange('remove', 'admin');
-                    }}
-                    variant="danger"
-                  >
-                    Remove Admin Privileges
-                  </Button>
-                </div>
-              )}
-
-              {!isEmployee ? (
-                <div className={styles.employee}>
-                  <h4>Not an Employee</h4>
-                  <Button
-                    onClick={() => {
-                      handleRoleChange('assign', 'employee');
-                    }}
-                    variant="warning"
-                  >
-                    Give Employee Privleges
-                  </Button>
-                </div>
-              ) : (
-                <div className={styles.employee}>
-                  <h4>Employee</h4>
-                  <Button
-                    onClick={() => {
-                      handleRoleChange('remove', 'employee');
-                    }}
-                    variant="danger"
-                  >
-                    Remove Employee Privileges
-                  </Button>
-                </div>
-              )}
             </div>
-            <DeleteConfirmationModal title={`${firstName} ${lastName}`} show={modalShow} setModalShow={setModalShow} onHide={() => setModalShow(false)} handleDeleteTrue={deleteHandler} />
-          </DetailsGroup>
-        </AdminGroup>
-      )}
-    </>
+          ) : (
+            <div className={styles.admin}>
+              <h4>Admin</h4>
+              <Button
+                onClick={() => {
+                  handleRoleChange('remove', 'admin');
+                }}
+                variant="danger"
+              >
+                Remove Admin Privileges
+              </Button>
+            </div>
+          )}
+
+          {!isEmployee ? (
+            <div className={styles.employee}>
+              <h4>Not an Employee</h4>
+              <Button
+                onClick={() => {
+                  handleRoleChange('assign', 'employee');
+                }}
+                variant="warning"
+              >
+                Give Employee Privileges
+              </Button>
+            </div>
+          ) : (
+            <div className={styles.employee}>
+              <h4>Employee</h4>
+              <Button
+                onClick={() => {
+                  handleRoleChange('remove', 'employee');
+                }}
+                variant="danger"
+              >
+                Remove Employee Privileges
+              </Button>
+            </div>
+          )}
+        </div>
+        <DeleteConfirmationModal title={`${firstName} ${lastName}`} show={modalShow} setModalShow={setModalShow} onHide={() => setModalShow(false)} handleDeleteTrue={deleteHandler} />
+      </DetailsGroup>
+    </AdminGroup>
   );
 };
 

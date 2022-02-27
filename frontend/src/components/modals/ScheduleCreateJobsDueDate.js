@@ -18,6 +18,8 @@ export const ScheduleCreateJobsDueDate = ({ setModalShow, ...rest }) => {
   const { jobList } = jobsList;
   const jobPartsList = useSelector((state) => state.jobParts);
   const { jobParts } = jobPartsList;
+  const dueDates = useSelector((state) => state.jobDueDates);
+  const { dueDateUpdated } = dueDates;
 
   const [job, setJob] = useState('');
 
@@ -31,7 +33,7 @@ export const ScheduleCreateJobsDueDate = ({ setModalShow, ...rest }) => {
         dispatch(getJobDueDates(token, job._id));
       })();
     }
-  }, [dispatch, getAccessTokenSilently, job, rest.show]);
+  }, [dispatch, getAccessTokenSilently, job, rest.show, dueDateUpdated]);
   return (
     rest.show && (
       <Modal {...rest} size="xl" aria-labelledby="contained-modal-title-vcenter" centered>

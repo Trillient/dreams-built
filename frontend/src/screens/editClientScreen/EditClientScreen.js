@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
 
 import { deleteClient, getClient, resetClientRedirect, updateClient } from '../../actions/clientActions';
 
@@ -69,47 +68,42 @@ const EditClientScreen = () => {
     setModalShow(false);
   };
 
-  return (
-    <>
-      <ToastContainer theme="colored" />
-      {loading ? (
-        <Loader />
-      ) : error && error.length < 1 ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <AdminGroup>
-          <DetailsGroup title="Edit Client" link="/clients" linkName="Clients">
-            <Form className={styles.form} onSubmit={submitHandler}>
-              <Form.Group className={styles.client} controlId="Client">
-                <Form.Label>Client *</Form.Label>
-                <Form.Control type="text" placeholder="Company..." value={clientName} onChange={(e) => setClientName(e.target.value)}></Form.Control>
-              </Form.Group>
-              <Form.Group className={styles.color} controlId="color">
-                <Form.Label>Colour</Form.Label>
-                <Form.Control type="color" style={{ width: '100%' }} value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
-              </Form.Group>
-              <div className={styles.contact}>
-                <Form.Group className="mb-2" controlId="contact.name">
-                  <Form.Label>Contact Name</Form.Label>
-                  <Form.Control type="text" placeholder="John Doe" value={contactName} onChange={(e) => setContactName(e.target.value)}></Form.Control>
-                </Form.Group>
-                <Form.Group className="mb-2" controlId="contact.email">
-                  <Form.Label>Contact Email</Form.Label>
-                  <Form.Control type="text" placeholder="john@gmail.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)}></Form.Control>
-                </Form.Group>
-              </div>
-              <Button className={styles['button-update']} disabled={!clientName} type="submit" variant="success">
-                Save
-              </Button>
-              <Button className={styles['button-delete']} onClick={setModalShow} variant="danger">
-                Delete
-              </Button>
-            </Form>
-            <DeleteConfirmationModal title={clientName} show={modalShow} setModalShow={setModalShow} onHide={() => setModalShow(false)} handleDeleteTrue={handleDeleteTrue} />
-          </DetailsGroup>
-        </AdminGroup>
-      )}
-    </>
+  return loading ? (
+    <Loader />
+  ) : error && error.length < 1 ? (
+    <Message variant="danger">{error}</Message>
+  ) : (
+    <AdminGroup>
+      <DetailsGroup title="Edit Client" link="/clients" linkName="Clients">
+        <Form className={styles.form} onSubmit={submitHandler}>
+          <Form.Group className={styles.client} controlId="Client">
+            <Form.Label>Client *</Form.Label>
+            <Form.Control type="text" placeholder="Company..." value={clientName} onChange={(e) => setClientName(e.target.value)}></Form.Control>
+          </Form.Group>
+          <Form.Group className={styles.color} controlId="color">
+            <Form.Label>Colour</Form.Label>
+            <Form.Control type="color" style={{ width: '100%' }} value={color} onChange={(e) => setColor(e.target.value)} title="Choose your color" />
+          </Form.Group>
+          <div className={styles.contact}>
+            <Form.Group className="mb-2" controlId="contact.name">
+              <Form.Label>Contact Name</Form.Label>
+              <Form.Control type="text" placeholder="John Doe" value={contactName} onChange={(e) => setContactName(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-2" controlId="contact.email">
+              <Form.Label>Contact Email</Form.Label>
+              <Form.Control type="text" placeholder="john@gmail.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)}></Form.Control>
+            </Form.Group>
+          </div>
+          <Button className={styles['button-update']} disabled={!clientName} type="submit" variant="success">
+            Save
+          </Button>
+          <Button className={styles['button-delete']} onClick={setModalShow} variant="danger">
+            Delete
+          </Button>
+        </Form>
+        <DeleteConfirmationModal title={clientName} show={modalShow} setModalShow={setModalShow} onHide={() => setModalShow(false)} handleDeleteTrue={handleDeleteTrue} />
+      </DetailsGroup>
+    </AdminGroup>
   );
 };
 

@@ -6,7 +6,6 @@ import DatePicker from 'react-date-picker';
 import { DateTime } from 'luxon';
 import Select from 'react-select';
 import ReactToPrint from 'react-to-print';
-import { ToastContainer } from 'react-toastify';
 import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 
 import { getDueDates, getJobList, getJobPartsList, resetDueDateUpdate } from '../../actions/jobActions';
@@ -97,7 +96,6 @@ const ScheduleScreen = () => {
     <Message variant="danger">{dueDateError}</Message>
   ) : (
     <div className={styles.calendar}>
-      <ToastContainer theme="colored" />
       <div className={styles.header}>
         <div className={styles.filter}>
           <Select

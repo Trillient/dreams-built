@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { Form, Button, Dropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { ToastContainer } from 'react-toastify';
 import { DateTime } from 'luxon';
 import Select from 'react-select';
 
@@ -92,7 +91,6 @@ const TimesheetScreen = () => {
 
   return (
     <div className="parent-container">
-      <ToastContainer theme="colored" />
       {loading ? (
         <Loader />
       ) : error ? (

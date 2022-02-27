@@ -5,18 +5,17 @@ import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-date-picker';
 import { BsFillPrinterFill, BsFillCalendarFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs';
+import ReactToPrint from 'react-to-print';
 
 import { getEmployeeTimeSheets, getEmployeeTimeSheetsNotEntered, resetReportRefresh } from '../../actions/reportActions';
+import { getJobList } from '../../actions/jobActions';
 
 import EmployeeReportCard from '../../components/EmployeeReportCard';
 import Message from '../../components/Message';
 import ReportNoteEnteredModal from '../../components/modals/ReportNotEnteredModal';
+import Loader from '../../components/Loader';
 
 import styles from './timesheetReports.module.css';
-import ReactToPrint from 'react-to-print';
-import Loader from '../../components/Loader';
-import { getJobList } from '../../actions/jobActions';
-import { ToastContainer } from 'react-toastify';
 
 const TimesheetUserReportScreen = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -74,7 +73,6 @@ const TimesheetUserReportScreen = () => {
     <Message variant="danger">{error}</Message>
   ) : (
     <section className="container">
-      <ToastContainer theme="colored" />
       <div className={styles.page}>
         <h1 style={{ textAlign: 'center' }}>Timesheets</h1>
         <div className={styles.controls}>

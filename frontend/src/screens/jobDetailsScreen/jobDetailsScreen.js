@@ -38,9 +38,10 @@ const JobDetailsScreen = () => {
   const { loading, error, job, redirect } = jobDetails;
   const clients = useSelector((state) => state.clients);
   const { clientList } = clients;
-
   const jobPartsList = useSelector((state) => state.jobParts);
   const { jobParts } = jobPartsList;
+  const dueDates = useSelector((state) => state.jobDueDates);
+  const { dueDateUpdated } = dueDates;
 
   const [display, setDisplay] = useState(0);
   const [jobNumberError, setJobNumberError] = useState(false);
@@ -60,9 +61,20 @@ const JobDetailsScreen = () => {
   const defaultLabel = job?.client ? { label: job.client.clientName, value: job.client._id } : '';
 
   useEffect(() => {
-    if (redirect) {
-      dispatch(resetJobRedirect());
-      navigate('/jobs');
+    if (redirect || dueDateUpdated) {
+      if (redirect) {
+        dispatch(resetJobRedirect());
+        navigate('/jobs');
+      } else {
+        (async () => {
+          try {
+            const token = await getAccessTokenSilently();
+            dispatch(getJobDueDates(token, jobId));
+          } catch (err) {
+            console.log(err);
+          }
+        })();
+      }
     } else {
       if (!job || job._id !== jobId) {
         (async () => {
@@ -87,7 +99,7 @@ const JobDetailsScreen = () => {
         setInvoiced(job.isInvoiced || false);
       }
     }
-  }, [dispatch, navigate, getAccessTokenSilently, job, jobId, redirect]);
+  }, [dispatch, navigate, getAccessTokenSilently, job, jobId, redirect, dueDateUpdated]);
 
   const submitHandler = async (e) => {
     e.preventDefault();

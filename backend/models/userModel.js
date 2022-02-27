@@ -5,7 +5,7 @@ const userSchema = mongoose.Schema(
     userId: { type: String, required: true, unique: true },
     firstName: { type: String },
     lastName: { type: String },
-    auth0Email: { type: String, required: true },
+    auth0Email: { type: String },
     hourlyRate: { type: Number },
   },
   { timestamps: true }
