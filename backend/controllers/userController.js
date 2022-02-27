@@ -1,6 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const axios = require('axios').default;
 const User = require('../models/userModel');
+const TimesheetEntry = require('../models/timesheetEntryModel');
+const TimesheetComment = require('../models/timesheetCommentModel');
 const { domain, auth0ClientId, auth0ClientSecret } = require('../config/env');
 const dotenv = require('dotenv');
 
@@ -124,6 +126,18 @@ const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (user) {
+    const checkUserUsedInTimesheetEntry = await TimesheetEntry.find({ user: user._id });
+    if (checkUserUsedInTimesheetEntry.length > 0) {
+      res.status(400);
+      throw new Error('User is referenced in Timesheet Entries');
+    }
+
+    const checkUserUsedInTimesheetComments = await TimesheetComment.find({ user: user._id });
+    if (checkUserUsedInTimesheetComments.length > 0) {
+      res.status(400);
+      throw new Error('User is referenced in Timesheet Comments');
+    }
+
     await user.remove();
     res.json({ message: 'User removed' });
   } else {
