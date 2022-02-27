@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Client = require('../models/clientModel');
+const JobDetails = require('../models/jobModel');
 
 /**
  * @Desc Get a list of all Clients
@@ -122,8 +123,14 @@ const updateClient = asyncHandler(async (req, res) => {
 const deleteClient = asyncHandler(async (req, res) => {
   const client = await Client.findById(req.params.id);
   if (client) {
-    client.remove();
-    res.json({ message: 'client removed!' });
+    const clientInUse = await JobDetails.find({ client: client._id });
+    if (clientInUse.length > 0) {
+      res.status(400);
+      throw new Error('Client in use by Job(s)');
+    } else {
+      client.remove();
+      res.json({ message: 'client removed!' });
+    }
   } else {
     res.status(404);
     throw new Error('Client not found');
