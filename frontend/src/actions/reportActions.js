@@ -132,8 +132,6 @@ export const updateEmployeeTimesheetEntry = (token, entryId, startTime, endTime,
       jobTime: parseFloat(jobTime),
     };
 
-    console.log(entry);
-
     const { data } = await axios.patch(`${process.env.REACT_APP_API_URL}/timesheet/admin/users/entry/${entryId}`, entry, config);
 
     toast.success('Saved!');
