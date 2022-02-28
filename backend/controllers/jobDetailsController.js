@@ -65,6 +65,13 @@ const createJob = asyncHandler(async (req, res) => {
     throw new Error('Job Number already exists!');
   }
 
+  const addressUsed = await JobDetails.findOne({ address: address });
+
+  if (addressUsed) {
+    res.status(400);
+    throw new Error('Address already exists!');
+  }
+
   const clientExists = await Client.findById(client);
 
   if (!clientExists) {
@@ -129,6 +136,13 @@ const updateJob = asyncHandler(async (req, res) => {
     if (checkJobNumberDuplicate && String(job._id) !== String(checkJobNumberDuplicate._id)) {
       res.status(400);
       throw new Error('JobNumber already exists');
+    }
+
+    const addressUsed = await JobDetails.findOne({ address: address });
+
+    if (addressUsed && String(job._id) !== String(addressUsed._id)) {
+      res.status(400);
+      throw new Error('Address already exists!');
     }
 
     job.jobNumber = +jobNumber;

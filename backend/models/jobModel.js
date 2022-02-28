@@ -8,7 +8,7 @@ const jobSchema = mongoose.Schema(
       required: true,
       ref: 'Client',
     },
-    address: { type: String },
+    address: { type: String, required: true, unique: true },
     city: { type: String },
     area: { type: Number },
     endClient: { type: String },
