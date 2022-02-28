@@ -23,9 +23,10 @@ const { jobDetailsSchema, jobIdParams } = require('../middleware/validators/jobD
 const { jobPartsSchema, jobPartParams } = require('../middleware/validators/jobPartsValidation');
 const validation = require('../middleware/validatorMiddleware');
 const { shiftPatchSchema, dueDateQuerySchema, dueDateIdParams, dueDatePartIdQueryParams, dueDateJobIdParams, dueDateFullSchema, dueDatePartialSchema } = require('../middleware/validators/jobPartDueDateValidation');
+const { paginationQuery } = require('../middleware/validators/paginationQueryValidation');
 
 // Job details
-router.route('/details').get(readJobDetailsAuth, getJobs).post(createJobDetailsAuth, jobDetailsSchema, validation, createJob);
+router.route('/details').get(readJobDetailsAuth, paginationQuery, validation, getJobs).post(createJobDetailsAuth, jobDetailsSchema, validation, createJob);
 router.route('/details/:id').get(readJobDetailsAuth, jobIdParams, validation, getJob).put(updateJobDetailsAuth, jobIdParams, jobDetailsSchema, validation, updateJob).delete(deleteJobDetailsAuth, jobIdParams, validation, deleteJob);
 
 // Job parts

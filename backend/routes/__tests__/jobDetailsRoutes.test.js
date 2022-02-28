@@ -60,16 +60,17 @@ const createNewJob = (jobId, client, address = '12 abc lane', city = 'hamilton',
  */
 
 describe('Given we have an "/api/job/details" endpoint', () => {
-  it('When a GET request is valid, authenticated and appropriately authrorized, then a 200 response with a list of jobs should be returned', async () => {
+  it('When a GET request is valid, authenticated and appropriately authorized, then a 200 response with a list of jobs should be returned', async () => {
     const getClient = await Client.findOne({ clientName: 'warehouse' });
     for (let jobId = 22000; jobId < 22020; jobId++) {
-      const newJob = createNewJob(jobId, getClient._id);
+      const newJob = createNewJob(jobId, getClient._id, `${jobId} abc lane`);
       await JobDetails.create(newJob);
     }
 
     const checkBody = (res) => {
-      expect(res.body.length).toBe(20);
-      expect(res.body[0].client.clientName).toBe('warehouse');
+      expect(res.body.jobList.length).toBe(20);
+      expect(res.body.jobList[0].client.clientName).toBe('warehouse');
+      expect(res.body.pages).toBe(1);
     };
 
     const validToken = jwks.token({
@@ -87,7 +88,7 @@ describe('Given we have an "/api/job/details" endpoint', () => {
       .expect(checkBody)
       .expect(200);
   });
-  it('When a GET request is made without a valid token, then the user should recieve an error 401 response', async () => {
+  it('When a GET request is made without a valid token, then the user should receive an error 401 response', async () => {
     const checkBody = (res) => {
       expect(res.body.code).toBe('invalid_token');
     };
@@ -107,7 +108,7 @@ describe('Given we have an "/api/job/details" endpoint', () => {
       .expect(checkBody)
       .expect(401);
   });
-  it('When a GET request is made without the required permissions, then the user should recieve an error 403 response', async () => {
+  it('When a GET request is made without the required permissions, then the user should receive an error 403 response', async () => {
     const checkBody = (res) => {
       expect(res.body.error).toBe('Forbidden');
     };
@@ -128,7 +129,7 @@ describe('Given we have an "/api/job/details" endpoint', () => {
   });
   it('When a GET request is made and there are no saved jobs, then the user should recieve a 200 response with an empty array', async () => {
     const checkBody = (res) => {
-      expect(res.body).toEqual([]);
+      expect(res.body.jobList).toEqual([]);
     };
 
     await request(app)
@@ -170,6 +171,7 @@ describe('Given we have an "/api/job/details" endpoint', () => {
       jobNumber: 1,
       client: getClient._id,
       color: '#bc12bc',
+      address: '123 above lane',
     };
 
     const checkBody = (res) => {
@@ -534,6 +536,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
       jobNumber: 22002,
       client: job.client,
       city: 'Auckland',
+      address: '12b acb lane',
       color: '#bc32ab',
     };
 
@@ -653,6 +656,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 22002,
       client: job.client,
+      address: '12 abc lane',
       city: 'Auckland',
       color: '#bc32ab',
     };
@@ -678,6 +682,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 22002,
       client: job.client,
+      address: '12 abc lane',
       city: 'Auckland',
       color: '#bc32ab',
     };
@@ -723,7 +728,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
   it('When a PUT request tries to change the "jobNumber" value to a value that already exists, then a 400 response is returned', async () => {
     const getClient = await Client.findOne({ clientName: 'warehouse' });
 
-    await JobDetails.create(createNewJob(1, getClient._id));
+    await JobDetails.create(createNewJob(1, getClient._id, '22 tree lance'));
 
     await JobDetails.create(createNewJob(2, getClient._id));
     const job = await JobDetails.findOne({ jobNumber: 2 });
@@ -732,6 +737,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 1,
       client: job.client,
+      address: '12 ac lane',
       city: 'Auckland',
       color: '#bc32ab',
     };
@@ -758,6 +764,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 1,
       city: 'Auckland',
+      address: '12 abc lane',
       color: '#bc32ab',
     };
 
@@ -783,6 +790,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 1,
       client: '507f191e810c19729de860ea',
+      address: '12 abc lane',
       city: 'Auckland',
       color: '#bc32ab',
     };
@@ -809,6 +817,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 2,
       client: 'abcdefghijklmnop',
+      address: '12 abc lane',
       city: 'Auckland',
       color: '#bc32ab',
     };
@@ -862,6 +871,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 2,
       client: getClient._id,
+      address: '12 abc lane',
       city: false,
       color: '#bc32ab',
     };
@@ -888,6 +898,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 2,
       client: getClient._id,
+      address: '12 abc lane',
       area: '201g',
       color: '#bc32ab',
     };
@@ -914,7 +925,8 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 2,
       client: getClient._id,
-      endClient: null,
+      address: '12 abc lane',
+      endClient: 3343,
       color: '#bc32ab',
     };
 
@@ -940,6 +952,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 2,
       client: getClient._id,
+      address: '12 abc lane',
       isInvoiced: 'trues',
       color: '#bc32ab',
     };
@@ -966,6 +979,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 2,
       client: getClient._id,
+      address: '12 abc lane',
       color: true,
     };
 
@@ -991,6 +1005,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 2,
       client: getClient._id,
+      address: '12 abc lane',
       color: 'bc32abfs',
     };
 
@@ -1016,6 +1031,7 @@ describe('Given we have an "/api/job/details/:id" endpoint', () => {
     updatedJob = {
       jobNumber: 2,
       client: getClient._id,
+      address: '12 abc lane',
     };
 
     const checkBody = (res) => {
@@ -1158,7 +1174,7 @@ describe('Given we have an "/api/job/parts" endpoint', () => {
       await JobPart.create({ jobPartTitle: `Schedule${i}`, jobOrder: i });
     }
     const checkBody = (res) => {
-      expect(res.body.length).toBe(20);
+      expect(res.body.jobParts.length).toBe(20);
     };
 
     const validToken = jwks.token({
@@ -2019,7 +2035,7 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
     const databaseJobParts = await JobPart.find();
 
     // Create a new job to make sure only the required job due dates are returned
-    await JobDetails.create(createNewJob(2, databaseClient._id));
+    await JobDetails.create(createNewJob(2, databaseClient._id, '22 lane way'));
     const databaseDifferentJob = await JobDetails.findOne({ jobNumber: 2 });
 
     // Create a due date for each job part (2) and for each job (2). This would create 4 entries in total
