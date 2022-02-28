@@ -7,6 +7,7 @@ const app = require('../../app');
 const database = require('../../config/database');
 const { domain, audience } = require('../../config/env');
 const Client = require('../../models/clientModel');
+const JobDetails = require('../../models/jobModel');
 
 beforeAll(async () => {
   const mongoServer = await MongoMemoryServer.create();
@@ -48,7 +49,8 @@ describe('Given we have an "/api/users" endpoint', () => {
 
     const checkBody = (res) => {
       expect(res.body.error).toBeUndefined();
-      expect(res.body.length).toBe(20);
+      expect(res.body.clientList.length).toBe(20);
+      expect(res.body.pages).toBe(1);
     };
 
     const validToken = jwks.token({
@@ -60,6 +62,62 @@ describe('Given we have an "/api/users" endpoint', () => {
 
     await request(app)
       .get('/api/clients/')
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+
+  it('When a GET request is made and is valid, authenticated and appropriately authorized with specified page and limit, then a 200 response with a list of paginated clients should be returned', async () => {
+    for (let i = 0; i < 20; i++) {
+      await Client.create(createNewClient(`client${i}`));
+    }
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBeUndefined();
+      expect(res.body.clientList.length).toBe(5);
+      expect(res.body.clientList[0].clientName).toBe('client5');
+      expect(res.body.pages).toBe(4);
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'read:clients',
+    });
+
+    await request(app)
+      .get('/api/clients?page=2&limit=5')
+      .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+
+  it('When a GET request is made and is valid, authenticated and appropriately authorized with a keyword, then a 200 response with a list of searched clients should be returned', async () => {
+    for (let i = 0; i < 20; i++) {
+      await Client.create(createNewClient(`client${i}`));
+    }
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBeUndefined();
+      expect(res.body.clientList.length).toBe(2);
+      expect(res.body.clientList[0].clientName).toBe('client5');
+      expect(res.body.pages).toBe(1);
+    };
+
+    const validToken = jwks.token({
+      aud: audience,
+      iss: `https://${domain}/`,
+      sub: clientId,
+      permissions: 'read:clients',
+    });
+
+    await request(app)
+      .get('/api/clients?keyword=5')
       .set(`Authorization`, `Bearer ${validToken}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
@@ -545,6 +603,28 @@ describe('Given we have an "/api/users" endpoint', () => {
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
+  });
+
+  it('When a DELETE request is valid, but the client is being referenced by a job, then a 400 response is returned', async () => {
+    const clientInput = createNewClient('Spark', '#21502c', { email: 'abc@abc.com', name: 'test' });
+    await Client.create(clientInput);
+
+    const dbClient = await Client.findOne({ clientName: 'Spark' });
+    await JobDetails.create({ jobNumber: 1, address: '1 abc place', client: dbClient._id, color: '#21502c' });
+
+    const checkBody = async (res) => {
+      const data = await Client.find();
+      expect(res.body.message).toBe('Client in use by Job(s)');
+      expect(data.length).toBe(1);
+    };
+
+    await request(app)
+      .delete(`/api/clients/${dbClient._id}`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
   });
 
   it('When a DELETE request is valid, authenticated and does not have the required authorization, then a 403 response is returned', async () => {
