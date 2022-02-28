@@ -5,8 +5,9 @@ const { getContractors, createContractors, getContractor, updateContractor, dele
 const { readContractorsAuth, createContractorsAuth, updateContractorsAuth, deleteContractorsAuth } = require('../middleware/authMiddleware');
 const validation = require('../middleware/validatorMiddleware');
 const { contractorSchema, contractorParams } = require('../middleware/validators/contractorsValidation');
+const { paginationQuery } = require('../middleware/validators/paginationQueryValidation');
 
-router.route('/').get(readContractorsAuth, getContractors).post(createContractorsAuth, contractorSchema, validation, createContractors);
+router.route('/').get(readContractorsAuth, paginationQuery, validation, getContractors).post(createContractorsAuth, contractorSchema, validation, createContractors);
 router
   .route('/:id')
   .get(readContractorsAuth, contractorParams, validation, getContractor)

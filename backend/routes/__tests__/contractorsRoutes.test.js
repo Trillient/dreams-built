@@ -7,6 +7,7 @@ const app = require('../../app');
 const database = require('../../config/database');
 const { domain, audience } = require('../../config/env');
 const Contractor = require('../../models/contractorModel');
+const JobDueDate = require('../../models/jobPartDueDateModel');
 
 beforeAll(async () => {
   const mongoServer = await MongoMemoryServer.create();
@@ -49,7 +50,8 @@ describe('Given we have an "/api/contractors" endpoint', () => {
 
     const checkBody = (res) => {
       expect(res.body.error).toBeUndefined();
-      expect(res.body.length).toBe(20);
+      expect(res.body.contractorList.length).toBe(20);
+      expect(res.body.pages).toBe(1);
     };
 
     const validToken = jwks.token({
@@ -62,6 +64,26 @@ describe('Given we have an "/api/contractors" endpoint', () => {
     await request(app)
       .get('/api/contractors/')
       .set(`Authorization`, `Bearer ${validToken}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(200);
+  });
+  it('When a GET request is made and is valid, authenticated and appropriately authorized with pagination queries, then a 200 response with a list of contractors should be returned', async () => {
+    for (let i = 0; i < 20; i++) {
+      await Contractor.create(createNewContractor(`contractor${i}`));
+    }
+
+    const checkBody = (res) => {
+      expect(res.body.error).toBeUndefined();
+      expect(res.body.contractorList.length).toBe(5);
+      expect(res.body.contractorList[0].contractor).toBe('contractor14');
+      expect(res.body.pages).toBe(3);
+    };
+
+    await request(app)
+      .get('/api/contractors?limit=5&page=2&keyword=1')
+      .set(`Authorization`, `Bearer ${token}`)
       .set('Content-Type', 'application/json')
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
@@ -594,6 +616,24 @@ describe('Given we have an "/api/contractors/:id" endpoint', () => {
       .expect('Content-Type', /application\/json/)
       .expect(checkBody)
       .expect(200);
+  });
+  fit('When a DELETE request is made and is valid and authorized, then a 200 response is returned', async () => {
+    const contractor = await Contractor.findOne({ contractor: 'fooMill' });
+    const contractorId = contractor._id;
+
+    await JobDueDate.create({ job: '507f191e810c19729de860ea', jobPartTitle: '507f191e810c19729de860eb', contractors: [contractorId] });
+
+    const checkBody = (res) => {
+      expect(res.body.message).toBe('Contractor in use by Due Dates(s)');
+    };
+
+    await request(app)
+      .delete(`/api/contractors/${contractorId}`)
+      .set(`Authorization`, `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .expect('Content-Type', /application\/json/)
+      .expect(checkBody)
+      .expect(400);
   });
   it('When a DELETE request is made and has an invalid token, then a 401 response is returned', async () => {
     const contractor = await Contractor.findOne({ contractor: 'fooMill' });
