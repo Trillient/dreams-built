@@ -62,7 +62,9 @@ const Calendar = ({ jobPart, week, dueDates, loading, dueDateLoading, filterCont
                     >
                       <div style={{ backgroundColor: job.job.color, color: fontColorContrast(job.job.color) }} className={styles['job-insert']}>
                         {job.job.jobNumber} - <span className={styles.mobile}>{job.job.address.slice(0, 5)}...</span>
-                        <span className={styles.desktop}>{job.job.address}</span>
+                        <span className={styles.desktop}>
+                          {job.job.address} <br /> <em>{job.details}</em>
+                        </span>
                       </div>
                     </div>
                   ))}

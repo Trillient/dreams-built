@@ -51,7 +51,7 @@ const getJobPartDueDates = asyncHandler(async (req, res) => {
  */
 
 const createJobPartDueDate = asyncHandler(async (req, res) => {
-  const { dueDate, contractors, startDate } = req.body;
+  const { dueDate, contractors, startDate, details } = req.body;
   const jobId = req.params.jobid;
 
   const checkJobExists = await JobDetails.findById(jobId);
@@ -89,7 +89,7 @@ const createJobPartDueDate = asyncHandler(async (req, res) => {
     } else if (dueDate) {
       dateRange.push(dueDate);
     }
-    const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate, startDate: startDate, dueDateRange: dateRange, contractors: contractors });
+    const created = await JobDueDate.create({ job: jobId, jobPartTitle: partId, dueDate: dueDate, startDate: startDate, dueDateRange: dateRange, contractors: contractors, details: details });
 
     res.status(201).json(created);
   }
@@ -175,7 +175,7 @@ const deleteJobPartDueDates = asyncHandler(async (req, res) => {
  */
 
 const updateJobPartDueDate = asyncHandler(async (req, res) => {
-  const { dueDate, startDate, contractors } = req.body;
+  const { dueDate, startDate, contractors, details } = req.body;
   const jobPartDueDateItem = await JobDueDate.findById(req.params.id);
 
   if (jobPartDueDateItem) {
@@ -198,6 +198,7 @@ const updateJobPartDueDate = asyncHandler(async (req, res) => {
     jobPartDueDateItem.startDate = startDate;
     jobPartDueDateItem.dueDateRange = dateRange;
     jobPartDueDateItem.contractors = contractors;
+    jobPartDueDateItem.details = details;
 
     const updatedDueDate = await jobPartDueDateItem.save();
     res.json(updatedDueDate);

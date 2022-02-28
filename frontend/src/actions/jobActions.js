@@ -419,7 +419,7 @@ export const getJobDueDates = (token, jobId) => async (dispatch) => {
 };
 
 export const createJobPartDueDate =
-  (token, jobId, jobPart, dueDate, startDate, contractors = []) =>
+  (token, jobId, jobPart, dueDate, startDate, contractors = [], details) =>
   async (dispatch) => {
     try {
       dispatch({
@@ -432,7 +432,7 @@ export const createJobPartDueDate =
         },
       };
 
-      const body = { dueDate: dueDate, startDate: startDate, contractors: contractors.map((contractor) => contractor._id) };
+      const body = { dueDate: dueDate, startDate: startDate, contractors: contractors.map((contractor) => contractor._id), details: details };
 
       const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/job/duedates/parts/${jobId}?partid=${jobPart}`, body, config);
 
@@ -500,7 +500,7 @@ export const updateJobPartDueDate = (token, dueId, dueDate, startDate) => async 
   }
 };
 
-export const updateWholeJobPartDueDate = (token, dueId, dueDate, startDate, contractors) => async (dispatch) => {
+export const updateWholeJobPartDueDate = (token, dueId, dueDate, startDate, contractors, details) => async (dispatch) => {
   try {
     dispatch({
       type: actions.JOBPART_DUEDATE_UPDATE_REQUEST,
@@ -520,7 +520,7 @@ export const updateWholeJobPartDueDate = (token, dueId, dueDate, startDate, cont
       return;
     }
 
-    const body = { dueDate: dueDate, startDate: startDate, contractors: contractors.map((contractor) => contractor._id) };
+    const body = { dueDate: dueDate, startDate: startDate, contractors: contractors.map((contractor) => contractor._id), details: details };
 
     const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/job/duedates/job/part/${dueId}`, body, config);
 

@@ -18,6 +18,7 @@ const ScheduleEditDueDate = ({ setModalShow, job, jobPart, ...rest }) => {
 
   const [startDate, setStartDate] = useState(job.startDate ? job.startDate : '');
   const [dueDate, setDueDate] = useState(job.dueDate ? job.dueDate : '');
+  const [details, setDetails] = useState(job.details ? job.details : '');
   const [contractors, setContractors] = useState(
     job.contractors
       ? job.contractors.map((contractor) => {
@@ -29,6 +30,7 @@ const ScheduleEditDueDate = ({ setModalShow, job, jobPart, ...rest }) => {
   useEffect(() => {
     setStartDate(job.startDate ? job.startDate : '');
     setDueDate(job.dueDate ? job.dueDate : '');
+    setDetails(job.details ? job.details : '');
     setContractors(
       job.contractors
         ? job.contractors.map((contractor) => {
@@ -36,12 +38,12 @@ const ScheduleEditDueDate = ({ setModalShow, job, jobPart, ...rest }) => {
           })
         : []
     );
-  }, [job.dueDate, job.startDate, job.contractors]);
+  }, [job.dueDate, job.startDate, job.contractors, job.details]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     const token = await getAccessTokenSilently();
-    dispatch(updateWholeJobPartDueDate(token, job._id, dueDate, startDate, contractors));
+    dispatch(updateWholeJobPartDueDate(token, job._id, dueDate, startDate, contractors, details));
     setModalShow(false);
   };
 
@@ -74,6 +76,10 @@ const ScheduleEditDueDate = ({ setModalShow, job, jobPart, ...rest }) => {
             <Form.Group className={styles.due}>
               <Form.Label>Due Date:</Form.Label>
               <Form.Control type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Group className={styles.details}>
+              <Form.Label>Details:</Form.Label>
+              <Form.Control as="textarea" value={details} onChange={(e) => setDetails(e.target.value)}></Form.Control>
             </Form.Group>
             <Form.Group className={styles.contractors}>
               <Form.Label>Contractors:</Form.Label>

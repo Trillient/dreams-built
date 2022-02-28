@@ -25,6 +25,7 @@ const ScheduleCreateDueDate = ({ setModalShow, date, jobPart, ...rest }) => {
   const [startDate, setStartDate] = useState('');
   const [dueDate, setDueDate] = useState(date);
   const [contractors, setContractors] = useState([]);
+  const [details, setDetails] = useState('');
 
   useEffect(() => {
     setDueDate(date);
@@ -40,9 +41,9 @@ const ScheduleCreateDueDate = ({ setModalShow, date, jobPart, ...rest }) => {
     e.preventDefault();
     const token = await getAccessTokenSilently();
     if (jobDueDate.length > 0) {
-      dispatch(updateWholeJobPartDueDate(token, jobDueDate[0]._id, dueDate, startDate, contractors));
+      dispatch(updateWholeJobPartDueDate(token, jobDueDate[0]._id, dueDate, startDate, contractors, details));
     } else {
-      dispatch(createJobPartDueDate(token, job._id, jobPart._id, dueDate, startDate, contractors));
+      dispatch(createJobPartDueDate(token, job._id, jobPart._id, dueDate, startDate, contractors, details));
     }
     setModalShow(false);
   };
@@ -83,6 +84,10 @@ const ScheduleCreateDueDate = ({ setModalShow, date, jobPart, ...rest }) => {
             <Form.Group className={styles.due}>
               <Form.Label>Due Date:</Form.Label>
               <Form.Control type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}></Form.Control>
+            </Form.Group>
+            <Form.Group className={styles.details}>
+              <Form.Label>Details:</Form.Label>
+              <Form.Control as="textarea" value={details} onChange={(e) => setDetails(e.target.value)}></Form.Control>
             </Form.Group>
             <Form.Group className={styles.contractors}>
               <Form.Label>Contractors:</Form.Label>

@@ -22,7 +22,11 @@
 @media only screen and (min-width: 40rem) {
   .form {
     grid-template-columns: 1fr 1fr;
-    grid-template-areas: 'title title' 'start due' 'contractors contractors' 'save delete';
+    grid-template-areas: 'title title' 'start due' 'details details' 'contractors contractors' 'save delete';
+  }
+
+  .details {
+    grid-area: details;
   }
 
   .sub-title {
