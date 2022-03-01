@@ -17,7 +17,7 @@ router
 //TODO validation
 router.route('/roles/user/:id').post(checkJwt, updateUsersAuth, addRole).delete(checkJwt, updateUsersAuth, deleteRole);
 
-// User //TODO - :id change
+// User
 router.route('/profile/:id').get(checkJwt, readProfileAuth, getUserProfile).put(checkJwt, updateProfileAuth, userUpdateSchema, validation, updateUserProfile);
 
 module.exports = router;

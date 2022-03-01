@@ -22,6 +22,11 @@ describe('Given a JobPartDueDate schema model, when JobPartDueDates has been upd
     expect(startDate).toBeTruthy();
     expect(startDate.type()).toEqual(expect.any(String));
   });
+  it("A property named 'details' should be on the schema", () => {
+    const details = JobPartDueDate.schema.obj.details;
+    expect(details).toBeTruthy();
+    expect(details.type()).toEqual(expect.any(String));
+  });
   it("A property named 'dueDateRange' should be on the schema", () => {
     const dueDateRange = JobPartDueDate.schema.obj.dueDateRange;
     expect(dueDateRange).toBeTruthy();

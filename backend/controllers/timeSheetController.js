@@ -42,10 +42,11 @@ const createUserEntry = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Invalid user');
   }
+
   await TimesheetComment.deleteMany({ weekStart: weekStart, user: user._id });
   await TimesheetEntry.deleteMany({ weekStart: weekStart, userId: req.params.id });
 
-  const commentsResult = await comments.map((comment) => {
+  const commentsResult = await comments?.map((comment) => {
     TimesheetComment.create({
       user: user._id,
       day: comment.day,
@@ -54,7 +55,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
     });
   });
 
-  const entriesResult = await entries.map((entry) => {
+  const entriesResult = await entries?.map((entry) => {
     TimesheetEntry.create({
       user: user._id,
       job: entry.job._id,
@@ -71,7 +72,7 @@ const createUserEntry = asyncHandler(async (req, res) => {
     });
   });
 
-  res.status(201).json({ entriesCreated: entriesResult.length, commentsCreated: commentsResult.length });
+  res.status(201).json({ entriesCreated: entriesResult?.length, commentsCreated: commentsResult?.length });
 });
 
 /**

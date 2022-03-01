@@ -143,21 +143,6 @@ describe('Given we have an "/api/users" endpoint', () => {
         .expect(checkBody)
         .expect(400);
     });
-    it('When email is missing, then a 400 response is returned', async () => {
-      const newUser = createNewUser('2', 'john', 'Doe', null);
-
-      const checkBody = (res) => {
-        expect(res.body.errors[0].msg).toBe('Must enter a valid email');
-      };
-
-      await request(app)
-        .post('/api/users')
-        .send(newUser)
-        .set('Content-Type', 'application/json')
-        .expect('Content-Type', /application\/json/)
-        .expect(checkBody)
-        .expect(400);
-    });
   });
 });
 
@@ -165,104 +150,6 @@ describe('Given we have an "/api/users" endpoint', () => {
  * @Route /api/users/:id
  */
 describe('Given we have an "/api/users/:id" endpoint', () => {
-  describe('and a GET method', () => {
-    it("when a valid request is made then it should return a 200 response with the user's details", async () => {
-      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
-      const userParams = await user._id;
-
-      const checkBody = (res) => {
-        expect(res.body.userId).toBe(clientId);
-        expect(res.body.firstName).toBe('foo');
-        expect(res.body.auth0Email).toBe('foo@gmail.com');
-      };
-
-      const validToken = jwks.token({
-        aud: audience,
-        iss: `https://${domain}/`,
-        sub: clientId,
-        permissions: 'read:users',
-      });
-
-      await request(app)
-        .get(`/api/users/${userParams}`)
-        .set(`Authorization`, `Bearer ${validToken}`)
-        .set('Content-Type', 'application/json')
-        .expect('Content-Type', /application\/json/)
-        .expect(checkBody)
-        .expect(200);
-    });
-    it('when a request has an invalid token then it should return a 401 response', async () => {
-      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
-      const userParams = await user._id;
-
-      const checkBody = (res) => {
-        expect(res.body.code).toBe('invalid_token');
-      };
-
-      const invalidToken = jwks.token({
-        aud: audience,
-        iss: `https://{domain}/`,
-        sub: clientId,
-        permissions: 'read:users',
-      });
-
-      await request(app)
-        .get(`/api/users/${userParams}`)
-        .set(`Authorization`, `Bearer ${invalidToken}`)
-        .set('Content-Type', 'application/json')
-        .expect('Content-Type', /application\/json/)
-        .expect(checkBody)
-        .expect(401);
-    });
-    it('when a request has insufficient permissions, then it should return a 403 response', async () => {
-      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
-      const userParams = await user._id;
-
-      const checkBody = (res) => {
-        expect(res.body.error).toBe('Forbidden');
-      };
-
-      const invalidToken = jwks.token({
-        aud: audience,
-        iss: `https://${domain}/`,
-        sub: clientId,
-      });
-
-      await request(app)
-        .get(`/api/users/${userParams}`)
-        .set(`Authorization`, `Bearer ${invalidToken}`)
-        .set('Content-Type', 'application/json')
-        .expect('Content-Type', /application\/json/)
-        .expect(checkBody)
-        .expect(403);
-    });
-    it('when a request has an invalid "id" parameter, then a 400 response is returned', async () => {
-      const checkBody = (res) => {
-        expect(res.body.errors[0].msg).toBe('Invalid user');
-      };
-
-      await request(app)
-        .get(`/api/users/{userParams}`)
-        .set(`Authorization`, `Bearer ${token}`)
-        .set('Content-Type', 'application/json')
-        .expect('Content-Type', /application\/json/)
-        .expect(checkBody)
-        .expect(400);
-    });
-    it('when a request has an "id" parameter that does not exist, then a 404 response is returned', async () => {
-      const checkBody = (res) => {
-        expect(res.body.message).toBe('User does not exist');
-      };
-
-      await request(app)
-        .get(`/api/users/507f191e810c19729de860ea`)
-        .set(`Authorization`, `Bearer ${token}`)
-        .set('Content-Type', 'application/json')
-        .expect('Content-Type', /application\/json/)
-        .expect(checkBody)
-        .expect(404);
-    });
-  });
   describe('and a PUT method', () => {
     it('when a valid request is made then it should return a 200 response with an updated user', async () => {
       const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
@@ -286,7 +173,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       });
 
       await request(app)
-        .put(`/api/users/${userParams}`)
+        .put(`/api/users/user/${userParams}`)
         .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${validToken}`)
         .set('Content-Type', 'application/json')
@@ -316,7 +203,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       });
 
       await request(app)
-        .put(`/api/users/${userParams}`)
+        .put(`/api/users/user/${userParams}`)
         .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${invalidToken}`)
         .set('Content-Type', 'application/json')
@@ -345,7 +232,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       });
 
       await request(app)
-        .put(`/api/users/${userParams}`)
+        .put(`/api/users/user/${userParams}`)
         .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${invalidToken}`)
         .set('Content-Type', 'application/json')
@@ -368,7 +255,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       };
 
       await request(app)
-        .put(`/api/users/${userParams}`)
+        .put(`/api/users/user/${userParams}`)
         .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
@@ -392,7 +279,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       };
 
       await request(app)
-        .put(`/api/users/${userParams}`)
+        .put(`/api/users/user/${userParams}`)
         .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
@@ -415,7 +302,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       };
 
       await request(app)
-        .put(`/api/users/${userParams}`)
+        .put(`/api/users/user/${userParams}`)
         .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
@@ -438,7 +325,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       };
 
       await request(app)
-        .put(`/api/users/${userParams}`)
+        .put(`/api/users/user/${userParams}`)
         .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
@@ -458,7 +345,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       };
 
       await request(app)
-        .put(`/api/users/{userParams}`)
+        .put(`/api/users/user/{userParams}`)
         .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
@@ -478,7 +365,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       };
 
       await request(app)
-        .put(`/api/users/507f191e810c19729de860ea`)
+        .put(`/api/users/user/507f191e810c19729de860ea`)
         .send(updatedUserDetails)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
@@ -504,7 +391,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       });
 
       await request(app)
-        .delete(`/api/users/${user._id}`)
+        .delete(`/api/users/user/${user._id}`)
         .set(`Authorization`, `Bearer ${validToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -526,7 +413,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       });
 
       await request(app)
-        .delete(`/api/users/${user._id}`)
+        .delete(`/api/users/user/${user._id}`)
         .set(`Authorization`, `Bearer ${invalidToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -547,7 +434,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       });
 
       await request(app)
-        .delete(`/api/users/${user._id}`)
+        .delete(`/api/users/user/${user._id}`)
         .set(`Authorization`, `Bearer ${invalidToken}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -560,7 +447,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       };
 
       await request(app)
-        .delete(`/api/users/{user._id}`)
+        .delete(`/api/users/user/{user._id}`)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -573,7 +460,7 @@ describe('Given we have an "/api/users/:id" endpoint', () => {
       };
 
       await request(app)
-        .delete(`/api/users/507f191e810c19729de860ea`)
+        .delete(`/api/users/user/507f191e810c19729de860ea`)
         .set(`Authorization`, `Bearer ${token}`)
         .set('Content-Type', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -679,14 +566,13 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
 
       const updatedUserDetails = {
         firstName: user.firstName,
-        lastName: user.lastName,
-        auth0Email: 'kraig@gmail.com',
+        lastName: 'allan',
       };
 
       const checkBody = async (res) => {
         expect(res.body.message).toBe('Details updated!');
         const savedResult = await User.findOne({ userId: userParams });
-        expect(savedResult.auth0Email).toBe(updatedUserDetails.auth0Email);
+        expect(savedResult.lastName).toBe(updatedUserDetails.lastName);
       };
 
       const validToken = jwks.token({

@@ -21,7 +21,6 @@ describe('Given a User schema model has been updated', () => {
     const email = User.schema.obj.auth0Email;
     expect(email).toBeTruthy();
     expect(email.type()).toEqual(expect.any(String));
-    expect(email.required).toBeTruthy();
   });
   it("A property named 'hourlyRate' should be on the schema", () => {
     const hourlyRate = User.schema.obj.hourlyRate;

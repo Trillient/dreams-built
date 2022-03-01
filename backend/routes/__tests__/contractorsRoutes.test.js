@@ -617,7 +617,7 @@ describe('Given we have an "/api/contractors/:id" endpoint', () => {
       .expect(checkBody)
       .expect(200);
   });
-  fit('When a DELETE request is made and is valid and authorized, then a 200 response is returned', async () => {
+  it('When a DELETE request is made and is valid and authorized, then a 200 response is returned', async () => {
     const contractor = await Contractor.findOne({ contractor: 'fooMill' });
     const contractorId = contractor._id;
 
