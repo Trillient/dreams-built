@@ -29,8 +29,8 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
-  await mongoose.disconnect();
   jwks.stop();
+  await mongoose.connection.close();
 });
 
 const jwks = createJWKSMock(`https://${domain}/`);
