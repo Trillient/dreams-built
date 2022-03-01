@@ -76,10 +76,10 @@ afterEach(async () => {
   await TimesheetEntry.deleteMany();
 });
 
-afterAll((done) => {
-  jwks.stop();
-  mongoose.connection.close();
-  done();
+afterAll(async () => {
+  await User.deleteMany();
+  await mongoose.disconnect();
+  await jwks.stop();
 });
 
 describe('Given we have an /api/timesheet/user/:id endpoint', () => {

@@ -19,10 +19,9 @@ afterEach(async () => {
   await Contractor.deleteMany();
 });
 
-afterAll((done) => {
-  jwks.stop();
-  mongoose.connection.close();
-  done();
+afterAll(async () => {
+  await jwks.stop();
+  await mongoose.disconnect();
 });
 
 const jwks = createJWKSMock(`https://${domain}/`);
