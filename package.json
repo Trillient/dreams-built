@@ -1,0 +1,21 @@
+{
+  "name": "dreams-built",
+  "version": "1.0.0",
+  "description": "**_Currently still a work in progress, ETA completion 20/3/2022_**",
+  "main": "index.js",
+  "scripts": {
+    "ci:server": "npm --prefix backend ci",
+    "test:server": "npm --prefix backend test:ci"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BaileyNepe/dreams-built.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BaileyNepe/dreams-built/issues"
+  },
+  "homepage": "https://github.com/BaileyNepe/dreams-built#readme"
+}

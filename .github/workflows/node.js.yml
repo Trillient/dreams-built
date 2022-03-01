@@ -5,13 +5,12 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main, development ]
+    branches: [main, development]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -26,12 +25,11 @@ jobs:
       AUTH0_ADMIN_ROLE: rol_admin
       AUTH0_EMPLOYEE_ROLE: rol_employee
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm --prefix backend ci
-    - run: npm run build --if-present
-    - run: npm --prefix backend test:ci
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci:server
+      - run: npm test:server
