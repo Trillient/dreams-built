@@ -23,6 +23,10 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+app.get('/', (req, res) => {
+  res.json({ message: 'API running...' });
+});
+
 app.use('/api/users', userRoutes);
 app.use('/api/timesheet', checkJwt, timesheetRoutes);
 app.use('/api/job', checkJwt, jobDetailRoutes);
