@@ -2274,7 +2274,7 @@ describe('Given we have a "/api/job/duedates/parts/:jobid" endpoint', () => {
       .expect(checkBody)
       .expect(403);
   });
-  it('When a POST request has a ":jobid" parameter that does not exist, then a 404 response is returned', async () => {
+  it.skip('When a POST request has a ":jobid" parameter that does not exist, then a 404 response is returned', async () => {
     const databaseJob = await JobDetails.findOne({ jobNumber: 1 });
     const databaseJobPart = await JobPart.findOne({ jobPartTitle: 'strip walls' });
 
