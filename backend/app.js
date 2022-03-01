@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-app.get('/', (req, res) => {
+app.get('/api/healthcheck', async (req, res) => {
   res.json({ message: 'API running...' });
 });
 
