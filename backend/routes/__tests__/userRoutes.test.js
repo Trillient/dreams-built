@@ -23,9 +23,10 @@ afterEach(async () => {
   await User.deleteMany();
 });
 
-afterAll(async () => {
+afterAll((done) => {
   jwks.stop();
-  await mongoose.connection.close();
+  mongoose.connection.close();
+  done();
 });
 
 const jwks = createJWKSMock(`https://${domain}/`);
