@@ -2,7 +2,6 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const morgan = require('morgan');
 
 const jobDetailRoutes = require('./routes/jobDetailsRoutes');
 const timesheetRoutes = require('./routes/timesheetRoutes.js');
@@ -20,6 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 if (process.env.NODE_ENV === 'development') {
+  const morgan = require('morgan');
   app.use(morgan('dev'));
 }
 
