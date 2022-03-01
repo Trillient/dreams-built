@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "ci:server": "npm --prefix backend ci",
-    "test:server": "npm --prefix backend test:ci"
+    "test": "npm --prefix backend test:ci"
   },
   "repository": {
     "type": "git",
