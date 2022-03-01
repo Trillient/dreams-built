@@ -98,14 +98,13 @@ const getUser = asyncHandler(async (req, res) => {
  */
 
 const updateUser = asyncHandler(async (req, res) => {
-  const { firstName, lastName, auth0Email, hourlyRate } = req.body;
+  const { firstName, lastName, hourlyRate } = req.body;
 
   const user = await User.findById(req.params.id);
 
   if (user) {
     user.firstName = firstName;
     user.lastName = lastName;
-    user.auth0Email = auth0Email;
     user.hourlyRate = hourlyRate;
 
     await user.save();
