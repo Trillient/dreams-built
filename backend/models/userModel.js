@@ -6,7 +6,7 @@ const userSchema = mongoose.Schema(
     firstName: { type: String },
     lastName: { type: String },
     auth0Email: { type: String },
-    hourlyRate: { type: Number },
+    hourlyRate: { type: Number, default: 21 },
   },
   { timestamps: true }
 );
