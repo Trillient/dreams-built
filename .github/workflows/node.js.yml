@@ -24,6 +24,7 @@ jobs:
       AUTH0_CLIENT_SECRET: RandomSecret
       AUTH0_ADMIN_ROLE: rol_admin
       AUTH0_EMPLOYEE_ROLE: rol_employee
+    timeout-minutes: 1
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
