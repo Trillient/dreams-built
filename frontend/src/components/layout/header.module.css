@@ -2,6 +2,10 @@
   grid-area: header;
 }
 
+.logo {
+  width: 15rem;
+}
+
 .display-none_mobile {
   display: none;
 }
