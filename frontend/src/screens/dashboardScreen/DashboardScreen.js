@@ -24,7 +24,7 @@ const DashboardScreen = () => {
           iconText="Video Tutorial"
           title="Need help figuring things out?"
           text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-          link={{ title: 'Help Center', link: '/help' }}
+          link={{ title: 'Help Center', link: 'https://www.loom.com/share/37ca52a4b25241799923784bdf98d2a3?sharedAppSource=personal_library' }}
         />
         <InfoBlock
           icon={<HiOutlineInformationCircle />}
@@ -55,7 +55,13 @@ const DashboardScreen = () => {
         You're in the Employee portal
       </Message>
       <div className={styles.grid}>
-        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Video Tutorial" title="Need help figuring things out?" text="Watch this explanation video, to learn how to use the website." link={{ title: 'Help Center', link: '/help' }} />
+        <InfoBlock
+          icon={<HiOutlineInformationCircle />}
+          iconText="Video Tutorial"
+          title="Need help figuring things out?"
+          text="Watch this explanation video, to learn how to use the website."
+          link={{ title: 'Help Center', link: 'https://www.loom.com/embed/89ea8e4453e241ba93ccc27f0fbf8390?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true' }}
+        />
         <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Timesheet" title="Need help figuring things out?" text="The following video, helps with common timesheet issues." link={{ title: 'Help Center', link: '/help' }} />
         <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Profile" title="Need help figuring things out?" text="The following video help you" link={{ title: 'Help Center', link: '/help' }} />
         <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Help Center" title="Need help figuring things out?" text="Still need help? Contact us here." link={{ title: 'Help Center', link: '/help' }} />

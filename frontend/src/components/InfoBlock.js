@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { Button, Card } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 import { FiArrowRight } from 'react-icons/fi';
 
 import styles from './infoBlock.module.css';
 
+import VideoModal from './modals/VideoModal';
+
 const InfoBlock = ({ icon, iconText, title, text, link }) => {
+  const [modalShow, setModalShow] = useState(false);
   return (
     <Card className={styles.card}>
       <Card.Title className={styles.title}>
@@ -17,11 +20,10 @@ const InfoBlock = ({ icon, iconText, title, text, link }) => {
       </Card.Body>
       <hr style={{ color: 'gray', width: '100%' }} />
       <Card.Footer className={styles.footer}>
-        <LinkContainer to={link.link}>
-          <Button className={styles.button}>
-            {link.title} <FiArrowRight />
-          </Button>
-        </LinkContainer>
+        <Button className={styles.button} onClick={setModalShow}>
+          {link.title} <FiArrowRight />
+        </Button>
+        <VideoModal show={modalShow} setModalShow={setModalShow} src={link.link} title={title} onHide={() => setModalShow(false)} />
       </Card.Footer>
     </Card>
   );
