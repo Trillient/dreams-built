@@ -28,10 +28,10 @@ const JobReportCard = ({ job }) => {
           {job.value.map((entry) => (
             <tr key={entry._id}>
               <td>
-                {entry.user.firstName} {entry.user.lastName}
+                {entry?.user?.firstName} {entry?.user?.lastName}
               </td>
-              <td className={`${styles.col} ${styles.rate}`}>$ {entry.user.hourlyRate}</td>
-              <td className={`${styles.col} ${styles.time}`}>{entry.jobTime}</td>
+              <td className={`${styles.col} ${styles.rate}`}>$ {entry?.user?.hourlyRate}</td>
+              <td className={`${styles.col} ${styles.time}`}>{entry?.jobTime}</td>
               <td className={styles.col}>$ {(entry?.user?.hourlyRate * entry?.jobTime)?.toFixed(2)}</td>
             </tr>
           ))}

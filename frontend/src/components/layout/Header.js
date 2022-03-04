@@ -1,5 +1,5 @@
 import { LinkContainer } from 'react-router-bootstrap';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Navbar, Nav, Container, Image } from 'react-bootstrap';
 
 import LoginButton from '../LoginButton';
 
@@ -13,13 +13,17 @@ const Header = () => {
           <div className={styles.topnav}>
             <div className={styles['display-none_mobile']}>
               <LinkContainer to="/">
-                <Navbar.Brand>Dreams Built</Navbar.Brand>
+                <Navbar.Brand>
+                  <Image className={styles.logo} src="logo-min.png" />
+                </Navbar.Brand>
               </LinkContainer>
             </div>
             <div className={styles.mobile}>
               <div className={styles.brand}>
                 <LinkContainer to="/">
-                  <Navbar.Brand>Dreams Built</Navbar.Brand>
+                  <Navbar.Brand>
+                    <Image className={styles.logo} src="logo-min.png" />
+                  </Navbar.Brand>
                 </LinkContainer>
               </div>
               <div className={styles.toggle}>
@@ -28,9 +32,6 @@ const Header = () => {
               <div className={styles.collapse}>
                 <Navbar.Collapse id="basic-navbar-nav">
                   <Nav>
-                    <LinkContainer to="/">
-                      <Nav.Link>Home</Nav.Link>
-                    </LinkContainer>
                     <div className={styles.login}>
                       <LoginButton />
                     </div>

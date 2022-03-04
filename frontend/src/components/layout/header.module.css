@@ -2,6 +2,10 @@
   grid-area: header;
 }
 
+.logo {
+  width: 15rem;
+}
+
 .display-none_mobile {
   display: none;
 }
@@ -43,6 +47,7 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    align-items: center;
   }
   .display-none_mobile {
     display: block;
@@ -62,5 +67,6 @@
     grid-template-columns: min-content 1fr;
     grid-template-rows: min-content auto;
     grid-template-areas: 'brand toggle' 'col col';
+    align-items: center;
   }
 }

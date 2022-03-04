@@ -5,10 +5,10 @@ import styles from './layout.module.css';
 
 const Footer = () => {
   return (
-    <footer className={styles.footer}>
+    <footer className={`${styles.footer} ${'bg-dark'}`}>
       <Container>
         <Row>
-          <Col className="text-center py3 m-3">Copyright &copy; Dreams Built</Col>
+          <Col className="text-center py3 m-3"> Dreams Built &copy; {new Date().getFullYear()}</Col>
         </Row>
       </Container>
     </footer>
