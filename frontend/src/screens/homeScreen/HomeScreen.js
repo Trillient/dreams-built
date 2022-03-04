@@ -1,6 +1,6 @@
-import { Carousel, Container } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 
-import styles from './homeScreen.module.css';
+// import styles from './homeScreen.module.css';
 
 const HomeScreen = () => {
   return (
