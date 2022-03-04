@@ -38,6 +38,8 @@
 
 .footer {
   grid-area: footer;
+  font-size: 0.7rem;
+  color: white;
 }
 
 @media only screen and (max-width: 50rem) {

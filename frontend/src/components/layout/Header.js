@@ -8,7 +8,7 @@ import styles from './header.module.css';
 const Header = () => {
   return (
     <header className={styles.header}>
-      <Navbar bg="light" variant="light" expand="lg" collapseOnSelect>
+      <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
         <Container>
           <div className={styles.topnav}>
             <div className={styles['display-none_mobile']}>
