@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap';
 const VideoModal = ({ setModalShow, title, src, ...rest }) => {
   return (
     rest.show && (
-      <Modal {...rest} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
+      <Modal {...rest} size="xl" aria-labelledby="contained-modal-title-vcenter" centered>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             <h1 style={{ fontSize: '1.7rem' }}>{title}</h1>

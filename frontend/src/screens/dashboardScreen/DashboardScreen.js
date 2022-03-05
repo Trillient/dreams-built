@@ -34,7 +34,7 @@ const DashboardScreen = () => {
           iconText="Video Tutorial"
           title="Need help figuring things out?"
           text="Watch this explanation video, to learn how to use the Employee Dashboard."
-          link={{ title: 'Demo', link: 'https://www.loom.com/embed/89ea8e4453e241ba93ccc27f0fbf8390?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true' }}
+          link={{ title: 'Demo', link: 'https://www.loom.com/embed/80058a2a069d477b9bd194ad089fdc34?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true' }}
         />
         <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Help Center" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Help Center', link: null }} />
       </div>
