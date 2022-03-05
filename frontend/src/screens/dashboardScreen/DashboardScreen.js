@@ -19,8 +19,20 @@ const DashboardScreen = () => {
         You're in the Admin portal
       </Message>
       <div className={styles.grid}>
-        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Schedule" title="Need help figuring things out?" text="Watch this explanation video, to learn how to use the Job Schedule." link={{ title: 'Help Center', link: '/help' }} />
-        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Job Reports" title="Need help figuring things out?" text="Watch this explanation video, to learn how to use the Reports." link={{ title: 'Help Center', link: '/help' }} />
+        <InfoBlock
+          icon={<HiOutlineInformationCircle />}
+          iconText="Schedule"
+          title="Need help figuring things out?"
+          text="Watch this explanation video, to learn how to use the Job Schedule."
+          link={{ title: 'Help Center', link: 'https://www.loom.com/embed/8e22009ec07741768244878dfe84780b?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true' }}
+        />
+        <InfoBlock
+          icon={<HiOutlineInformationCircle />}
+          iconText="Job Reports"
+          title="Need help figuring things out?"
+          text="Watch this explanation video, to learn how to use the Reports."
+          link={{ title: 'Help Center', link: 'https://www.loom.com/embed/590488f9bd704092af3c5ba508b3b435?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true' }}
+        />
       </div>
     </div>
   ) : user[`${domain}/roles`].includes('Employee') ? (
@@ -45,8 +57,8 @@ const DashboardScreen = () => {
         You have not been added to the employee list yet, please contact your employer.
       </Message>
       <div className={styles.grid}>
-        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: '/contact' }} />
-        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: '/contact' }} />
+        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: 'null' }} />
+        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: 'null' }} />
       </div>
     </div>
   );
