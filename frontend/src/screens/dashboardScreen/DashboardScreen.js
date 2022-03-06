@@ -54,11 +54,11 @@ const DashboardScreen = () => {
   ) : (
     <div className="parent-container">
       <Message margin={'0'} variant="info">
-        You have not been added to the employee list yet, please contact your employer.
+        Try out the Employee and Admin dashboards by accessing the roles with the buttons below.
       </Message>
       <div className={styles.grid}>
-        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: 'null' }} />
-        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: 'null' }} />
+        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: null }} />
+        <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: null }} />
       </div>
     </div>
   );
