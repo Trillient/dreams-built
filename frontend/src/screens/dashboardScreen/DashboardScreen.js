@@ -1,4 +1,5 @@
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
+import { Button } from 'react-bootstrap';
 import { HiOutlineInformationCircle } from 'react-icons/hi';
 
 import InfoBlock from '../../components/InfoBlock';
@@ -19,6 +20,8 @@ const DashboardScreen = () => {
         You're in the Admin portal
       </Message>
       <div className={styles.grid}>
+        <Button variant="warning">Remove all Privileges</Button>
+        <Button variant="success">Try Employee Privileges</Button>
         <InfoBlock
           icon={<HiOutlineInformationCircle />}
           iconText="Schedule"
@@ -41,6 +44,8 @@ const DashboardScreen = () => {
         You're in the Employee portal
       </Message>
       <div className={styles.grid}>
+        <Button variant="warning">Remove all Privileges</Button>
+        <Button variant="success">Try Admin Privileges</Button>
         <InfoBlock
           icon={<HiOutlineInformationCircle />}
           iconText="Video Tutorial"
@@ -57,6 +62,8 @@ const DashboardScreen = () => {
         Try out the Employee and Admin dashboards by accessing the roles with the buttons below.
       </Message>
       <div className={styles.grid}>
+        <Button variant="success">Try Admin Privileges</Button>
+        <Button variant="success">Try Employee Privileges</Button>
         <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: null }} />
         <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: null }} />
       </div>
