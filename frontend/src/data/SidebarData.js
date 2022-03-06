@@ -10,11 +10,6 @@ export const UnAuthenticatedSidebarData = [
     icon: <AiFillHome />,
   },
   {
-    title: 'Profile',
-    path: '/profile',
-    icon: <CgProfile />,
-  },
-  {
     title: 'Logout',
     icon: <MdLogout />,
   },
