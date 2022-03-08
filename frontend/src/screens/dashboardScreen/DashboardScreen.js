@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 import { HiOutlineInformationCircle } from 'react-icons/hi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { addRole, deleteRole, getProfile } from '../../actions/employeeActions';
+import { changeRole, getProfile, resetProfileRefresh } from '../../actions/employeeActions';
 
 import InfoBlock from '../../components/InfoBlock';
 import Loader from '../../components/Loader';
@@ -19,9 +19,13 @@ const DashboardScreen = () => {
   const navigate = useNavigate();
 
   const userInfo = useSelector((state) => state.profile);
-  const { userData } = userInfo;
+  const { userData, refresh, loading } = userInfo;
 
   useEffect(() => {
+    if (refresh) {
+      dispatch(resetProfileRefresh());
+      navigate(0);
+    }
     if (!userData) {
       (async () => {
         try {
@@ -32,28 +36,14 @@ const DashboardScreen = () => {
         }
       })();
     }
-  }, [dispatch, getAccessTokenSilently, user.sub, userData]);
+  }, [dispatch, getAccessTokenSilently, navigate, refresh, user.sub, userData]);
 
   const changeRoleHandler = async (roleToDelete, roleToAdd) => {
     const token = await getAccessTokenSilently();
-    dispatch(deleteRole(token, userData._id, roleToDelete));
-    dispatch(addRole(token, userData._id, roleToAdd));
-    navigate(0);
+    dispatch(changeRole(token, userData._id, roleToDelete, roleToAdd));
   };
 
-  const removeRoleHandler = async (roleToDelete) => {
-    const token = await getAccessTokenSilently();
-    dispatch(deleteRole(token, userData._id, roleToDelete));
-    navigate(0);
-  };
-
-  const addRoleHandler = async (roleToAdd) => {
-    const token = await getAccessTokenSilently();
-    dispatch(addRole(token, userData._id, roleToAdd));
-    navigate(0);
-  };
-
-  return isLoading ? (
+  return isLoading || loading ? (
     <Loader />
   ) : error ? (
     <Message variant="danger">{error}</Message>
@@ -63,7 +53,7 @@ const DashboardScreen = () => {
         You're in the Admin portal
       </Message>
       <div className={styles.grid}>
-        <Button variant="danger" onClick={() => removeRoleHandler('admin')}>
+        <Button variant="danger" onClick={() => changeRoleHandler('admin', null)}>
           Remove admin Privileges
         </Button>
         <Button variant="success" onClick={() => changeRoleHandler('admin', 'employee')}>
@@ -91,7 +81,7 @@ const DashboardScreen = () => {
         You're in the Employee portal
       </Message>
       <div className={styles.grid}>
-        <Button variant="danger" onClick={() => removeRoleHandler('employee')}>
+        <Button variant="danger" onClick={() => changeRoleHandler('employee', null)}>
           Remove all Privileges
         </Button>
         <Button variant="info" onClick={() => changeRoleHandler('employee', 'admin')}>
@@ -113,10 +103,10 @@ const DashboardScreen = () => {
         Try out the Employee and Admin dashboards by accessing the roles with the buttons below.
       </Message>
       <div className={styles.grid}>
-        <Button variant="info" onClick={() => addRoleHandler('admin')}>
+        <Button variant="info" onClick={() => changeRoleHandler(null, 'admin')}>
           Try Admin Privileges
         </Button>
-        <Button variant="info" onClick={() => addRoleHandler('employee')}>
+        <Button variant="info" onClick={() => changeRoleHandler(null, 'employee')}>
           Try Employee Privileges
         </Button>
         <InfoBlock icon={<HiOutlineInformationCircle />} iconText="Contact" title="Need help figuring things out?" text="Contact us here." link={{ title: 'Contact', link: null }} />

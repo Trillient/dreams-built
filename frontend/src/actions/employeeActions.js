@@ -277,3 +277,48 @@ export const updateProfile = (token, user, userId) => async (dispatch) => {
     });
   }
 };
+
+export const resetProfileRefresh = () => async (dispatch) => {
+  dispatch({
+    type: actions.PROFILE_RESET_REDIRECT,
+  });
+};
+
+export const changeRole = (token, userId, roleToDelete, roleToAdd) => async (dispatch) => {
+  try {
+    dispatch({
+      type: actions.PROFILE_CHANGE_ROLE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    if (roleToDelete) {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/users/roles/user/${userId}?role=${roleToDelete}`, config);
+    }
+
+    if (roleToAdd) {
+      await axios.post(`${process.env.REACT_APP_API_URL}/users/roles/user/${userId}?role=${roleToAdd}`, {}, config);
+    }
+
+    dispatch({
+      type: actions.PROFILE_CHANGE_ROLE_SUCCESS,
+    });
+    toast.success('Roles Updated!');
+  } catch (error) {
+    const message = error.response && error.response.data.message ? error.response.data.message : error.response.data.errors ? error.response.data.errors : error.message;
+
+    if (error.response.data.errors && message.length > 0) {
+      message.map((err) => toast.error(err.msg));
+    } else {
+      toast.error(message);
+    }
+    dispatch({
+      type: actions.PROFILE_CHANGE_ROLE_FAIL,
+      payload: message,
+    });
+  }
+};
