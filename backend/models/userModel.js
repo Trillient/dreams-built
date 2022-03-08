@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema(
   {
     userId: { type: String, required: true, unique: true },
-    firstName: { type: String },
-    lastName: { type: String },
+    firstName: { type: String, default: 'John' },
+    lastName: { type: String, default: 'Doe' },
     auth0Email: { type: String },
     hourlyRate: { type: Number, default: 21 },
   },

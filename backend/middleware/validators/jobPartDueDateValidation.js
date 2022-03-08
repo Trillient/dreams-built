@@ -18,7 +18,7 @@ const dueDateFullSchema = [
     .optional()
     .isString()
     .custom((value) => checkDate(value)),
-  body('details', 'Details field must be valid').optional().isString(),
+  body('details', 'Details field must be valid').optional().isString().trim(),
   body('contractors.*', 'contractors field must be valid').optional().isMongoId(),
 ];
 

@@ -82,10 +82,10 @@ const createUserEntry = asyncHandler(async (req, res) => {
  */
 
 const getAllUsers = asyncHandler(async (req, res) => {
-  const jobs = await TimesheetEntry.find({ weekStart: req.query.weekstart }).populate('user job', 'firstName lastName auth0Email hourlyRate userId jobNumber address city');
+  const jobs = await TimesheetEntry.find({ weekStart: req.query.weekstart }).populate('user job', 'firstName lastName hourlyRate userId jobNumber address city');
 
   const entriesInit = await User.aggregate([
-    { $sort: { lastName: 1, firstName: 1, _id: 1 } },
+    { $sort: { firstName: 1, lastName: 1, _id: 1 } },
     {
       $lookup: {
         from: 'timesheetentries',
@@ -118,7 +118,13 @@ const getAllUsers = asyncHandler(async (req, res) => {
     },
   ]);
 
-  const entries = entriesInit ? entriesInit.filter((entries) => entries.entries.length > 0 || entries.comments.length > 0) : [];
+  const entries = entriesInit
+    ? entriesInit
+        .filter((entries) => entries.entries.length > 0 || entries.comments.length > 0)
+        .map((object) => {
+          return { ...object, auth0Email: 'private' };
+        })
+    : [];
 
   res.json({ jobs, entries });
 });
@@ -153,8 +159,11 @@ const getAllUsersNotEntered = asyncHandler(async (req, res) => {
   ]);
 
   const data = userEntries.filter((entries) => entries.comments.length < 1 && entries.entries.length < 1);
+  const filterOutUnusedData = data.map((details) => {
+    return { firstName: details.firstName || 'noname', lastName: details.lastName || 'noname' };
+  });
 
-  res.json(data);
+  res.json(filterOutUnusedData);
 });
 
 /**

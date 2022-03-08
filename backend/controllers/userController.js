@@ -34,7 +34,21 @@ const getUsers = asyncHandler(async (req, res) => {
 
   const mergedData = data.users.map((authUser) => ({ ...authUser, ...userList.find((dbUser) => dbUser.userId === authUser.user_id) }));
 
-  res.json({ users: mergedData, pages: Math.ceil(data.total / pageSize) });
+  //remove user emails and other personal details to allow users to view admin dashboard without seeing other user's personal information
+  const filterOutUserEmail = mergedData.map((details) => {
+    return {
+      firstName: details.firstName || 'noname',
+      lastName: details.lastName || 'noname',
+      hourlyRate: details.hourlyRate,
+      email: 'private',
+      last_login: details.last_login,
+      picture: 'https://lh3.googleusercontent.com/a/AATXAJyKEBN-XVjwxUVakokeEF83h2LMO1pv_xE4PfEg=s96-c',
+      _id: details._id,
+      userId: details.userId,
+    };
+  });
+
+  res.json({ users: filterOutUserEmail, pages: Math.ceil(data.total / pageSize) });
 });
 
 /**
@@ -84,7 +98,17 @@ const getUser = asyncHandler(async (req, res) => {
       headers: { Authorization: `Bearer ${token.data.access_token}` },
     };
     const { data } = await axios.get(`https://${domain}/api/v2/users/${user.userId}/roles`, config);
-    res.json({ user: user, roles: data });
+
+    const filteredUser = {
+      _id: user._id,
+      userId: user.userId,
+      firstName: user.firstName || 'noname',
+      lastName: user.lastName || 'noname',
+      hourlyRate: user.hourlyRate,
+      auth0Email: 'private',
+    };
+
+    res.json({ user: filteredUser, roles: data });
   } else {
     res.status(404);
     throw new Error('User does not exist');
