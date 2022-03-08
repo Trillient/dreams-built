@@ -1,4 +1,4 @@
-const { body, param } = require('express-validator');
+const { body, param, query } = require('express-validator');
 
 const userSchema = [
   body('userId', 'userId required').exists().isString(),
@@ -13,4 +13,12 @@ const userAdminUpdateSchema = [body('hourlyRate', 'Hourly Rate must be a valid n
 
 const userParams = [param('id').exists().isMongoId().withMessage('Invalid user')];
 
-module.exports = { userParams, userSchema, userUpdateSchema, userAdminUpdateSchema };
+const updateUserRole = [
+  query('role', 'Role not valid')
+    .exists()
+    .custom((value) => {
+      return value === 'employee' || value === 'admin';
+    }),
+];
+
+module.exports = { userParams, userSchema, userUpdateSchema, userAdminUpdateSchema, updateUserRole };
