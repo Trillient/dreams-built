@@ -3,6 +3,7 @@ import { Button, Card } from 'react-bootstrap';
 import { FiArrowRight } from 'react-icons/fi';
 
 import styles from './infoBlock.module.css';
+import ContactModal from './modals/ContactModal';
 
 import VideoModal from './modals/VideoModal';
 
@@ -23,7 +24,11 @@ const InfoBlock = ({ icon, iconText, title, text, link }) => {
         <Button className={styles.button} onClick={setModalShow}>
           {link.title} <FiArrowRight />
         </Button>
-        <VideoModal show={modalShow} setModalShow={setModalShow} src={link.link} title={title} onHide={() => setModalShow(false)} />
+        {link.link ? (
+          <VideoModal show={modalShow} setModalShow={setModalShow} src={link.link} title={title} onHide={() => setModalShow(false)} />
+        ) : (
+          <ContactModal show={modalShow} setModalShow={setModalShow} title={title} onHide={() => setModalShow(false)} />
+        )}
       </Card.Footer>
     </Card>
   );

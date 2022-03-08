@@ -11,7 +11,7 @@ const TimesheetEntry = require('../models/timesheetEntryModel');
  */
 
 const getJobs = asyncHandler(async (req, res) => {
-  const pageSize = +req.query.limit || 25;
+  const pageSize = +req.query.limit || 100;
   const page = +req.query.page || 1;
 
   const keyword = req.query.keyword
@@ -33,6 +33,12 @@ const getJobs = asyncHandler(async (req, res) => {
               },
               {
                 city: {
+                  $regex: req.query.keyword,
+                  $options: 'i',
+                },
+              },
+              {
+                endClient: {
                   $regex: req.query.keyword,
                   $options: 'i',
                 },

@@ -522,29 +522,8 @@ describe('Given we have an "/api/users/profile/:id" endpoint', () => {
         .expect(checkBody)
         .expect(401);
     });
-    it('when a request has insufficient permissions, then a 403 response is returned', async () => {
-      const user = await User.findOne({ auth0Email: 'foo@gmail.com' });
 
-      const checkBody = (res) => {
-        expect(res.body.error).toBe('Forbidden');
-      };
-
-      const invalidToken = jwks.token({
-        aud: audience,
-        iss: `https://${domain}/`,
-        sub: clientId,
-      });
-
-      await request(app)
-        .get(`/api/users/profile/${user.userId}`)
-        .set(`Authorization`, `Bearer ${invalidToken}`)
-        .set('Content-Type', 'application/json')
-        .expect('Content-Type', /application\/json/)
-        .expect(checkBody)
-        .expect(403);
-    });
-
-    it('when a request has a "id" paramtere that does not exist, then a 404 response is returned', async () => {
+    it('when a request has a "id" parameter that does not exist, then a 404 response is returned', async () => {
       const checkBody = (res) => {
         expect(res.body.message).toBe('User not found');
       };
