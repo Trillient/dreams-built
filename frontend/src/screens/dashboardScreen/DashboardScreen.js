@@ -56,7 +56,7 @@ const DashboardScreen = () => {
         <Button variant="danger" onClick={() => changeRoleHandler('admin', null)}>
           Remove admin Privileges
         </Button>
-        <Button variant="success" onClick={() => changeRoleHandler('admin', 'employee')}>
+        <Button variant="info" onClick={() => changeRoleHandler('admin', 'employee')}>
           Try Employee Privileges
         </Button>
         <InfoBlock
