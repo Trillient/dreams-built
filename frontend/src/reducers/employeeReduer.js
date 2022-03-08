@@ -58,20 +58,28 @@ export const userReducer = (state = { user: [] }, action) => {
   }
 };
 
-export const profileReducer = (state = { userData: '', error: false }, action) => {
+export const profileReducer = (state = { userData: '', error: false, refresh: false }, action) => {
   switch (action.type) {
     case actions.PROFILE_FETCH_REQUEST:
-      return { ...state, loading: true };
+      return { ...state, loading: true, refresh: false };
     case actions.PROFILE_FETCH_SUCCESS:
-      return { ...state, loading: false, userData: action.payload };
+      return { ...state, loading: false, userData: action.payload, refresh: false };
     case actions.PROFILE_FETCH_FAIL:
       return { ...state, loading: false, error: action.payload };
     case actions.PROFILE_UPDATE_REQUEST:
       return { ...state, loading: true };
     case actions.PROFILE_UPDATE_SUCCESS:
-      return { ...state, loading: false, userData: action.payload.userProfile };
+      return { ...state, loading: false, userData: action.payload.userProfile, refresh: false };
     case actions.PROFILE_UPDATE_FAIL:
       return { ...state, loading: false };
+    case actions.PROFILE_CHANGE_ROLE_REQUEST:
+      return { ...state, loading: true };
+    case actions.PROFILE_CHANGE_ROLE_SUCCESS:
+      return { ...state, loading: false, refresh: true };
+    case actions.PROFILE_CHANGE_ROLE_FAIL:
+      return { ...state, loading: false };
+    case actions.PROFILE_RESET_REDIRECT:
+      return { ...state, refresh: false };
     default:
       return state;
   }

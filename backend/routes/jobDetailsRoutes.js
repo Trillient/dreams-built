@@ -30,7 +30,6 @@ router.route('/details').get(readJobDetailsAuth, paginationQuery, validation, ge
 router.route('/details/:id').get(readJobDetailsAuth, jobIdParams, validation, getJob).put(updateJobDetailsAuth, jobIdParams, jobDetailsSchema, validation, updateJob).delete(deleteJobDetailsAuth, jobIdParams, validation, deleteJob);
 
 // Job parts
-//TODO - patch update validations + add tests
 router.route('/parts').get(readJobPartsAuth, paginationQuery, validation, getJobParts).post(createJobPartsAuth, jobPartsSchema, validation, createJobPart).patch(updateJobPartsAuth, updateJobParts);
 router.route('/parts/:id').get(readJobPartsAuth, jobPartParams, validation, getJobPart).put(updateJobPartsAuth, jobPartParams, jobPartsSchema, validation, updateJobPart).delete(deleteJobPartsAuth, jobPartParams, validation, deleteJobPart);
 
