@@ -1,0 +1,40 @@
+.contact-block {
+  padding: 2rem 0;
+}
+
+.form {
+  background: whitesmoke;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  display: grid;
+  gap: 1rem;
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+@media only screen and (min-width: 48rem) {
+  .form {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'contact-title .' 'name email' 'subject subject' 'message message' 'send .';
+  }
+  .contact-title {
+    grid-area: contact-title;
+  }
+  .name {
+    grid-area: name;
+  }
+  .email {
+    grid-area: email;
+  }
+  .subject {
+    grid-area: subject;
+  }
+  .message {
+    grid-area: message;
+  }
+  .send {
+    grid-area: send;
+    width: fit-content;
+  }
+}
