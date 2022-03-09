@@ -1,17 +1,17 @@
-import { Container } from 'react-bootstrap';
+import { Carousel, Container } from 'react-bootstrap';
 
 // import styles from './homeScreen.module.css';
 
 const HomeScreen = () => {
   return (
     <Container>
-      {/* <section>Intro Video</section>
+      <section>Intro Video</section>
       <section>About the app + Login credentials</section>
       <section>
         <h2>Features</h2>
         <Carousel fade>
           <Carousel.Item>
-            <img className="d-block w-100"  alt="First slide" />
+            <img className="d-block w-100" alt="First slide" />
             <Carousel.Caption>
               <h3>First slide label</h3>
               <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
@@ -35,7 +35,7 @@ const HomeScreen = () => {
           </Carousel.Item>
         </Carousel>
       </section>
-      <section>Contact</section> */}
+      <section>Contact</section>
     </Container>
   );
 };
