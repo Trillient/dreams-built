@@ -15,7 +15,7 @@
 
 .form {
   margin-top: 3rem;
-  background: rgb(228, 228, 228);
+  background: #aac1c7;
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
@@ -48,6 +48,10 @@
     grid-template-columns: 1fr 2fr;
     grid-template-areas: 'try form';
     gap: 2rem;
+  }
+
+  .try {
+    justify-self: center;
   }
   .form {
     margin: unset;

@@ -59,7 +59,7 @@ const HomeScreen = () => {
             ></iframe>
           </div>
         </section>
-
+        <hr />
         <section className={styles.block}>
           <h1 style={{ textAlign: 'center' }}>About</h1>
           <p style={{ padding: '1rem 0' }}>
@@ -72,7 +72,7 @@ const HomeScreen = () => {
             View The Code
           </a>
         </section>
-
+        <hr />
         <section className={styles.block}>
           <div className={styles.stack}>
             <SiMongodb style={{ color: '#69AF56' }} /> <SiExpress /> <SiReact style={{ color: '#61DAFB' }} /> <SiNodedotjs style={{ color: '#94C190' }} /> <SiRedux style={{ color: '#764ABC' }} /> <SiDocker style={{ color: '#2596ED' }} /> <SiAuth0 />{' '}
@@ -83,7 +83,7 @@ const HomeScreen = () => {
       <section className={styles.block} style={{ marginBottom: '4rem' }}>
         <Container className={styles.divide}>
           <div className={styles.try}>
-            <h2 style={{ paddingBottom: '0.7rem', fontSize: '1.7rem' }}>Try it out</h2>
+            <h2 style={{ paddingBottom: '0.7rem' }}>Try it out</h2>
             <p>Try it out for yourself by either registering your own account or using the following login credentials:</p>
             <p>
               <strong>Username:</strong> <em>test@test.com</em>
