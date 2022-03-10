@@ -1,5 +1,6 @@
 .header {
   grid-area: header;
+  box-shadow: rgba(0, 0, 0, 0.45) 0px 5px 20px;
 }
 
 .logo {
