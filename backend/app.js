@@ -8,6 +8,7 @@ const timesheetRoutes = require('./routes/timesheetRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
 const clientRoutes = require('./routes/clientRoutes');
 const contractorRoutes = require('./routes/contractorsRoutes');
+const contactRoutes = require('./routes/contactRoutes');
 const { checkJwt } = require('./middleware/authMiddleware');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware.js');
 
@@ -32,6 +33,7 @@ app.use('/api/timesheet', checkJwt, timesheetRoutes);
 app.use('/api/job', checkJwt, jobDetailRoutes);
 app.use('/api/clients', checkJwt, clientRoutes);
 app.use('/api/contractors', checkJwt, contractorRoutes);
+app.use('/api/contact', contactRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

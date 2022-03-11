@@ -1,0 +1,85 @@
+.block {
+  margin: 1.5rem 0;
+  padding: 1rem 0;
+}
+
+.stack {
+  font-size: 4rem;
+  margin: 4rem 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+  align-items: center;
+  justify-items: center;
+}
+
+.form {
+  margin-top: 3rem;
+  background: #aac1c7;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 40rem;
+  grid-area: form;
+  justify-self: right;
+}
+
+.contact-title {
+  text-align: center;
+}
+
+.try {
+  grid-area: try;
+}
+
+.divide {
+  background: whitesmoke;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+@media only screen and (min-width: 48rem) {
+  .divide {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas: 'try form';
+    gap: 2rem;
+  }
+
+  .try {
+    justify-self: center;
+  }
+  .form {
+    margin: unset;
+  }
+  .stack {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .form {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'contact-title contact-title' 'name email' 'subject subject' 'message message' 'send .';
+  }
+  .contact-title {
+    grid-area: contact-title;
+  }
+  .name {
+    grid-area: name;
+  }
+  .email {
+    grid-area: email;
+  }
+  .subject {
+    grid-area: subject;
+  }
+  .message {
+    grid-area: message;
+  }
+  .send {
+    grid-area: send;
+    width: fit-content;
+  }
+}

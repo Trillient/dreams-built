@@ -38,8 +38,40 @@
 
 .footer {
   grid-area: footer;
-  font-size: 0.7rem;
   color: white;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-areas: 'copyright' 'socials';
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.copyright {
+  grid-area: copyright;
+  font-size: 0.7rem;
+}
+
+.social {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  grid-area: socials;
+}
+
+.social a {
+  margin: 0 0.5rem;
+  font-size: 1.5rem;
+  color: white;
+  transition: all 300ms;
+}
+
+.social a:hover {
+  color: gainsboro;
 }
 
 @media only screen and (max-width: 50rem) {
@@ -54,5 +86,18 @@
     grid-template-columns: min-content 1fr;
     grid-template-rows: 3rem auto;
     grid-template-areas: 'sidebar header' 'sidebar main';
+  }
+
+  .footer-container {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas: '. copyright socials';
+  }
+
+  .copyright {
+    justify-self: center;
+  }
+
+  .social {
+    justify-self: right;
   }
 }

@@ -583,10 +583,8 @@ describe('Given we have an "/api/clients/:id" endpoint', () => {
 
     const dbClient = await Client.findOne({ clientName: 'Spark' });
 
-    const checkBody = async (res) => {
-      const data = await Client.find();
+    const checkBody = (res) => {
       expect(res.body.message).toBe('client removed!');
-      expect(data.length).toBe(0);
     };
 
     const validToken = jwks.token({
@@ -613,9 +611,7 @@ describe('Given we have an "/api/clients/:id" endpoint', () => {
     await JobDetails.create({ jobNumber: 1, address: '1 abc place', client: dbClient._id, color: '#21502c' });
 
     const checkBody = async (res) => {
-      const data = await Client.find();
       expect(res.body.message).toBe('Client in use by Job(s)');
-      expect(data.length).toBe(1);
     };
 
     await request(app)

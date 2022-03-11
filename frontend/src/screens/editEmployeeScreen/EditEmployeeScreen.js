@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-import { addRole, deleteRole, deleteUser, getUser, resetUserRedirect, updateUser } from '../../actions/employeeActions';
+import { addRole, deleteRole, getUser, resetUserRedirect, updateUser } from '../../actions/employeeActions';
 
 import AdminGroup from '../../components/groups/AdminGroup';
 import DetailsGroup from '../../components/groups/DetailsGroup';
@@ -65,9 +66,10 @@ const EditEmployeeScreen = () => {
 
   const deleteHandler = async (e) => {
     e.preventDefault();
-    const token = await getAccessTokenSilently();
-    dispatch(deleteUser(token, userId));
+    // const token = await getAccessTokenSilently();
+    // dispatch(deleteUser(token, userId));
     setModalShow(false);
+    toast.info('User Delete function has been disabled');
   };
 
   const handleRoleChange = async (method, role) => {
