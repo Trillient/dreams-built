@@ -51,7 +51,7 @@ const HomeScreen = () => {
         <section className={styles.block} style={{ margin: '3.5rem 0' }}>
           <div style={{ position: 'relative', paddingBottom: '56.25%', height: '0' }}>
             <iframe
-              src="https://www.loom.com/embed/8e22009ec07741768244878dfe84780b?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true"
+              src="https://www.loom.com/embed/629df3942e3944b683fd5a5d6acba76c?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true"
               frameBorder="0"
               title="demo"
               allowFullScreen
