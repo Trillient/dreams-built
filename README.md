@@ -56,6 +56,6 @@ Website: [Dreams-Built website](https://dreams-built.netlify.app/)
 
 ![Job List](images/jobList.png)
 
-### Schedule
+### Schedules
 
 ![Schedule](images/schedule.png)
